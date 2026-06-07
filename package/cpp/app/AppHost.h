@@ -7,13 +7,13 @@
 
 namespace react_native_uws {
 
-class AppWrapper {
+class AppHost {
 
 private:
   std::shared_ptr<AppRunner> appRunner;
 
 public:
-  AppWrapper() {
+  AppHost() {
     // TODO Implement the uWS::App options
     this->appRunner = std::make_shared<AppRunner>();
   }
