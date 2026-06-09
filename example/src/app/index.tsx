@@ -32,7 +32,7 @@ export default function Page() {
 
 			console.log("getMethod", req.getMethod())
 
-			// console.log("getParameter", req.getParameter("name"))
+			console.log("getParameter", req.getParameter(0))
 
 			// This is only work in debugOptimized and release/production build
 			// I don't know why this doesn't work on the basic debug build
@@ -43,8 +43,18 @@ export default function Page() {
 			res.end("hello world")
 		})
 
-		app.get("/testing", (res) => {
-			res.end("testing")
+		app.get("/testing", (res, req) => {
+			res.write("<html><body><h2>Hello, your headers are:</h2><ul>")
+
+			req.forEach((k, v) => {
+				res.write("<li>")
+				res.write(k)
+				res.write(" = ")
+				res.write(v)
+				res.write("</li>")
+			})
+
+			res.end("</ul></body></html>");
 		})
 
 		app.listen(5000, () => {

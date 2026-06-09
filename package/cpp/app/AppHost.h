@@ -14,7 +14,7 @@ private:
 
 public:
   AppHost() {
-    // TODO Implement the uWS::App options
+    // TODO Implement the uWS::App ssl options
     this->appRunner = std::make_shared<AppRunner>();
   }
 

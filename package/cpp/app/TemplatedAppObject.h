@@ -36,7 +36,7 @@ private:
       auto callback = arguments[1].asObject(rt).asFunction(rt);
       auto asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker);
 
-      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [asyncCallback_ = std::move(asyncCallback), &jsInvoker](auto *res, auto *req) {
+      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [asyncCallback_ = std::move(asyncCallback)](auto *res, auto *req) {
         auto aborted = std::make_shared<bool>(false);
         /**
          * I don't know why without this,
@@ -47,9 +47,9 @@ private:
           *aborted = true;
         });
 
-        asyncCallback_.call([&res, &req, &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+        asyncCallback_.call([&res, &req](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
           auto httpResponseObject = std::make_shared<HttpResponseObject>(rt_1, res);
-          auto httpRequestObject = std::make_shared<HttpRequestObject>(rt_1, req, jsInvoker);
+          auto httpRequestObject = std::make_shared<HttpRequestObject>(rt_1, req);
 
           cb.call(rt_1,
                   *httpResponseObject,
@@ -94,7 +94,7 @@ public:
                                                                                                const facebook::jsi::Value *arguments,
                                                                                                size_t count) -> facebook::jsi::Value {
       std::optional<std::string> host = std::nullopt;
-      double port = -1; // it could be unsigned, but JSI provide it as double
+      double port = -1; // it could be unsigned short, but JSI provide it as double
       std::optional<int> options = std::nullopt;
 
       if(arguments[0].isString()) {

@@ -1,8 +1,8 @@
-# Currently, this CMake is only used by Android for React Native C++ autolinking
+# Currently, this CMake is only used by Android for React Native C++ static autolinking
 # We need to adjust this build if this is getting used by other platforms
-# or to build Shared Object file, and may put this folder not this Android directory.
+# or to build Shared Object file.
 
-project("react-native-uws")
+project("react_native_uws")
 cmake_minimum_required(VERSION 3.14.0)
 
 include(FetchContent)
@@ -149,6 +149,7 @@ target_compile_options(uWebSockets INTERFACE -Wno-deprecated-declarations)
 # ----- uWebSockets C++ library -----
 
 add_subdirectory(app)
+add_subdirectory(bridging)
 
 # Link Libraries
 target_link_libraries(
@@ -160,5 +161,6 @@ target_link_libraries(
 	uWebSockets
 	android
 	log
-	react_native_uws__app
+	react_native_uws::app
+	react_native_uws::bridging
 )

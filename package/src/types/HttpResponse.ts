@@ -2,9 +2,9 @@ import type {
 	RecognizedString,
 } from "./RecognizedString"
 
-import type {
-	us_socket_context_t,
-} from "./us_socket_context_t"
+// import type {
+// 	us_socket_context_t,
+// } from "./us_socket_context_t"
 
 /**
  * An HttpResponse is valid until either onAborted callback or any of the .end/.tryEnd calls succeed. You may attach user data to this object.
@@ -36,16 +36,19 @@ export interface HttpResponse {
 		cb: () => void,
 	) : HttpResponse,
 
-	/**
-	 * `collectBody` is a helper function making optimal use of the new onDataV2.
-     * It allows efficient and easy collection of smallish HTTP request body data into RAM.
-     * It accumulates all data chunks and calls handler with the complete body as an ArrayBuffer once all data has arrived.
-     * If the total body size exceeds maxSize bytes, handler is called with null instead.
-	 */
-	collectBody(
-		maxSize: number,
-		handler: (fullBody: ArrayBuffer | null) => void,
-	) : HttpResponse,
+	// TODO
+	// It is a custom method from uWebSockets.js.
+	// We need to figure it out how to implement this method in JSI way.
+	// /**
+	//  * `collectBody` is a helper function making optimal use of the new onDataV2.
+	//  * It allows efficient and easy collection of smallish HTTP request body data into RAM.
+	//  * It accumulates all data chunks and calls handler with the complete body as an ArrayBuffer once all data has arrived.
+	//  * If the total body size exceeds maxSize bytes, handler is called with null instead.
+	//  */
+	// collectBody(
+	// 	maxSize: number,
+	// 	handler: (fullBody: ArrayBuffer | null) => void,
+	// ) : HttpResponse,
 
 	/**
 	 * Ends this response by copying the contents of body.
@@ -56,82 +59,53 @@ export interface HttpResponse {
 	) : HttpResponse,
 
 	/**
-	 * Returns the remote IP address in binary format (4 or 16 bytes).
-	 */
-	getRemoteAddress() : ArrayBuffer,
-
-	/**
-	 * Returns the remote IP address as text.
-	 */
-	getRemoteAddressAsText() : ArrayBuffer,
-
-	/**
-	 * Returns the remote port number.
-	 */
-	getRemotePort() : number,
-
-	/**
-	 * Returns the remote IP address in binary format (4 or 16 bytes), as reported by the PROXY Protocol v2 compatible proxy.
-	 */
-	getProxiedRemoteAddress() : ArrayBuffer,
-
-	/**
-	 * Returns the remote IP address as text, as reported by the PROXY Protocol v2 compatible proxy.
-	 */
-	getProxiedRemoteAddressAsText() : ArrayBuffer,
-
-	/**
-	 * Returns the remote port number, as reported by the PROXY Protocol v2 compatible proxy.
-	 */
-	getProxiedRemotePort() : number,
-
-	/**
-	 * Returns the global byte write offset for this response. Use with onWritable.
-	 */
-	getWriteOffset() : number,
-
-	/**
-	 * Writes the HTTP status message such as "200 OK".
-     * This has to be called first in any response, otherwise
-     * it will be called automatically with "200 OK".
-     *
-     * If you want to send custom headers in a WebSocket
-     * upgrade response, you have to call writeStatus with
-     * "101 Switching Protocols" before you call writeHeader,
-     * otherwise your first call to writeHeader will call
-     * writeStatus with "200 OK" and the upgrade will fail.
-     *
-     * As you can imagine, we format outgoing responses in a linear
-     * buffer, not in a hash table. You can read about this in
-     * the user manual under "corking".
-	 */
-	writeStatus(
-		status: RecognizedString,
-	) : HttpResponse,
-
-	/**
-	 * Writes key and value to HTTP response.
-     * See writeStatus and corking.
-	 */
-	writeHeader(
-		key: RecognizedString,
-		value: RecognizedString,
-	) : HttpResponse,
-
-	/**
-	 * Enters or continues chunked encoding mode. Writes part of the response. End with zero length write. Returns true if no backpressure was added.
-	 */
-	write(
-		chunk: RecognizedString,
-	) : boolean,
-
-	/**
 	 * Ends this response without a body.
 	 */
 	endWithoutBody(
 		reportedContentLength?: number,
 		closeConnection?: boolean,
 	) : HttpResponse,
+
+	// Would be implemented until ArrayBuffer supported by React Native
+	// /**
+	//  * Returns the remote IP address in binary format (4 or 16 bytes).
+	//  */
+	// getRemoteAddress() : ArrayBuffer,
+
+	/**
+	 * Returns the remote IP address as text.
+	 */
+	getRemoteAddressAsText() : string,
+
+	/**
+	 * Returns the remote port number.
+	 */
+	getRemotePort() : number,
+
+	// TODO
+	// Would be implemented until SSL has been implemented
+	// /**
+	//  * Returns the remote IP address in binary format (4 or 16 bytes), as reported by the PROXY Protocol v2 compatible proxy.
+	//  */
+	// getProxiedRemoteAddress() : ArrayBuffer,
+
+	// TODO
+	// Would be implemented until the SSL has been implemented
+	// /**
+	//  * Returns the remote IP address as text, as reported by the PROXY Protocol v2 compatible proxy.
+	//  */
+	// getProxiedRemoteAddressAsText() : string,
+
+	// Would be implemented until we support the Proxy
+	// /**
+	//  * Returns the remote port number, as reported by the PROXY Protocol v2 compatible proxy.
+	//  */
+	// getProxiedRemotePort() : number,
+
+	/**
+	 * Returns the global byte write offset for this response. Use with onWritable.
+	 */
+	getWriteOffset() : number,
 
 	/**
 	 * Every HttpResponse MUST have an attached abort handler IF you do not respond
@@ -195,19 +169,65 @@ export interface HttpResponse {
 		totalSize: number,
 	) : [boolean, boolean],
 
-	/**
-	 * Upgrades a HttpResponse to a WebSocket. See UpgradeAsync, UpgradeSync example files.
-	 */
-	upgrade<UserData>(
-		userData : UserData,
-		secWebSocketKey: RecognizedString,
-		secWebSocketProtocol: RecognizedString,
-		secWebSocketExtensions: RecognizedString,
-		context: us_socket_context_t,
-	) : void,
+	// TODO
+	// Implement this method later.
+	// /**
+	//  * Upgrades a HttpResponse to a WebSocket. See UpgradeAsync, UpgradeSync example files.
+	//  * 
+	//  * Currently, this library is only supported string for the user data.
+	//  * As an object alternative, you can use `JSON.stringify` to this method,
+	//  * and retrieve the user data back from ws.getUserData() with `JSON.parse`.
+	//  */
+	// upgrade/* <UserData extends object> */(
+	// 	// userData: UserData,
+	// 	userData: string,
+	// 	secWebSocketKey: RecognizedString,
+	// 	secWebSocketProtocol: RecognizedString,
+	// 	secWebSocketExtensions: RecognizedString,
+	// 	context: us_socket_context_t,
+	// ) : void,
 
 	/**
-	 * Arbitrary user data may be attached to this object 
+	 * Enters or continues chunked encoding mode. Writes part of the response. End with zero length write. Returns true if no backpressure was added.
 	 */
-	[key: string]: unknown,
+	write(
+		chunk: RecognizedString,
+	) : boolean,
+
+	/**
+	 * Writes key and value to HTTP response.
+     * See writeStatus and corking.
+	 */
+	writeHeader(
+		key: RecognizedString,
+		value: RecognizedString,
+	) : HttpResponse,
+
+	/**
+	 * Writes the HTTP status message such as "200 OK".
+     * This has to be called first in any response, otherwise
+     * it will be called automatically with "200 OK".
+     *
+     * If you want to send custom headers in a WebSocket
+     * upgrade response, you have to call writeStatus with
+     * "101 Switching Protocols" before you call writeHeader,
+     * otherwise your first call to writeHeader will call
+     * writeStatus with "200 OK" and the upgrade will fail.
+     *
+     * As you can imagine, we format outgoing responses in a linear
+     * buffer, not in a hash table. You can read about this in
+     * the user manual under "corking".
+	 */
+	writeStatus(
+		status: RecognizedString,
+	) : HttpResponse,
+
+	// TODO
+	// the `upgrade` method needs to be implemented first,
+	// but I also don't know how to attach arbitrary UserData to the HttpRequest object JSI C++.
+	// Probably, I would tell user to get the data explicitly from the ws.getUserData() method
+	// /**
+	//  * Arbitrary user data may be attached to this object 
+	//  */
+	// [key: string]: unknown,
 }

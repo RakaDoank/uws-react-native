@@ -12,8 +12,7 @@ class HttpRequestObject : public facebook::jsi::Object {
 
 public:
   HttpRequestObject(facebook::jsi::Runtime &rt,
-                    uWS::HttpRequest *req,
-                    std::shared_ptr<facebook::react::CallInvoker> &jsInvoker) : facebook::jsi::Object(rt) {
+                    uWS::HttpRequest *req) : facebook::jsi::Object(rt) {
 
     this->setProperty(rt,
                       "forEach",

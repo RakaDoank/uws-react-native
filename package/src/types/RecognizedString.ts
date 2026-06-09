@@ -9,5 +9,5 @@
 export type RecognizedString =
 	| string
 
-	// Currently not supported from React Native
-	// | ArrayBuffer
+// TODO : Implement it later
+// | ArrayBuffer

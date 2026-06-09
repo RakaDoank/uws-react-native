@@ -21,7 +21,7 @@ import type {
 /**
  * A structure holding settings and handlers for a WebSocket URL route handler.
  */
-export interface WebSocketBehavior<UserData> {
+export interface WebSocketBehavior/* <UserData> */ {
 	/**
 	 * Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed. Defaults to 16 * 1024.
 	 */
@@ -72,14 +72,14 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for new WebSocket connection. WebSocket is valid from open to close, no errors.
 	 */
 	open?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 	) => void | Promise<void>,
 
 	/**
 	 * Handler for a WebSocket message. Messages are given as ArrayBuffer no matter if they are binary or not. Given ArrayBuffer is valid during the lifetime of this callback (until first await or return) and will be neutered.
 	 */
 	message?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		message: ArrayBuffer,
 		isBinary: boolean,
 	) => void | Promise<void>,
@@ -88,7 +88,7 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for a dropped WebSocket message. Messages can be dropped due to specified backpressure settings. Messages are given as ArrayBuffer no matter if they are binary or not. Given ArrayBuffer is valid during the lifetime of this callback (until first await or return) and will be neutered.
 	 */
 	dropped?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		message: ArrayBuffer,
 		isBinary: boolean,
 	) => void | Promise<void>,
@@ -97,14 +97,14 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for when WebSocket backpressure drains. Check ws.getBufferedAmount(). Use this to guide / drive your backpressure throttling.
 	 */
 	drain?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 	) => void,
 
 	/**
 	 * Handler for close event, no matter if error, timeout or graceful close. You may not use WebSocket after this event. Do not send on this WebSocket from within here, it is closed.
 	 */
 	close?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		code: number,
 		message: ArrayBuffer,
 	) => void,
@@ -113,7 +113,7 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for received ping control message. You do not need to handle this, pong messages are automatically sent as per the standard.
 	 */
 	ping?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		message: ArrayBuffer,
 	) => void,
 
@@ -121,7 +121,7 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for received pong control message.
 	 */
 	pong?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		message: ArrayBuffer,
 	) => void,
 
@@ -129,7 +129,7 @@ export interface WebSocketBehavior<UserData> {
 	 * Handler for subscription changes.
 	 */
 	subscription?: (
-		ws: WebSocket<UserData>,
+		ws: WebSocket/* <UserData> */,
 		topic: ArrayBuffer,
 		newCount: number,
 		oldCount: number,
