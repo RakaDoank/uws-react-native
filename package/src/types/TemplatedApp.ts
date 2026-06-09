@@ -162,9 +162,9 @@ export interface TemplatedApp {
 	/**
 	 * Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught.
 	 */
-	ws<UserData>(
+	ws/* <UserData> */(
 		pattern: RecognizedString,
-		behavior: WebSocketBehavior<UserData>,
+		behavior: WebSocketBehavior/* <UserData> */,
 	) : TemplatedApp,
 
 	/**
@@ -223,7 +223,7 @@ export interface TemplatedApp {
 	/**
 	 * Closes all sockets including listen sockets. This will forcefully terminate all connections.
 	 */
-	close() : TemplatedApp,
+	close() : void,
 
 	/**
 	 * Returns the app descriptor for worker thread distribution.

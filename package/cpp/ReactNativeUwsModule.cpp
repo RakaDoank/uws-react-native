@@ -21,8 +21,15 @@ ReactNativeUwsModule::ReactNativeUwsModule(std::shared_ptr<CallInvoker> jsInvoke
 
 react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Runtime &rt,
                                                                std::optional<facebook::jsi::Object> appOptions) {
-  auto appHost = std::make_shared<react_native_uws::AppHost>();
+  auto assignedIndex = appHosts.size();
+
+  auto appHost = std::make_shared<react_native_uws::AppHost>([assignedIndex]() {
+    if(assignedIndex < appHosts.size()) {
+      appHosts.erase(appHosts.begin() + assignedIndex);
+    }
+  });
   appHosts.emplace_back(appHost);
+
   return appHost->getTemplatedAppObject(rt, this->jsInvoker_);
 }
 

@@ -82,7 +82,8 @@ private:
 public:
   TemplatedAppObject(std::shared_ptr<AppRunner> &appRunner,
                      facebook::jsi::Runtime &rt,
-                     std::shared_ptr<facebook::react::CallInvoker> &jsInvoker) : facebook::jsi::Object(rt) {
+                     std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
+                     const std::function<void ()> &closeHandler) : facebook::jsi::Object(rt) {
 
     this->setProperty(rt,
                       "listen",
@@ -289,11 +290,12 @@ public:
                       facebook::jsi::Function::createFromHostFunction(rt,
                                                                       facebook::jsi::PropNameID::forUtf8(rt, "close"),
                                                                       0,
-                                                                      [](facebook::jsi::Runtime &rt_1,
+                                                                      [closeHandler](facebook::jsi::Runtime &rt_1,
                                                                               const facebook::jsi::Value &thisValue,
                                                                               const facebook::jsi::Value *arguments,
                                                                               size_t count) -> facebook::jsi::Value {
-      return {rt_1, thisValue};
+      closeHandler();
+      return facebook::jsi::Value::undefined();
     }));
   };
 

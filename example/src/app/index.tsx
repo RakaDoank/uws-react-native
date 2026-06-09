@@ -40,7 +40,7 @@ export default function Page() {
 
 			console.log("getUrl", req.getUrl(), req.getUrl().length)
 
-			res.end("hello world")
+			res.end("hello bebelac")
 		})
 
 		app.get("/testing", (res, req) => {
@@ -58,7 +58,7 @@ export default function Page() {
 		})
 
 		app.listen(5000, () => {
-			// testing
+			console.log("Listen!")
 		})
 
 		// const server = new Echo.Http.Server()
@@ -114,9 +114,9 @@ export default function Page() {
 		// 	console.log("ONSTART")
 		// })
 
-		// return () => {
-		// 	server.close();
-		// }
+		return () => {
+			app.close()
+		}
 	}, [])
 
 	// useEffect(() => {

@@ -68,16 +68,19 @@ public:
     this->serverThread.detach();
   };
 
-  void close() {
+  void close(std::function<void ()> &&onClose) {
     if(this->serverLoop) {
-      this->serverLoop->defer([this]() {
+      this->serverLoop->defer([this, onClose]() {
         std::lock_guard<std::mutex> lock(this->listenSocketMutex);
         if(this->listenSocket) {
           us_listen_socket_close(0, this->listenSocket);
           this->listenSocket = nullptr;
+          onClose();
         }
       });
     }
+
+    // stop the thread
   };
 
 };
