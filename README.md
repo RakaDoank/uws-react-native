@@ -1,22 +1,22 @@
-# react-native-uws
+<h1 align="center">
+  react-native-uws
+</h1>
 
-A library to embed a HTTP server in a React Native app with thread safety to handle high-volume and high-pressure requests.
+The [uWebSockets](https://github.com/uNetworking/uWebSockets) ported library for React Native.
 
-> ⚠️ The library is still in development and research. I'm still playing around with this library. Read [New Research](#new-research)
+## Development Phase
+The library is still in development and research. All the uWebSockets instances are not fully implemented yet.
 
-See this [example](https://github.com/RakaDoank/react-native-uws/blob/main/example/src/app/index.tsx) of how to use this library.
+These below are the item that we need to implement in this library
 
-## Features
+- Implement missing methods from the `TemplatedAppObject` e.g. `ws`, `addServerName`, etc.
+- `getParts` API like in uWebSockets.js to get body data `JSON`, `multipart/form-data`, or raw text
+- App options for SSL configuration
+- Implement `ArrayBuffer` support for all the `RecognizedString` typed data
+- Missing `upgrade` method from `HttpResponse` object
 
-- Built-in support for `JSON` thanks to the nature of JavaScript
-- Memory optimized for `multipart/form-data` request handling support with its cached file instead of holding an array buffer
+## Usage
+Since react-native-uws is just a reimplementation of uWebSockets in React Native JSI, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++ or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) in Node.js.
+You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example.
 
-#### Pending
-- Static file and/or directory serving
-- WebSocket support for real time bidirectional communication
-
-## New Research
-I'm still in development and research to make this library performs better in high-volume and high-pressure requests. Currently, migrating to [uWebSockets](https://github.com/uNetworking/uWebSockets) server to support cross platforms and better performance since React Native new architecture can make JavaScript side communicate back and forth with C++ through JSI with a little overhead.
-
-## Old Research
-See [react-native-echo](https://github.com/RakaDoank/react-native-echo).
+This repository does also contain the [example](https://github.com/RakaDoank/react-native-uws/blob/main/example/src/app/index.tsx) app. You can also refer to it, but it's currently for library development playground.
