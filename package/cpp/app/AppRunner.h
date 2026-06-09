@@ -50,6 +50,7 @@ public:
 
       std::function<void (us_listen_socket_t *listenedSocket)> listenHandler = [this, handler](auto *listenedSocket) {
         this->listenSocket = listenedSocket;
+        handler(this->listenSocket);
       };
 
       if(host.has_value()) {
