@@ -35,6 +35,45 @@ import type {
  */
 export interface TemplatedApp {
 	/**
+	 * Add a child app descriptor for worker thread distribution.
+	 */
+	addChildAppDescriptor(
+		descriptor: AppDescriptor,
+	): void,
+
+	/**
+	 * Adds a server name.
+	 */
+	addServerName(
+		hostname: string,
+		options: AppOptions,
+	) : TemplatedApp,
+
+	/**
+	 * Closes all sockets including listen sockets. This will forcefully terminate all connections.
+	 */
+	close() : void,
+
+	/**
+	 * Browse to SNI domain. Used together with .get, .post and similar to attach routes under SNI domains.
+	 */
+	domain(
+		domain: string,
+	) : TemplatedApp,
+
+	/**
+	 * Attaches a "filter" function to track socket connections / disconnections.
+	 */
+	filter(
+		cb: (res: HttpResponse, count: number) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Returns the app descriptor for worker thread distribution.
+	 */
+	getDescriptor(): AppDescriptor,
+
+	/**
 	 * Listens to hostname & port and sets Listen Options. Callback hands either false or a listen socket.
 	 */
 	listen(
@@ -70,6 +109,52 @@ export interface TemplatedApp {
 		cb: (listenSocket: us_listen_socket | false) => void | Promise<void>,
 	) : TemplatedApp,
 
+	/**
+	 * Registers a synchronous callback on missing server names. See /examples/ServerName.js.
+	 */
+	missingServerName(
+		cb: (hostname: string) => void,
+	) : TemplatedApp,
+
+	/**
+	 * Returns number of subscribers for this topic.
+	 */
+	numSubscribers(
+		topic: RecognizedString,
+	) : number,
+
+	/**
+	 * Publishes a message under topic, for all WebSockets under this app. See WebSocket.publish.
+	 */
+	publish(
+		topic: RecognizedString,
+		message: RecognizedString,
+		isBinary?: boolean,
+		compress?: boolean,
+	) : boolean,
+
+	/**
+	 * Remove a child app descriptor.
+	 */
+	removeChildAppDescriptor(
+		descriptor: AppDescriptor,
+	): void,
+
+	/**
+	 * Removes a server name.
+	 */
+	removeServerName(
+		hostname: string,
+	) : TemplatedApp,
+
+	/**
+	 * Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught.
+	 */
+	ws/* <UserData> */(
+		pattern: RecognizedString,
+		behavior: WebSocketBehavior/* <UserData> */,
+	) : TemplatedApp,
+
 	// we can't provide this in Reaact Native
 	/**
 	 * Listens to unix socket. Callback hands either false or a listen socket.
@@ -79,58 +164,12 @@ export interface TemplatedApp {
 	// 	path: RecognizedString,
 	// ) : TemplatedApp,
 
-	/**
-	 * Registers an HTTP GET handler matching specified URL pattern.
-	 */
-	get(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
+	// +++++ ROUTER +++++
 
 	/**
-	 * Registers an HTTP POST handler matching specified URL pattern.
+	 * Registers an HTTP handler matching specified URL pattern on any HTTP method.
 	 */
-	post(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers an HTTP OPTIONS handler matching specified URL pattern.
-	 */
-	options(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers an HTTP DELETE handler matching specified URL pattern.
-	 */
-	del(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers an HTTP PATCH handler matching specified URL pattern.
-	 */
-	patch(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers an HTTP PUT handler matching specified URL pattern.
-	 */
-	put(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers an HTTP HEAD handler matching specified URL pattern.
-	 */
-	head(
+	any(
 		pattern: RecognizedString,
 		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
 	) : TemplatedApp,
@@ -144,6 +183,62 @@ export interface TemplatedApp {
 	) : TemplatedApp,
 
 	/**
+	 * Registers an HTTP DELETE handler matching specified URL pattern.
+	 */
+	del(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP GET handler matching specified URL pattern.
+	 */
+	get(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP HEAD handler matching specified URL pattern.
+	 */
+	head(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP OPTIONS handler matching specified URL pattern.
+	 */
+	options(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP PATCH handler matching specified URL pattern.
+	 */
+	patch(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP POST handler matching specified URL pattern.
+	 */
+	post(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
+	 * Registers an HTTP PUT handler matching specified URL pattern.
+	 */
+	put(
+		pattern: RecognizedString,
+		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
+	) : TemplatedApp,
+
+	/**
 	 * Registers an HTTP TRACE handler matching specified URL pattern.
 	 */
 	trace(
@@ -151,96 +246,5 @@ export interface TemplatedApp {
 		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
 	) : TemplatedApp,
 
-	/**
-	 * Registers an HTTP handler matching specified URL pattern on any HTTP method.
-	 */
-	any(
-		pattern: RecognizedString,
-		handler: (res: HttpResponse, req: HttpRequest) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught.
-	 */
-	ws/* <UserData> */(
-		pattern: RecognizedString,
-		behavior: WebSocketBehavior/* <UserData> */,
-	) : TemplatedApp,
-
-	/**
-	 * Publishes a message under topic, for all WebSockets under this app. See WebSocket.publish.
-	 */
-	publish(
-		topic: RecognizedString,
-		message: RecognizedString,
-		isBinary?: boolean,
-		compress?: boolean,
-	) : boolean,
-
-	/**
-	 * Returns number of subscribers for this topic.
-	 */
-	numSubscribers(
-		topic: RecognizedString,
-	) : number,
-
-	/**
-	 * Adds a server name.
-	 */
-	addServerName(
-		hostname: string,
-		options: AppOptions,
-	) : TemplatedApp,
-
-	/**
-	 * Browse to SNI domain. Used together with .get, .post and similar to attach routes under SNI domains.
-	 */
-	domain(
-		domain: string,
-	) : TemplatedApp,
-
-	/**
-	 * Removes a server name.
-	 */
-	removeServerName(
-		hostname: string,
-	) : TemplatedApp,
-
-	/**
-	 * Registers a synchronous callback on missing server names. See /examples/ServerName.js.
-	 */
-	missingServerName(
-		cb: (hostname: string) => void,
-	) : TemplatedApp,
-
-	/**
-	 * Attaches a "filter" function to track socket connections / disconnections.
-	 */
-	filter(
-		cb: (res: HttpResponse, count: number) => void | Promise<void>,
-	) : TemplatedApp,
-
-	/**
-	 * Closes all sockets including listen sockets. This will forcefully terminate all connections.
-	 */
-	close() : void,
-
-	/**
-	 * Returns the app descriptor for worker thread distribution.
-	 */
-	getDescriptor(): AppDescriptor,
-
-	/**
-	 * Add a child app descriptor for worker thread distribution.
-	 */
-	addChildAppDescriptor(
-		descriptor: AppDescriptor,
-	): void,
-
-	/**
-	 * Remove a child app descriptor.
-	 */
-	removeChildAppDescriptor(
-		descriptor: AppDescriptor,
-	): void,
+	// ----- ROUTER -----
 }

@@ -84,6 +84,35 @@ public:
                      facebook::jsi::Runtime &rt,
                      std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
                      const std::function<void ()> &closeHandler) : facebook::jsi::Object(rt) {
+//    this->setProperty(rt,
+//                      "addServerName",
+//                      facebook::jsi::Function::createFromHostFunction(rt,
+//                                                                      facebook::jsi::PropNameID::forUtf8(rt, "addServerName"),
+//                                                                      2,
+//                                                                      [&appRunner](facebook::jsi::Runtime &rt_1,
+//                                                                                   const facebook::jsi::Value &thisValue,
+//                                                                                   const facebook::jsi::Value *arguments,
+//                                                                                   size_t count) -> facebook::jsi::Value {
+//      auto hostname = arguments[0].asString(rt_1).utf8(rt_1);
+//      auto options = arguments[1].asObject(rt_1);
+//
+//      appRunner->app.addServerName()
+//
+//      return facebook::jsi::Value::undefined();
+//    }));
+
+    this->setProperty(rt,
+                      "close",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "close"),
+                                                                      0,
+                                                                      [closeHandler](facebook::jsi::Runtime &rt_1,
+                                                                                     const facebook::jsi::Value &thisValue,
+                                                                                     const facebook::jsi::Value *arguments,
+                                                                                     size_t count) -> facebook::jsi::Value {
+      closeHandler();
+      return facebook::jsi::Value::undefined();
+    }));
 
     this->setProperty(rt,
                       "listen",
@@ -126,6 +155,40 @@ public:
       });
 
       return {rt_1, thisValue};
+    }));
+
+    this->setProperty(rt,
+                      "publish",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "publish"),
+                                                                      4,
+                                                                      [&appRunner](facebook::jsi::Runtime &rt_1,
+                                                                                   const facebook::jsi::Value &thisValue,
+                                                                                   const facebook::jsi::Value *arguments,
+                                                                                   size_t count) -> facebook::jsi::Value {
+      if(!arguments ||
+         !arguments[0].isString() ||
+         !arguments[1].isString()) {
+        return false;
+      }
+
+      auto topic = arguments[0].asString(rt_1).utf8(rt_1);
+      auto message = arguments[1].asString(rt_1).utf8(rt_1);
+
+      bool isBinary = false;
+      if(arguments[2].isBool()) {
+        isBinary = arguments[2].asBool();
+      }
+
+      bool compress = false;
+      if(arguments[3].isBool()) {
+        compress = arguments[3].asBool();
+      }
+
+      return appRunner->app.publish(std::string_view(topic),
+                             std::string_view(message),
+                             isBinary ? uWS::OpCode::BINARY : uWS::TEXT,
+                             compress);
     }));
 
     // +++++ ROUTER +++++
@@ -284,19 +347,6 @@ public:
     }));
 
     // ----- ROUTER -----
-
-    this->setProperty(rt,
-                      "close",
-                      facebook::jsi::Function::createFromHostFunction(rt,
-                                                                      facebook::jsi::PropNameID::forUtf8(rt, "close"),
-                                                                      0,
-                                                                      [closeHandler](facebook::jsi::Runtime &rt_1,
-                                                                              const facebook::jsi::Value &thisValue,
-                                                                              const facebook::jsi::Value *arguments,
-                                                                              size_t count) -> facebook::jsi::Value {
-      closeHandler();
-      return facebook::jsi::Value::undefined();
-    }));
   };
 
 };
