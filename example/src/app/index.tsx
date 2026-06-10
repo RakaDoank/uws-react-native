@@ -20,7 +20,26 @@ export default function Page() {
 	useEffect(() => {
 		const app = uws.App()
 
+		app.get("/long-operation", async (res) => {
+			// We already assigned `onAborted`
+			// internally in C++
+			// res.onAborted(() => {
+			// 	console.log("onAborted")
+			// })
+
+			await new Promise(resolver => {
+				setTimeout(() => {
+					resolver(true)
+				}, 2000)
+			})
+
+			res.end("long operation")
+		})
+
 		app.get("/hola/:name", (res, req) => {
+			res.onAborted(() => {
+				console.log("onAbort")
+			})
 			req.forEach((key, val) => {
 				console.log("header", key, val)
 			})
