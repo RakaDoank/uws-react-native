@@ -10,6 +10,18 @@ namespace react_native_uws {
 
 class HttpResponseObject : public facebook::jsi::Object {
 
+private:
+  struct {
+    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value>> callback;
+    bool alreadyAborted = false;
+  } OnAbortedAssignee;
+
+  struct {
+    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>> callback;
+    std::string chunk = {};
+    unsigned long maxRemainingBodyLength = 0;
+  } OnDataV2Assignee;
+
 public:
   HttpResponseObject(facebook::jsi::Runtime &rt,
                      uWS::HttpResponse<false> *res,
@@ -134,33 +146,46 @@ public:
     this->setProperty(rt, "onAborted", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                             facebook::jsi::PropNameID::forUtf8(rt, "onAborted"),
                                                                                             1,
-                                                                                            [res](facebook::jsi::Runtime &rt_1,
+                                                                                            [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
                                                                                                   const facebook::jsi::Value &thisValue,
                                                                                                   const facebook::jsi::Value *arguments,
                                                                                                   size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
-      res->onAborted([&rt_1, callback_ = std::move(callback)]() {
-        callback_.call(rt_1);
-      });
+      this->OnAbortedAssignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
+
+      if(this->OnAbortedAssignee.alreadyAborted && this->OnAbortedAssignee.callback) {
+        this->OnAbortedAssignee.callback->call([this](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
+          cb.call(rt_2);
+          this->OnAbortedAssignee.callback = nullptr;
+          this->OnAbortedAssignee.alreadyAborted = false;
+        });
+      }
+
       return {rt_1, thisValue};
     }));
 
     this->setProperty(rt, "onData", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                  facebook::jsi::PropNameID::forUtf8(rt, "onData"),
                                                                                  1,
-                                                                                 [res, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                 [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
                                                                                        const facebook::jsi::Value &thisValue,
                                                                                        const facebook::jsi::Value *arguments,
                                                                                        size_t count) -> facebook::jsi::Value {
+      /// Same usage as the onDataV2
+      /// except the second parameter to the JS handler is the boolean `isLast`
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
+      this->OnDataV2Assignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
 
-      res->onData([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](auto chunk, auto isLast) {
-        asyncCallback.call([chunk, isLast](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-          cb.call(rt_2,
-                  std::string(chunk),
-                  isLast);
+      if(this->OnDataV2Assignee.maxRemainingBodyLength == 0 && this->OnDataV2Assignee.callback) {
+        this->OnDataV2Assignee.callback->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
+                                                          [this](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+          auto stringMutableBuffer = facebook::jsi::StringMutableBuffer(&this->OnDataV2Assignee.chunk);
+
+          cb.call(rt,
+                  facebook::jsi::ArrayBuffer(rt, std::make_shared<facebook::jsi::StringMutableBuffer>(stringMutableBuffer)),
+                  this->OnDataV2Assignee.maxRemainingBodyLength == 0);
         });
-      });
+      }
 
       return facebook::jsi::Value::undefined();
     }));
@@ -168,23 +193,35 @@ public:
     this->setProperty(rt, "onDataV2", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                       facebook::jsi::PropNameID::forUtf8(rt, "onDataV2"),
                                                                                       1,
-                                                                                      [res, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
                                                                                             const facebook::jsi::Value &thisValue,
                                                                                             const facebook::jsi::Value *arguments,
                                                                                             size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
+      this->OnDataV2Assignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
 
-      __android_log_print(ANDROID_LOG_INFO, "uwsserver", "onDataV2 0");
-      res->onDataV2([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](std::string_view chunk, auto maxRemainingBodyLength) {
-        __android_log_print(ANDROID_LOG_INFO, "uwsserver", "onDataV2 1");
-        asyncCallback.call([chunk, maxRemainingBodyLength](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-          __android_log_print(ANDROID_LOG_INFO, "uwsserver", "onDataV2 2");
-          auto stringMutableBuffer = std::make_shared<facebook::jsi::StringMutableBuffer>(std::string(chunk));
-          cb.call(rt_2,
-                  facebook::jsi::ArrayBuffer(rt_2, stringMutableBuffer),
-                  facebook::jsi::BigInt::fromUint64(rt_2, maxRemainingBodyLength));
+      /// This is a late call to the onDataV2 callback
+      /// due to the onDataV2 predefined lambda has finished earlier.
+      if(this->OnDataV2Assignee.maxRemainingBodyLength == 0 && this->OnDataV2Assignee.callback) {
+        this->OnDataV2Assignee.callback->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
+                                                 [this](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+                                                   auto stringMutableBuffer = facebook::jsi::StringMutableBuffer(&this->OnDataV2Assignee.chunk);
+
+          cb.call(rt,
+                 facebook::jsi::ArrayBuffer(rt, std::make_shared<facebook::jsi::StringMutableBuffer>(stringMutableBuffer)),
+                 facebook::jsi::BigInt::fromUint64(rt, this->OnDataV2Assignee.maxRemainingBodyLength));
         });
-      });
+      }
+
+      /// Sadly, we can't assign onDataV2 so late
+//      res->onDataV2([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](std::string_view chunk, auto maxRemainingBodyLength) {
+//        asyncCallback.call([chunk, maxRemainingBodyLength](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
+//          auto stringMutableBuffer = std::make_shared<facebook::jsi::StringMutableBuffer>(std::string(chunk));
+//          cb.call(rt_2,
+//                  facebook::jsi::ArrayBuffer(rt_2, stringMutableBuffer),
+//                  facebook::jsi::BigInt::fromUint64(rt_2, maxRemainingBodyLength));
+//        });
+//      });
 
       return facebook::jsi::Value::undefined();
     }));
@@ -304,6 +341,33 @@ public:
       return {rt_1, thisValue};
     }));
   } // HttpResponseObject
+
+  void jsCall_onAborted() {
+    this->OnAbortedAssignee.alreadyAborted = true;
+
+    if(this->OnAbortedAssignee.callback) {
+      this->OnAbortedAssignee.callback->call([](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+        cb.call(rt);
+      });
+    }
+  }
+
+  void jsCall_onDataV2(std::string_view chunk,
+                       unsigned long maxRemainingBodyLength) {
+    this->OnDataV2Assignee.chunk.append(chunk.data(), chunk.size());
+    this->OnDataV2Assignee.maxRemainingBodyLength = maxRemainingBodyLength;
+
+    if(this->OnDataV2Assignee.callback) {
+      this->OnDataV2Assignee.callback->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
+                                               [this, maxRemainingBodyLength](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+        auto stringMutableBuffer = facebook::jsi::StringMutableBuffer(&this->OnDataV2Assignee.chunk);
+
+        cb.call(rt,
+                facebook::jsi::ArrayBuffer(rt, std::make_shared<facebook::jsi::StringMutableBuffer>(stringMutableBuffer)),
+                facebook::jsi::BigInt::fromUint64(rt, maxRemainingBodyLength));
+      });
+    }
+  }
 
 };
 

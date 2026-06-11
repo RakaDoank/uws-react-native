@@ -20,12 +20,16 @@ export default function Page() {
 	useEffect(() => {
 		const app = uws.App()
 
-		app.get("/long-operation", async (res) => {
+		app.get("/test", res => {
+			res.end("Yeay");
+		})
+
+		app.get("/long-operation", async res => {
 			// We already assigned `onAborted`
 			// internally in C++
-			// res.onAborted(() => {
-			// 	console.log("onAborted")
-			// })
+			res.onAborted(() => {
+				console.log("onAborted")
+			})
 
 			await new Promise(resolver => {
 				setTimeout(() => {
@@ -79,7 +83,7 @@ export default function Page() {
 		app.post("/ondata", res => {
 			console.log("/ondata")
 			res.onData((chunk, isLast) => {
-				console.log("ondata", chunk.length, isLast)
+				console.log("ondata", chunk.byteLength, isLast)
 				if(isLast) {
 					res.end("finished")
 				}
@@ -89,10 +93,15 @@ export default function Page() {
 		app.post("/ondatav2", (res) => {
 			console.log("/ondatav2")
 			res.onDataV2((chunk, maxRemainingBodyLength) => {
-				console.log("onDataV2", chunk.byteLength, maxRemainingBodyLength)
+				console.log("onDataV2 JS", chunk.byteLength, maxRemainingBodyLength)
 
 				if(!maxRemainingBodyLength) {
-					res.end("finish")
+					res.writeHeader("content-type", "application/json")
+					res.end(
+						JSON.stringify({
+							uploaded: true,
+						}),
+					)
 				}
 			})
 		})

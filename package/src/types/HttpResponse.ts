@@ -119,8 +119,18 @@ export interface HttpResponse {
 
 	/**
 	 * Handler for reading HTTP request body data.
-     * Must be attached before performing any asynchronous operation, otherwise data may be lost.
-     * You MUST copy the data of chunk if isLast is not true. We Neuter ArrayBuffers on return, making them zero length.
+	 * Must be attached before performing any asynchronous operation, otherwise data may be lost.
+	 * You MUST copy the data of chunk if isLast is not true. We Neuter ArrayBuffers on return, making them zero length.
+	 * 
+	 * ---
+	 * 
+	 * **Note**
+	 * 
+	 * Not like in uWebSockets.js for Node.js,
+	 * your handler/callback might be called only once due to predefined `onData`
+	 * that we already passed earlier in C++ side.
+	 * 
+	 * We have to pass the `onData` lambda in C++ early because doing late assignment of `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and that's also by design to prevent Main/UI thread blocking.
 	 */
 	onData(
 		handler: (
@@ -132,10 +142,20 @@ export interface HttpResponse {
 	/**
 	 * Handler for reading HTTP request body data. V2.
 	 * 
-     * Must be attached before performing any asynchronous operation, otherwise data may be lost.
-     * You MUST copy the data of chunk if maxRemainingBodyLength is not 0n. We Neuter ArrayBuffers on return, making them zero length.
+	 * Must be attached before performing any asynchronous operation, otherwise data may be lost.
+	 * You MUST copy the data of chunk if maxRemainingBodyLength is not 0n. We Neuter ArrayBuffers on return, making them zero length.
 	 * 
-     * maxRemainingBodyLength is the known maximum of the remaining body length. Can be used to preallocate a receive buffer.
+	 * maxRemainingBodyLength is the known maximum of the remaining body length. Can be used to preallocate a receive buffer.
+	 * 
+	 * ---
+	 * 
+	 * **Note**
+	 * 
+	 * Not like in uWebSockets.js for Node.js,
+	 * your handler/callback might be called only once due to predefined `onDataV2`
+	 * that we already passed earlier in C++ side.
+	 * 
+	 * We have to pass the `onDataV2` lambda in C++ early because doing late assignment of `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and that's also by design to prevent Main/UI thread blocking.
 	 */
 	onDataV2(
 		handler: (
@@ -144,14 +164,16 @@ export interface HttpResponse {
 		) => void,
 	) : void,
 
-	/**
-	 * Registers a handler for writable events. Continue failed write attempts in here.
-     * You MUST return true for success, false for failure.
-     * Writing nothing is always success, so by default you must return true.
-	 */
-	onWritable(
-		handler: (offset: number) => boolean,
-	) : HttpResponse,
+	// TODO
+	// Implement it later.
+	// /**
+	//  * Registers a handler for writable events. Continue failed write attempts in here.
+	//  * You MUST return true for success, false for failure.
+	//  * Writing nothing is always success, so by default you must return true.
+	//  */
+	// onWritable(
+	// 	handler: (offset: number) => boolean,
+	// ) : HttpResponse,
 
 	/**
 	 * Pause HTTP request body streaming (throttle).

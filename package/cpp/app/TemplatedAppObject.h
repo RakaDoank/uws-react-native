@@ -1,8 +1,11 @@
 #pragma once
 
+#include <android/log.h>
 #include <ReactCommon/CallInvoker.h>
+#include <ReactCommon/SchedulerPriority.h>
 #include <algorithm>
 #include <jsi/jsi.h>
+#include <mutex>
 #include <utility>
 #include <uWebSockets/App.h>
 #include "AppRunner.h"
@@ -35,9 +38,23 @@ private:
       auto pattern = arguments[0].asString(rt).utf8(rt);
       auto callback = arguments[1].asObject(rt).asFunction(rt);
 
-      /// We can't make a sync call from arbitrary thread
-      /// where the uWebSockets runner lives
+      /// This is not working if the route handler is
+      /// doing long operation or async function.
+      /// It may throw an Error
+      /// `terminating due to uncaught exception of type facebook::jsi::JSError: Exception in HostFunction: Unable to retrieve jni environment. Is the thread attached?`
+//      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&rt, &jsInvoker, cb = std::make_shared<facebook::jsi::Function>(std::move(callback))](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
+//        auto httpResponseObject = std::make_shared<HttpResponseObject>(rt, res, jsInvoker);
+//        auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
+//
+//        cb->call(rt,
+//                 *httpResponseObject,
+//                 *httpRequestObject);
+//      };
 
+      /// Same, it also doesn't work with SyncCallback.
+      /// We can't make a sync call to JS
+      /// from arbitrary thread where the uWebSockets runner lives,
+      /// even the route handler is not doing anything long opt
 //      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&rt, syncCallback = std::make_shared<facebook::react::SyncCallback<void (facebook::jsi::Value, facebook::jsi::Value)>>(rt, std::move(callback), jsInvoker)](auto *res, auto *req) {
 //        auto httpResponseObject = std::make_shared<HttpResponseObject>(rt, res);
 //        auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
@@ -45,23 +62,33 @@ private:
 //        syncCallback->call(httpResponseObject.get(), httpRequestObject.get());
 //      };
 
-      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](auto *res, auto *req) {
-        asyncCallback.call([&jsInvoker, &res, &req](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
-          auto httpResponseObject = std::make_shared<HttpResponseObject>(rt_1, res, jsInvoker);
-          auto httpRequestObject = std::make_shared<HttpRequestObject>(rt_1, req);
+      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&rt, &jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
+        auto httpResponseObject = std::make_shared<HttpResponseObject>(rt, res, jsInvoker);
+        auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
 
+        asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [/* &jsInvoker, &res, &req */httpResponseObject, httpRequestObject](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
           cb.call(rt_1,
                   *httpResponseObject,
                   *httpRequestObject);
         });
 
-//        auto aborted = std::make_shared<bool>(false);
-        /**
-         * I don't know why without this,
-         * uWebSockets can't wait the route handler to be finished.
-         * I thought `onAborted` is just a callback or event listener.
-         */
-        res->onAborted([]() {});
+        /// We have to make JS call asynchronously because the uWebSockets app run at different thread.
+        /// See the `react_native_uws::AppRunner`, and `facebook::react::AsyncCallback`.
+        /// So this predefined `onAborted` assignment below is to tell that
+        /// uWebSockets has to wait until JS call finished.
+        ///
+        /// `Returning from a request handler without responding or attaching an onAborted handler is ill-use`
+        /// I thought `onAborted` is just a callback or event listener.
+        res->onAborted([httpResponseObject]() {
+          httpResponseObject->jsCall_onAborted();
+        });
+
+        /// Sadly, we can't do late assignment to the onDataV2 and onData.
+        /// uWebSockets will do nothing to our handler if we assign the lambda so late.
+        /// So we have to predefined onDataV2 handler here, and save the chunk.
+        res->onDataV2([httpResponseObject](auto chunk, auto maxRemainingBodyLength) {
+          httpResponseObject->jsCall_onDataV2(chunk, maxRemainingBodyLength);
+        });
       };
 
       if(method == UwsRouteMethod::ANY) {
