@@ -12,15 +12,27 @@ class HttpResponseObject : public facebook::jsi::Object {
 
 private:
   struct {
-    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value>> callback;
+    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value>> callback = nullptr;
     bool alreadyAborted = false;
   } OnAbortedAssignee;
 
   struct {
-    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>> callback;
+    std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>> callback = nullptr;
     std::string chunk = {};
     unsigned long maxRemainingBodyLength = 0;
   } OnDataV2Assignee;
+
+  void preEnd(facebook::jsi::Runtime &rt) const {
+    if(this->OnAbortedAssignee.alreadyAborted) {
+      /// Stated from uWebSockets
+      /// Every HttpResponse MUST have an attached abort handler.
+      /// If you do not respond to it immediately inside of the callback.
+      /// Returning from an Http request handler without attaching
+      /// (by calling onAborted) an abort handler is ill-use and will terminate.
+      /// When this event emits, the response has been aborted and may not be used.
+      throw facebook::jsi::JSError(rt, "Cannot send response to aborted request");
+    }
+  }
 
 public:
   HttpResponseObject(facebook::jsi::Runtime &rt,
@@ -74,10 +86,12 @@ public:
     this->setProperty(rt, "end", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                  facebook::jsi::PropNameID::forUtf8(rt, "end"),
                                                                                  1,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
+                                                                                 [this, res](facebook::jsi::Runtime &rt_1,
                                                                                        const facebook::jsi::Value &thisValue,
                                                                                        const facebook::jsi::Value *arguments,
                                                                                        size_t count) -> facebook::jsi::Value {
+      this->preEnd(rt_1);
+
       auto body = arguments[0].asString(rt_1).utf8(rt_1);
       res->end(std::move(body));
 
@@ -87,10 +101,12 @@ public:
     this->setProperty(rt, "endWithoutBody", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                  facebook::jsi::PropNameID::forUtf8(rt, "endWithoutBody"),
                                                                                  2,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
+                                                                                 [this, res](facebook::jsi::Runtime &rt_1,
                                                                                        const facebook::jsi::Value &thisValue,
                                                                                        const facebook::jsi::Value *arguments,
                                                                                        size_t count) -> facebook::jsi::Value {
+      this->preEnd(rt_1);
+
       if(!arguments) {
         res->endWithoutBody();
         return {rt_1, thisValue};
@@ -151,14 +167,15 @@ public:
                                                                                                   const facebook::jsi::Value *arguments,
                                                                                                   size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
-      this->OnAbortedAssignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
 
-      if(this->OnAbortedAssignee.alreadyAborted && this->OnAbortedAssignee.callback) {
-        this->OnAbortedAssignee.callback->call([this](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-          cb.call(rt_2);
-          this->OnAbortedAssignee.callback = nullptr;
-          this->OnAbortedAssignee.alreadyAborted = false;
-        });
+      if(this->OnAbortedAssignee.alreadyAborted) {
+        if(this->OnAbortedAssignee.callback) {
+          this->OnAbortedAssignee.callback->call(facebook::jsi::Value::undefined());
+        } else {
+          callback.call(rt_1, facebook::jsi::Value::undefined());
+        }
+      } else {
+        this->OnAbortedAssignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
       }
 
       return {rt_1, thisValue};
@@ -168,9 +185,9 @@ public:
                                                                                  facebook::jsi::PropNameID::forUtf8(rt, "onData"),
                                                                                  1,
                                                                                  [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+                                                                                                    const facebook::jsi::Value &thisValue,
+                                                                                                    const facebook::jsi::Value *arguments,
+                                                                                                    size_t count) -> facebook::jsi::Value {
       /// Same usage as the onDataV2
       /// except the second parameter to the JS handler is the boolean `isLast`
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
@@ -194,9 +211,9 @@ public:
                                                                                       facebook::jsi::PropNameID::forUtf8(rt, "onDataV2"),
                                                                                       1,
                                                                                       [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                            const facebook::jsi::Value &thisValue,
-                                                                                            const facebook::jsi::Value *arguments,
-                                                                                            size_t count) -> facebook::jsi::Value {
+                                                                                                         const facebook::jsi::Value &thisValue,
+                                                                                                         const facebook::jsi::Value *arguments,
+                                                                                                         size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
       this->OnDataV2Assignee.callback = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
 
@@ -251,10 +268,12 @@ public:
     this->setProperty(rt, "tryEnd", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                          facebook::jsi::PropNameID::forUtf8(rt, "tryEnd"),
                                                                                          2,
-                                                                                         [res](facebook::jsi::Runtime &rt_1,
+                                                                                         [this, res](facebook::jsi::Runtime &rt_1,
                                                                                                const facebook::jsi::Value &thisValue,
                                                                                                const facebook::jsi::Value *arguments,
                                                                                                size_t count) -> facebook::jsi::Value {
+      this->preEnd(rt_1);
+
       auto fullBodyOrChunk = arguments[0].asString(rt_1).utf8(rt_1);
       auto totalSize = arguments[1].asNumber();
 
@@ -346,9 +365,7 @@ public:
     this->OnAbortedAssignee.alreadyAborted = true;
 
     if(this->OnAbortedAssignee.callback) {
-      this->OnAbortedAssignee.callback->call([](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
-        cb.call(rt);
-      });
+      this->OnAbortedAssignee.callback->call(facebook::jsi::Value::undefined());
     }
   }
 
