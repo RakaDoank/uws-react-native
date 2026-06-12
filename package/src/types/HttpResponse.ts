@@ -38,7 +38,8 @@ export interface HttpResponse {
 
 	// TODO
 	// It is a custom method from uWebSockets.js.
-	// We need to figure it out how to implement this method in JSI way.
+	// I don't know how to implement this in React Native, since the JS call is always late than
+	// Our predefined `res->onDataV2` which already running and even may finished earlier.
 	// /**
 	//  * `collectBody` is a helper function making optimal use of the new onDataV2.
 	//  * It allows efficient and easy collection of smallish HTTP request body data into RAM.
