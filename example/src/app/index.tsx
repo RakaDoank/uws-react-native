@@ -11,62 +11,64 @@ import {
 	Text,
 } from "@audira/carbon-react-native"
 
-import * as uws from "react-native-uws"
+import * as uWS from "react-native-uws"
 
 export default function Page() {
 
 	CarbonStyleSheet.use()
 
 	useEffect(() => {
-		const app = uws.App()
+		const app = uWS.App()
 
 		app.get("/test", res => {
 			res.end("Yeay");
 		})
 
 		app.get("/long-operation", async res => {
-			// We already assigned `onAborted`
-			// internally in C++
+			let isAborted = false
 			res.onAborted(() => {
-				console.log("onAborted")
+				console.log("onAborted long operation")
+				isAborted = true
 			})
 
 			await new Promise(resolver => {
 				setTimeout(() => {
 					resolver(true)
-				}, 2000)
+				}, 5000)
 			})
 
-			res.end("long operation")
+			if(!isAborted) {
+				res.end("long operation")
+			}
 		})
 
-		app.get("/hola/:name", (res, req) => {
-			res.onAborted(() => {
-				console.log("onAbort")
-			})
-			req.forEach((key, val) => {
-				console.log("header", key, val)
-			})
+		app.get("/hola/:name/:type", (res, req) => {
+			// res.onAborted(() => {
+			// 	console.log("onAbort")
+			// })
+			// req.forEach((key, val) => {
+			// 	console.log("header", key, val)
+			// })
 
-			console.log("getCaseSensitiveMethod", req.getCaseSensitiveMethod())
+			// console.log("getCaseSensitiveMethod", req.getCaseSensitiveMethod())
 
-			// why it's empty
-			console.log("getHeader", req.getHeader("connection"))
+			// console.log("getHeader", req.getHeader("connection"))
 
-			console.log("getMethod", req.getMethod())
+			// console.log("getMethod", req.getMethod())
 
-			console.log("getParameter", req.getParameter(0))
+			console.log("getParameter", req.getParameter(0), req.getParameter("name"))
+			console.log("getParameter", req.getParameter(1), req.getParameter("type"))
 
 			// This is only work in debugOptimized and release/production build
 			// I don't know why this doesn't work on the basic debug build
-			// console.log("getQuery", req.getQuery("foo"))
+			// console.log("getQuery", req.getQuery(), req.getQuery("foo"))
 
-			console.log("getUrl", req.getUrl(), req.getUrl().length)
+			// console.log("getUrl", req.getUrl(), req.getUrl().length)
 
 			res.end("hello test")
 		})
 
-		app.get("/testing", (res, req) => {
+		app.get("/headers", (res, req) => {
 			res.write("<html><body><h2>Hello, your headers are:</h2><ul>")
 
 			req.forEach((k, v) => {
@@ -91,7 +93,6 @@ export default function Page() {
 		})
 
 		app.post("/ondatav2", (res) => {
-			console.log("/ondatav2")
 			res.onDataV2((chunk, maxRemainingBodyLength) => {
 				console.log("onDataV2 JS", chunk.byteLength, maxRemainingBodyLength)
 
@@ -109,59 +110,6 @@ export default function Page() {
 		app.listen(5000, () => {
 			console.log("Listen!")
 		})
-
-		// const server = new Echo.Http.Server()
-
-		// server.route("/api/route", (request) => {
-		// 	// return Echo.Http.Response.json({
-		// 	// 	bool: true,
-		// 	// 	number: Math.random(),
-		// 	// 	string: "Ich komme aus Deutschland",
-		// 	// 	array: [{
-		// 	// 		bool: true,
-		// 	// 		number: Math.random(),
-		// 	// 		string: "Ich komme aus Osterreich",
-		// 	// 	}, {
-		// 	// 		bool: true,
-		// 	// 		number: Math.random(),
-		// 	// 		string: "Ich komme aus Frankreich",
-		// 	// 	}],
-		// 	// })
-
-		// 	// mock long run
-		// 	return new Promise<Echo.Http.Response>(resolve => {
-		// 		setTimeout(() => {
-		// 			resolve(
-		// 				Echo.Http.Response.json({
-		// 					bool: true,
-		// 					number: Math.random(),
-		// 					string: "Ich komme aus Deutschland",
-		// 					array: [{
-		// 						bool: true,
-		// 						number: Math.random(),
-		// 						string: "Ich komme aus Osterreich",
-		// 					}, {
-		// 						bool: true,
-		// 						number: Math.random(),
-		// 						string: "Ich komme aus Frankreich",
-		// 					}],
-		// 				}),
-		// 			)
-		// 		}, 6000)
-		// 	})
-		// })
-
-		// server.route("/hello/:name", () => {
-		// 	return Echo.Http.Response.json({ hello: "world" })
-		// })
-
-		// server.route("/test", () => {
-		// 	return Echo.Http.Response.json({ test: "test" })
-		// })
-
-		// server.listen(5000, () => {
-		// 	console.log("ONSTART")
-		// })
 
 		return () => {
 			app.close()
