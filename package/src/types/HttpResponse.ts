@@ -39,7 +39,7 @@ export interface HttpResponse {
 	// TODO
 	// It is a custom method from uWebSockets.js.
 	// I don't know how to implement this in React Native, since the JS call is always late than
-	// Our predefined `res->onDataV2` which already running and even may finished earlier.
+	// our predefined `res->onDataV2` which already running and even may finished earlier.
 	// /**
 	//  * `collectBody` is a helper function making optimal use of the new onDataV2.
 	//  * It allows efficient and easy collection of smallish HTTP request body data into RAM.
@@ -128,11 +128,11 @@ export interface HttpResponse {
 	 * 
 	 * **Note**
 	 * 
-	 * Not like in uWebSockets.js for Node.js,
-	 * your handler/callback might be called only once due to predefined `onData`
-	 * that we already passed earlier in C++ side and it's already finished.
+	 * If you have ever used uWebSockets or uWebSockets.js for Node.js,
+	 * this handler/callback might be called lesser amount of times than normal uWebSockets due to predefined `onDataV2`
+	 * that we already passed earlier in C++ side, and it might already finished before JS does an assignment or attachment to `onData`.
 	 * 
-	 * We have to pass the `onData` lambda in C++ early because doing late assignment of `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and that's also by design to prevent Main/UI thread blocking.
+	 * We have to pass the `onDataV2` lambda in C++ early because doing late assignment to the `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and make any JS calls always late (asynchronously), and that is also by design to prevent Main/UI thread blocking.
 	 */
 	onData(
 		handler: (
@@ -153,11 +153,11 @@ export interface HttpResponse {
 	 * 
 	 * **Note**
 	 * 
-	 * Not like in uWebSockets.js for Node.js,
-	 * your handler/callback might be called only once due to predefined `onDataV2`
-	 * that we already passed earlier in C++ side and it's already finished.
+	 * If you have ever used uWebSockets or uWebSockets.js for Node.js,
+	 * this handler/callback might be called lesser amount of times than normal uWebSockets due to predefined `onDataV2`
+	 * that we already passed earlier in C++ side, and it might already finished before JS does an assignment or attachment to `onDataV2`.
 	 * 
-	 * We have to pass the `onDataV2` lambda in C++ early because doing late assignment of `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and that's also by design to prevent Main/UI thread blocking.
+	 * We have to pass the `onDataV2` lambda in C++ early because doing late assignment to the `onDataV2` handler will do nothing or our handler is never getting called. This is also due to uWebSockets run at different thread, and make any JS calls always late (asynchronously), and that is also by design to prevent Main/UI thread blocking.
 	 */
 	onDataV2(
 		handler: (
@@ -165,6 +165,43 @@ export interface HttpResponse {
 			maxRemainingBodyLength: bigint,
 		) => void,
 	) : void,
+
+	// /**
+	//  * Handler for reading HTTP request body data only when all the body data has been retrieved,
+	//  * or the body size has reached the `maxBodySize` limit from your route handler options.
+	//  * A good case for a simple route handler that only needs to read complete body data.
+	//  * 
+	//  * Not like the `onData` and `onDataV2`, this is a good option to save a bit of operation cost
+	//  * because react-native-uws passes an ArrayBuffer from C++ to JS only once when it is finished.
+	//  * 
+	//  * This is an equivalent of `res.collectBody()` method from uWebSockets.js for Node.js,
+	//  * but to set max byte of body size, you have to set it through router options at the third arguments.
+	//  * 
+	//  * @example
+	//  * ```
+	//  * app.post("/create", (res, req) => {
+	//  *   let isAborted = false
+	//  *   res.onAborted(() => {
+	//  *     isAborted = true
+	//  *   })
+	//  * 
+	//  *   if(!isAborted) {
+	//  *     res.onFullData(chunk => {
+	//  *       if(!isAborted) {
+	//  *         res.end(`Body size is ${chunk.byteLength}`)
+	//  *       }
+	//  *     })
+	//  *   }
+	//  * }, {
+	//  *   maxBodySize: 1024 * 1024, // 1MB in byte
+	//  * })
+	//  * ```
+	//  */
+	// onFullData(
+	// 	handler: (
+	// 		chunk: ArrayBuffer,
+	// 	) => void,
+	// ) : void,
 
 	// TODO
 	// Implement it later.
