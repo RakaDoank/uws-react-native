@@ -4,7 +4,7 @@
 
 namespace facebook::jsi {
 
-// Bad name and usage.
+// Probably bad name and usage.
 // I have to instantiate this class every onDataV2 call to create JSI Array Buffer.
 // I've tried to instantiate once, and just append the string inside with custom public append method,
 // but the app was crashed. I don't know why.
