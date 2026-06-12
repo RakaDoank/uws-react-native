@@ -80,8 +80,6 @@ public:
         }
       });
     }
-
-    // stop the thread
   };
 
 };
