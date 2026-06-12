@@ -58,8 +58,8 @@ public:
                                                                                        size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
 
-      res->cork([&rt_1, callback_ = std::move(callback)]() {
-        callback_.call(rt_1);
+      res->cork([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)]() {
+        asyncCallback.call();
       });
 
       return {rt_1, thisValue};
