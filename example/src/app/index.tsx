@@ -87,6 +87,9 @@ export default function Page() {
 			res.onData((chunk, isLast) => {
 				console.log("ondata", chunk.byteLength, isLast)
 				if(isLast) {
+					const textDecoder = new TextDecoder("utf-8");
+					const resultString = textDecoder.decode(chunk)
+					console.log("result string ", resultString)
 					res.end("finished")
 				}
 			})
