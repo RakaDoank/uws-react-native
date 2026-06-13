@@ -205,35 +205,6 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "onDataText", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onDataText"),
-                                                                                      1,
-                                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                         const facebook::jsi::Value &thisValue,
-                                                                                                         const facebook::jsi::Value *arguments,
-                                                                                                         size_t count) -> facebook::jsi::Value {
-      if(this->OnDataV2Assignee.callback) {
-        throw facebook::jsi::JSError(rt_1, "Cannot reassign onDataText or assign it with existing onFullDataText handler");
-      }
-
-      auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
-      this->OnDataV2Assignee.callbackStr = std::make_shared<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>>(rt_1, std::move(callback), jsInvoker);
-
-      /// This is a late call to the onDataText callback
-      /// due to the onDataV2 predefined lambda has finished earlier.
-      if(this->OnDataV2Assignee.maxRemainingBodyLength == 0) {
-        this->OnDataV2Assignee.callbackStr
-          ->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
-                             [this](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
-          cb.call(rt,
-                  this->OnDataV2Assignee.chunk,
-                  facebook::jsi::BigInt::fromUint64(rt, this->OnDataV2Assignee.maxRemainingBodyLength));
-        });
-      }
-
-      return facebook::jsi::Value::undefined();
-    }));
-
     this->setProperty(rt, "onDataV2", facebook::jsi::Function::createFromHostFunction(rt,
                                                                                       facebook::jsi::PropNameID::forUtf8(rt, "onDataV2"),
                                                                                       1,

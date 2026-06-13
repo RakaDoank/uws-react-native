@@ -142,19 +142,6 @@ export interface HttpResponse {
 	) : void,
 
 	/**
-	 * Similar to `onDataV2`, but it is for reading HTTP request body data in raw text.
-	 * 
-	 * This is an alternative method to read ArrayBuffer chunk in string because the TextDecoder is
-	 * missing in React Native 0.84 and older.
-	 */
-	onDataText(
-		handler: (
-			chunk: string,
-			maxRemainingBodyLength: bigint,
-		) => void,
-	) : void,
-
-	/**
 	 * Handler for reading HTTP request body data. V2.
 	 * 
 	 * Must be attached before performing any asynchronous operation, otherwise data may be lost.
