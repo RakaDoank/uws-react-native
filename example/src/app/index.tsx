@@ -127,6 +127,8 @@ export default function Page() {
 					res.end("not valid data")
 				}
 			})
+		}, {
+			maxBodySize: 1024 * 1024,
 		})
 
 		app.post("/read-json-from-text", res => {
@@ -143,6 +145,8 @@ export default function Page() {
 					res.end("not valid data")
 				}
 			})
+		}, {
+			maxBodySize: 1024 * 1024,
 		})
 
 		app.listen(5000, () => {
