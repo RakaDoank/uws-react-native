@@ -29,7 +29,7 @@ private:
      */
     std::unique_ptr<facebook::react::AsyncCallback<facebook::jsi::Value, facebook::jsi::Value>> callbackStr = nullptr;
 
-    std::unique_ptr<std::vector<char>> buffer = nullptr;
+    std::shared_ptr<std::vector<char>> buffer = nullptr;
 
     unsigned long maxRemainingBodyLength = 0;
 
@@ -468,7 +468,7 @@ public:
   void setChunk(std::string_view chunk,
                unsigned long maxRemainingBodyLength) {
     if(!this->OnDataV2Assignee.buffer) {
-      this->OnDataV2Assignee.buffer = std::make_unique<std::vector<char>>();
+      this->OnDataV2Assignee.buffer = std::make_shared<std::vector<char>>();
       this->OnDataV2Assignee.buffer->reserve(maxRemainingBodyLength + chunk.size()); // preallocate with hint
     }
     this->OnDataV2Assignee.buffer->insert(this->OnDataV2Assignee.buffer->end(), chunk.begin(), chunk.end());
@@ -484,18 +484,20 @@ public:
       /// HELP me the better way to pass JSI ArrayBuffer here.
       /// with faster buffer or anything
 
-      /// Capturing the buffer by reference into the lambda
-      /// may not giving accurate to the JS ArrayBuffer.byteLength (due to async call)
-      /// when it's compared to the maxRemainingBodyLength that captured by value
+      /// When capturing the buffer by reference into the lambda,
+      /// in the middle of stream, it may not giving accurate of
+      /// JS ArrayBuffer.byteLength in the `onDataV2` argument (due to async call)
+      /// when it's compared to the maxRemainingBodyLength that captured by value.
+      /// It's still accurate when it's finished.
 
-      /// While capturing the buffer by value is accurate but slower.
+      /// While capturing the buffer by value is accurate
+      /// but is it slower because of heap allocation?
 
       if(this->OnDataV2Assignee.callback) {
         this->OnDataV2Assignee.callback
           ->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
-                             [buffer = &this->OnDataV2Assignee.buffer, maxRemainingBodyLength = this->OnDataV2Assignee.maxRemainingBodyLength](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
-          //          auto stringMutableBuffer = facebook::jsi::StringMutableBuffer(chunk);
-          auto mutableBuffer = facebook::jsi::CharsMutableBuffer(buffer->get());
+                             [buffer = this->OnDataV2Assignee.buffer, maxRemainingBodyLength = this->OnDataV2Assignee.maxRemainingBodyLength](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+          auto mutableBuffer = facebook::jsi::CharsMutableBuffer(buffer);
 
           cb.call(rt,
                   facebook::jsi::ArrayBuffer(rt, std::make_shared<facebook::jsi::CharsMutableBuffer>(std::move(mutableBuffer))),
@@ -506,9 +508,9 @@ public:
       if(this->OnDataV2Assignee.callbackStr) {
         this->OnDataV2Assignee.callbackStr
           ->callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
-                             [buffer = &this->OnDataV2Assignee.buffer, maxRemainingBodyLength = this->OnDataV2Assignee.maxRemainingBodyLength](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
+                             [buffer = this->OnDataV2Assignee.buffer, maxRemainingBodyLength = this->OnDataV2Assignee.maxRemainingBodyLength](facebook::jsi::Runtime &rt, facebook::jsi::Function &cb) {
           cb.call(rt,
-                  std::string((*buffer)->begin(), (*buffer)->end()),
+                  std::string(buffer->begin(), buffer->end()),
                   facebook::jsi::BigInt::fromUint64(rt, maxRemainingBodyLength));
         });
       }
