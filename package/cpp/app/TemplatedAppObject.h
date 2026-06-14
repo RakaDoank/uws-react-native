@@ -210,9 +210,9 @@ public:
                       * instead, we just call the `close` method from AppRunner which a member of AppHost.
                       * See ReactNativeUwsModule.cpp.
                       *
-                      * It's also used us_socket_local_port JS module to get assigned port from uWebSockets app.
-                      * Same we also not use the us_socket_local_port from uSockets. Get the assigned port that
-                      * we store it inside of AppRunner.
+                      * It's also used by us_socket_local_port JS module to get assigned port from uWebSockets app.
+                      * We use the us_socket_local_port from uSockets tho, but we need to retrieve us_listen_socket_t
+                      * from the AppRunner which a member of AppHost.
                       */
                      unsigned short id,
 
