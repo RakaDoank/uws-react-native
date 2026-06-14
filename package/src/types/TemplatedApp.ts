@@ -30,9 +30,9 @@ import type {
 	WebSocketBehavior,
 } from "./WebSocketBehaviour"
 
-import type {
-	us_listen_socket,
-} from "./us_listen_socket"
+// import type {
+// 	us_listen_socket,
+// } from "./us_listen_socket"
 
 /**
  * Definitions of the `App` and `SSLApp`. This is entirely copied from uWebSockets.js
@@ -88,7 +88,10 @@ export interface TemplatedApp {
 		host: RecognizedString,
 		port: number,
 		options: ListenOptions,
-		cb: (listenSocket: us_listen_socket | false) => void | Promise<void>,
+		cb: (
+			id: number,
+			// listenSocket: us_listen_socket | false,
+		) => void | Promise<void>,
 	) : TemplatedApp,
 
 	/**
@@ -97,7 +100,10 @@ export interface TemplatedApp {
 	listen(
 		host: RecognizedString,
 		port: number,
-		cb: (listenSocket: us_listen_socket | false) => void | Promise<void>,
+		cb: (
+			token: number,
+			// listenSocket: us_listen_socket | false,
+		) => void | Promise<void>,
 	) : TemplatedApp,
 
 	/**
@@ -106,7 +112,10 @@ export interface TemplatedApp {
 	listen(
 		port: number,
 		options: ListenOptions,
-		cb: (listenSocket: us_listen_socket | false) => void | Promise<void>,
+		cb: (
+			token: number,
+			// listenSocket: us_listen_socket | false,
+		) => void | Promise<void>,
 	) : TemplatedApp,
 
 	/**
@@ -114,7 +123,10 @@ export interface TemplatedApp {
 	 */
 	listen(
 		port: number,
-		cb: (listenSocket: us_listen_socket | false) => void | Promise<void>,
+		cb: (
+			token: number,
+			// listenSocket: us_listen_socket | false,
+		) => void | Promise<void>,
 	) : TemplatedApp,
 
 	// TODO

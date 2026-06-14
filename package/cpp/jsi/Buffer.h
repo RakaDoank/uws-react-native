@@ -38,6 +38,10 @@ public:
     this->c = c;
   }
 
+  CharsMutableBuffer(const std::shared_ptr<std::vector<char>> &c) {
+    this->c = c.get();
+  }
+
   size_t size() const override {
     return this->c->size();
   }

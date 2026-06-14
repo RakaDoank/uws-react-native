@@ -1,6 +1,6 @@
 {
 	"name": "react-native-uws",
-	"version": "0.0.1-beta.5",
+	"version": "0.0.1-beta.1",
 	"description": "Embed uWebSockets server in React Native app",
 	"license": "MIT",
 	"author": "RakaDoank <rakaaudira@gmail.com> (https://github.com/RakaDoank)",

@@ -46,17 +46,17 @@ private:
     bool isStopCollecting = false;
   } OnDataV2Assignee;
 
-  void preEnd(facebook::jsi::Runtime &rt) const {
-    if(this->OnAbortedAssignee.alreadyAborted) {
-      /// Stated from uWebSockets
-      /// Every HttpResponse MUST have an attached abort handler.
-      /// If you do not respond to it immediately inside of the callback.
-      /// Returning from an Http request handler without attaching
-      /// (by calling onAborted) an abort handler is ill-use and will terminate.
-      /// When this event emits, the response has been aborted and may not be used.
-      throw facebook::jsi::JSError(rt, "Cannot send response to aborted request");
-    }
-  }
+//  void preEnd(facebook::jsi::Runtime &rt) const {
+//    if(this->OnAbortedAssignee.alreadyAborted) {
+//      /// Stated from uWebSockets
+//      /// Every HttpResponse MUST have an attached abort handler.
+//      /// If you do not respond to it immediately inside of the callback.
+//      /// Returning from an Http request handler without attaching
+//      /// (by calling onAborted) an abort handler is ill-use and will terminate.
+//      /// When this event emits, the response has been aborted and may not be used.
+//      throw facebook::jsi::JSError(rt, "Cannot send response to aborted request");
+//    }
+//  }
 
 public:
   HttpResponseObject(facebook::jsi::Runtime &rt,
@@ -96,7 +96,14 @@ public:
                                                                                              const facebook::jsi::Value &thisValue,
                                                                                              const facebook::jsi::Value *arguments,
                                                                                              size_t count) -> facebook::jsi::Value {
-      this->preEnd(rt_1);
+      /// Due to JS run at different thread
+      /// The race condition event is not avoidable under stress test
+      /// Our predefined `res->onAborted` call earlier than JS callback
+      /// This below makes JS side can call the "res.end" without attaching `onAborted` handler at all.
+      /// If we know how to make a sync call across the thread, please update this.
+      if(this->OnAbortedAssignee.alreadyAborted) {
+        return {rt_1, thisValue};
+      }
 
       auto body = arguments[0].asString(rt_1).utf8(rt_1);
       res->end(std::move(body));
@@ -111,7 +118,14 @@ public:
                                                                                              const facebook::jsi::Value &thisValue,
                                                                                              const facebook::jsi::Value *arguments,
                                                                                              size_t count) -> facebook::jsi::Value {
-      this->preEnd(rt_1);
+      /// Due to JS run at different thread
+      /// The race condition event is not avoidable under stress test
+      /// Our predefined `res->onAborted` call earlier than JS callback
+      /// This below makes JS side can call the "res.end" without attaching `onAborted` handler at all.
+      /// If we know how to make a sync call across the thread, please update this.
+      if(this->OnAbortedAssignee.alreadyAborted) {
+        return {rt_1, thisValue};
+      }
 
       if(!arguments) {
         res->endWithoutBody();
@@ -360,7 +374,14 @@ public:
                                                                                                const facebook::jsi::Value &thisValue,
                                                                                                const facebook::jsi::Value *arguments,
                                                                                                size_t count) -> facebook::jsi::Value {
-      this->preEnd(rt_1);
+      /// Due to JS run at different thread
+      /// The race condition event is not avoidable under stress test
+      /// Our predefined `res->onAborted` call earlier than JS callback
+      /// This below makes JS side can call the "res.end" without attaching `onAborted` handler at all.
+      /// If we know how to make a JS sync call across the thread, please update this.
+      if(this->OnAbortedAssignee.alreadyAborted) {
+        return {rt_1, thisValue};
+      }
 
       auto fullBodyOrChunk = arguments[0].asString(rt_1).utf8(rt_1);
       auto totalSize = arguments[1].asNumber();

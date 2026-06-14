@@ -15,13 +15,15 @@ public:
 
   facebook::jsi::Object getParts(facebook::jsi::Runtime &rt,
                                  facebook::jsi::Object body,
-                                 facebook::jsi::Object contentType);
+                                 facebook::jsi::String contentType);
 
-  void us_listen_socket_close(facebook::jsi::Runtime &rt,
-                              facebook::jsi::Object listenSocket);
+  void _us_listen_socket_close(facebook::jsi::Runtime &rt,
+                              double id
+                              /*facebook::jsi::Object listenSocket*/);
 
-  void us_socket_local_port(facebook::jsi::Runtime &rt,
-                            facebook::jsi::Object socket);
+  double _us_socket_local_port(facebook::jsi::Runtime &rt,
+                            double id
+                            /*facebook::jsi::Object socket*/);
 
 };
 

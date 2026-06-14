@@ -44,17 +44,19 @@ export interface Spec extends TurboModule {
 	// ) => CodegenTypes.UnsafeObject,
 
 	getParts: (
-		body: CodegenTypes.UnsafeObject,
-		contentType: CodegenTypes.UnsafeObject,
+		body: unknown,
+		contentType: string,
 	) => CodegenTypes.UnsafeObject,
 
-	us_listen_socket_close: (
-		listenSocket: CodegenTypes.UnsafeObject,
+	_us_listen_socket_close: (
+		id: CodegenTypes.Int32,
+		// listenSocket: CodegenTypes.UnsafeObject,
 	) => void,
 
-	us_socket_local_port: (
-		socket: CodegenTypes.UnsafeObject,
-	) => void,
+	_us_socket_local_port: (
+		id: CodegenTypes.Int32,
+		// socket: CodegenTypes.UnsafeObject,
+	) => number,
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

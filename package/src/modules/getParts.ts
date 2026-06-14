@@ -4,8 +4,8 @@ import NativeReactNativeUws from "../_internal/native-modules/NativeReactNativeU
  * Takes a POSTed body and contentType, and returns an array of parts if the request is a multipart request
  */
 export function getParts(
-	body: RecognizedString,
-	contentType: RecognizedString,
+	body: ArrayBuffer | string,
+	contentType: string,
 ) : MultipartField[] | undefined {
 	// TODO
 }

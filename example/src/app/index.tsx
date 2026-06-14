@@ -34,7 +34,7 @@ export default function Page() {
 			await new Promise(resolver => {
 				setTimeout(() => {
 					resolver(true)
-				}, 5000)
+				}, 3000)
 			})
 
 			if(!isAborted) {
@@ -42,30 +42,41 @@ export default function Page() {
 			}
 		})
 
-		app.get("/hola/:name/:type", (res, req) => {
-			// res.onAborted(() => {
-			// 	console.log("onAbort")
-			// })
-			// req.forEach((key, val) => {
-			// 	console.log("header", key, val)
-			// })
+		app.get("/data/:foo/:bar", (res, req) => {
+			res.onAborted(() => {
+				console.log("onAbort")
+			})
+
+			const headers: Record<string, string> = {}
+
+			req.forEach((key, val) => {
+				headers[key] = val
+			})
 
 			// console.log("getCaseSensitiveMethod", req.getCaseSensitiveMethod())
 
-			// console.log("getHeader", req.getHeader("connection"))
-
 			// console.log("getMethod", req.getMethod())
 
-			console.log("getParameter", req.getParameter(0), req.getParameter("name"))
-			console.log("getParameter", req.getParameter(1), req.getParameter("type"))
+			// console.log("getParameter", req.getParameter(0), req.getParameter("foo"))
+			// console.log("getParameter", req.getParameter(1), req.getParameter("bar"))
 
-			// This is only work in debugOptimized and release/production build
-			// I don't know why this doesn't work on the basic debug build
-			// console.log("getQuery", req.getQuery(), req.getQuery("foo"))
+			// // This is only work in debugOptimized and release/production build
+			// // I don't know why this doesn't work on the basic debug build
+			// // console.log("getQuery", req.getQuery(), req.getQuery("foo"))
 
 			// console.log("getUrl", req.getUrl(), req.getUrl().length)
 
-			res.end("hello test")
+			res.writeHeader("content-type", "application/json")
+			res.end(
+				JSON.stringify({
+					forEach: headers,
+					getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
+					getHeader: req.getHeader("connection"),
+					getParameter: `${req.getParameter(0)} | ${req.getParameter("foo")} | ${req.getParameter(1)} | ${req.getParameter("bar")}`,
+					getMethod: req.getMethod(),
+					getUrl: req.getUrl(),
+				}),
+			)
 		})
 
 		app.get("/headers", (res, req) => {
@@ -83,8 +94,13 @@ export default function Page() {
 		})
 
 		app.post("/ondata", res => {
-			res.onDataV2((chunk, isLast) => {
-				if(isLast) {
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
+			})
+
+			res.onData((chunk, isLast) => {
+				if(isLast && !isAborted) {
 					res.writeHeader("content-type", "application/json")
 					res.end(
 						JSON.stringify({
@@ -103,8 +119,7 @@ export default function Page() {
 			})
 
 			res.onDataV2((chunk, maxRemainingBodyLength) => {
-				// console.log("onDataV2", chunk.byteLength, maxRemainingBodyLength)
-
+				console.log("onDataV2", chunk.byteLength, maxRemainingBodyLength)
 				if(!maxRemainingBodyLength && !isAborted) {
 					res.writeHeader("content-type", "application/json")
 					res.end(
@@ -130,55 +145,84 @@ export default function Page() {
 		})
 
 		app.post("/onfulldata", res => {
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
+			})
+
 			res.onFullData(chunk => {
 				console.log("onFullData", chunk.byteLength)
-				res.writeHeader("content-type", "application/json")
-				res.end(
-					JSON.stringify({
-						type: "onFullData",
-						byteLength: chunk.byteLength,
-					}),
-				)
+				if(!isAborted) {
+					res.writeHeader("content-type", "application/json")
+					res.end(
+						JSON.stringify({
+							type: "onFullData",
+							byteLength: chunk.byteLength,
+						}),
+					)
+				}
 			})
 		})
 
 		// TextDecoder is supported only for React Native 0.85 and latest
 		app.post("/read-json-from-arraybuffer", res => {
-			res.onFullData(chunk => {
-				const textDecoder = new TextDecoder("utf-8")
-				const text = textDecoder.decode(chunk)
-				try {
-					const json = JSON.parse(text) as unknown
-
-					// send it back in JSON
-					res.writeHeader("content-type", "application/json")
-					res.end(
-						JSON.stringify(json),
-					)
-				} catch {
-					res.end("not valid data")
-				}
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
 			})
+
+			if(!isAborted) {
+				res.onFullData(chunk => {
+					const textDecoder = new TextDecoder("utf-8")
+					const text = textDecoder.decode(chunk)
+					try {
+						const json = JSON.parse(text) as unknown
+
+						if(!isAborted) {
+							// send it back in JSON
+							res.writeHeader("content-type", "application/json")
+							res.end(
+								JSON.stringify(json),
+							)
+						}
+					} catch {
+						res.end("not valid data")
+					}
+				})
+			}
 		})
 
 		app.post("/read-json-from-text", res => {
-			res.onFullDataText(chunk => {
-				try {
-					const json = JSON.parse(chunk) as unknown
-
-					// send it back in JSON
-					res.writeHeader("content-type", "application/json")
-					res.end(
-						JSON.stringify(json),
-					)
-				} catch {
-					res.end("not valid data")
-				}
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
 			})
+
+			if(!isAborted) {
+				res.onFullDataText(chunk => {
+					try {
+						const json = JSON.parse(chunk) as unknown
+
+						if(!isAborted) {
+							// send it back in JSON
+							res.writeHeader("content-type", "application/json")
+							res.end(
+								JSON.stringify(json),
+							)
+						}
+					} catch {
+						res.end("not valid data")
+					}
+				})
+			}
 		})
 
-		app.listen(5000, () => {
-			console.log("Listen!")
+		app.listen(5000, token => {
+			if(token) {
+				console.log("Listening at 5000")
+			} else {
+				console.log("Failed to listen")
+			}
 		})
 
 		return () => {
@@ -186,146 +230,9 @@ export default function Page() {
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	const server = new Echo.Http.Server()
-
-	// 	server.get(
-	// 		"/api/hello/world",
-	// 		() => {
-	// 			return Echo.Http.Response.json(
-	// 				{
-	// 					string: "Hello World",
-	// 					number: Math.random(),
-	// 					boolean: false,
-	// 					array: [
-	// 						{
-	// 							message: "Ich komme aus Osterreich",
-	// 							null: null,
-	// 						},
-	// 						{
-	// 							number: -1,
-	// 							boolean: true,
-	// 						},
-	// 					],
-	// 					null: null,
-	// 					undefined: undefined,
-	// 				},
-	// 			)
-	// 		},
-	// 	)
-
-	// 	server.get(
-	// 		"/api/nocontent",
-	// 		request => {
-	// 			console.log(request.url.pathname)
-	// 			return new Echo.Http.Response(null)
-	// 		},
-	// 	)
-
-	// 	server.post(
-	// 		"/api/json",
-	// 		async request => {
-	// 			try {
-	// 				const json = await request.json() as unknown as Record<string, string>
-	// 				return Echo.Http.Response.json(
-	// 					{
-	// 						foo: "bar",
-	// 						data: json,
-	// 					},
-	// 				)
-	// 			} catch(err) {
-	// 				return Echo.Http.Response.json(
-	// 					{
-	// 						foo: null,
-	// 						data: null,
-	// 						error: err instanceof Error ? {
-	// 							message: err.message,
-	// 						} : undefined,
-	// 					},
-	// 				)
-	// 			}
-	// 		},
-	// 	)
-
-	// 	server.post(
-	// 		"/api/formdata",
-	// 		async request => {
-	// 			try {
-	// 				const formData = await request.formData()
-	// 				return Echo.Http.Response.json(
-	// 					{
-	// 						yeay: true,
-	// 						file: formData.get("file1"),
-	// 					},
-	// 				)
-	// 			} catch(err) {
-	// 				return Echo.Http.Response.json(
-	// 					{
-	// 						yeay: false,
-	// 						error: err instanceof Error ? {
-	// 							message: err.message,
-	// 						} : undefined,
-	// 					},
-	// 				)
-	// 			}
-	// 		},
-	// 	)
-
-	// 	server.put(
-	// 		"/api/put",
-	// 		async request => {
-	// 			try {
-	// 				const headersObj: Record<string, string> = {}
-	// 				request.headers.forEach((value, key) => {
-	// 					headersObj[key] = value
-	// 				})
-
-	// 				return Echo.Http.Response.json({
-	// 					put: true,
-	// 					headers: headersObj,
-	// 					data: await request.json() as unknown,
-	// 				})
-	// 			} catch(err) {
-	// 				return Echo.Http.Response.json(
-	// 					{
-	// 						yeay: false,
-	// 						error: err instanceof Error ? {
-	// 							message: err.message,
-	// 						} : undefined,
-	// 					},
-	// 				)
-	// 			}
-	// 		},
-	// 	)
-
-	// 	server.delete(
-	// 		"/api/delete",
-	// 		() => {
-	// 			return new Echo.Http.Response(
-	// 				null,
-	// 				{
-	// 					status: 204,
-	// 				},
-	// 			)
-	// 		},
-	// 	)
-
-	// 	server.listen(
-	// 		4040,
-	// 		function() {
-	// 			console.log("onListened")
-	// 		},
-	// 	)
-
-	// 	return () => {
-	// 		server.close()
-	// 	}
-	// }, [])
-
 	return (
 		<View
 			style={ [
-				{ backgroundColor: "red" },
 				CarbonStyleSheet.g.py_09,
 				CarbonStyleSheet.g.px_05,
 			] }

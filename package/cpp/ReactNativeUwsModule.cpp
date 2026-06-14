@@ -2,7 +2,6 @@
 #include <memory>
 #include <vector>
 #include <jsi/jsi.h>
-#include "RequestHostObject.h"
 #include "app/AppHost.h"
 #include "app/TemplatedAppObject.h"
 #include "uWebSockets/HttpContextData.h"
@@ -30,24 +29,81 @@ react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Ru
   });
   appHosts.emplace_back(appHost);
 
-  return appHost->getTemplatedAppObject(rt, this->jsInvoker_);
+  /// Be aware!
+  /// We pass increased number of the assignedIndex to the appHost->getTemplatedAppObject().
+  /// When user use the listen method (app.listen)
+  /// they got 1..n number, not zero at first.
+
+  /// This is intentional to get similar behaviour from uWebSockets.js.
+  /// And this is also for future usage kind of thing.
+  /// When we actually start to pass the `us_socket_t` or `us_listen_socket_t` to the listen method (app.listen)
+  /// User doesn't need to do anything at all.
+
+  /// User often uses the app.listen like this below
+
+  /// app.listen(5000, token => {
+  ///   if(token) {
+  ///     console.log("Listening to port 5000");
+  ///   } else {
+  ///     console.log("Failed to listen to port 5000");
+  ///   }
+  /// });
+  return appHost->getTemplatedAppObject(rt, this->jsInvoker_, assignedIndex + 1);
 }
 
 facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
                                                     facebook::jsi::Object body,
-                                                    facebook::jsi::Object contentType) {
+                                                    facebook::jsi::String contentType) {
   // TODO
   return facebook::jsi::Object(rt);
 }
 
-void ReactNativeUwsModule::us_listen_socket_close(facebook::jsi::Runtime &rt,
-                                                  facebook::jsi::Object listenSocket) {
-  // TODO
+/// Consider this module is deprecated. It's better to have different name than this.
+/// It doesn't use us_listen_socket_close from uSockets directly in this function
+void ReactNativeUwsModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
+                                                  double id
+                                                  /*facebook::jsi::Object listenSocket*/) {
+  if(id < 1) {
+    return;
+  }
+
+  /// Pass decreased one number. See notes above at ReactNativeUwsModule::App
+  auto appHost = appHosts.at(id - 1);
+
+  if(!appHost) {
+    return;
+  }
+
+  appHost->closeAppRunner([id]() {
+    if(id < appHosts.size()) {
+      appHosts.erase(appHosts.begin() + id);
+    }
+  });
 }
 
-void ReactNativeUwsModule::us_socket_local_port(facebook::jsi::Runtime &rt,
-                                                facebook::jsi::Object socket) {
-  // TODO
+/// Consider this module is deprecated. It's better to have different name than this.
+/// JS side doesn't pass the us_socket_t or us_listen_socket_t to this function.
+double ReactNativeUwsModule::_us_socket_local_port(facebook::jsi::Runtime &rt,
+                                                double id
+                                                /*facebook::jsi::Object socket*/) {
+  if(id < 1) {
+    return -1;
+  }
+
+  /// Pass decreased one number. See notes above at ReactNativeUwsModule::App
+  auto appHost = appHosts.at(id - 1);
+
+  if(!appHost) {
+    return -1;
+  }
+
+  auto *listenSocket = appHost->getListenSocket();
+
+  if(!listenSocket) {
+    return -1;
+  }
+
+  return us_socket_local_port(0, (struct us_socket_t *)listenSocket);
 }
 
-}
+} // namespace facebook::react

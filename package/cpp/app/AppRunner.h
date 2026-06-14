@@ -23,7 +23,6 @@ private:
   uWS::Loop *serverLoop = nullptr;
 
   // +++++ for socket closing +++++
-  us_listen_socket_t *listenSocket = nullptr;
   std::mutex listenSocketMutex;
   // ----- for socket closing -----
 
@@ -36,6 +35,8 @@ public:
    * If you do, you don't need this class.
    */
   uWS::App app;
+
+  us_listen_socket_t *listenSocket = nullptr;
 
   void listen(const std::optional<std::string> &host,
               const int port,
