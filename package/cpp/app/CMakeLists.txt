@@ -35,4 +35,5 @@ target_link_libraries(
 	android
 	log
 	react_native_uws::bridging
+	react_native_uws::jsi
 )
