@@ -31,13 +31,13 @@ react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Ru
 
   /// Be aware!
   /// We pass increased number of the assignedIndex to the appHost->getTemplatedAppObject().
-  /// When user use the listen method (app.listen)
+  /// When users use the listen method (app.listen)
   /// they got 1..n number, not zero at first.
 
   /// This is intentional to get similar behaviour from uWebSockets.js.
   /// And this is also for future usage kind of thing.
-  /// When we actually start to pass the `us_socket_t` or `us_listen_socket_t` to the listen method (app.listen)
-  /// User doesn't need to do anything at all.
+  /// When we actually start to pass the `us_socket_t` or `us_listen_socket_t` to the listen method in JS,
+  /// we don't break users code space and they don't need to do anything at all.
 
   /// User often uses the app.listen like this below
 
@@ -58,7 +58,7 @@ facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
   return facebook::jsi::Object(rt);
 }
 
-/// Consider this module is deprecated. It's better to have different name than this.
+/// It's better to have different name than this.
 /// It doesn't use us_listen_socket_close from uSockets directly in this function
 void ReactNativeUwsModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
                                                   double id
@@ -67,22 +67,24 @@ void ReactNativeUwsModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
     return;
   }
 
-  /// Pass decreased one number. See notes above at ReactNativeUwsModule::App
-  auto appHost = appHosts.at(id - 1);
+  /// Decreased one number. See notes above at ReactNativeUwsModule::App
+  auto assignedIndex = id - 1;
+
+  auto appHost = appHosts.at(assignedIndex);
 
   if(!appHost) {
     return;
   }
 
-  appHost->closeAppRunner([id]() {
-    if(id < appHosts.size()) {
-      appHosts.erase(appHosts.begin() + id);
+  appHost->appRunner.close([assignedIndex]() {
+    if(assignedIndex < appHosts.size()) {
+      appHosts.erase(appHosts.begin() + assignedIndex);
     }
   });
 }
 
-/// Consider this module is deprecated. It's better to have different name than this.
-/// JS side doesn't pass the us_socket_t or us_listen_socket_t to this function.
+/// It's better to have different name than this.
+/// JS side doesn't pass the actual us_socket_t or us_listen_socket_t to this function.
 double ReactNativeUwsModule::_us_socket_local_port(facebook::jsi::Runtime &rt,
                                                 double id
                                                 /*facebook::jsi::Object socket*/) {
@@ -90,14 +92,16 @@ double ReactNativeUwsModule::_us_socket_local_port(facebook::jsi::Runtime &rt,
     return -1;
   }
 
-  /// Pass decreased one number. See notes above at ReactNativeUwsModule::App
-  auto appHost = appHosts.at(id - 1);
+  /// Decreased one number. See notes above at ReactNativeUwsModule::App
+  auto assignedIndex = id - 1;
+
+  auto appHost = appHosts.at(assignedIndex);
 
   if(!appHost) {
     return -1;
   }
 
-  auto *listenSocket = appHost->getListenSocket();
+  auto *listenSocket = appHost->appRunner.listenSocket;
 
   if(!listenSocket) {
     return -1;
