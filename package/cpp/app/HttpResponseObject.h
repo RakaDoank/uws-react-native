@@ -505,13 +505,14 @@ public:
       /// HELP me the better way to pass JSI ArrayBuffer here.
       /// with faster buffer or anything
 
-      /// When capturing the buffer by reference into the lambda,
-      /// in the middle of stream, it may not giving accurate of
+      /// I have tested that,
+      /// when we captured the buffer by reference into the lambda,
+      /// in the middle of stream, it is often giving inaccruacy of
       /// JS ArrayBuffer.byteLength in the `onDataV2` argument (due to async call)
-      /// when it's compared to the maxRemainingBodyLength that captured by value.
+      /// when it's compared to the maxRemainingBodyLength differentiation that captured by value.
       /// It's still accurate when it's finished.
 
-      /// While capturing the buffer by value is accurate
+      /// While capturing the buffer by value is often accurate.
       /// but is it slower because of heap allocation?
 
       if(this->OnDataV2Assignee.callback) {

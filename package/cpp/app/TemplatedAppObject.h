@@ -206,7 +206,7 @@ public:
                       * We don't actually pass the us_listen_socket_context_t there. The actual reason is
                       * we need to remove the AppHost instance which stored inside of vector.
                       * So, when user use the us_listen_socket_close JS module with this `id` passed,
-                      * we don't really use the us_listen_socket_close from uSockets,
+                      * we don't really use the us_listen_socket_close from uSockets directly,
                       * instead, we just call the `close` method from AppRunner which a member of AppHost.
                       * See ReactNativeUwsModule.cpp.
                       *
