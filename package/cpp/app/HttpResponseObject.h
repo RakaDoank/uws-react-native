@@ -319,8 +319,8 @@ public:
                                                                                                            const facebook::jsi::Value &thisValue,
                                                                                                            const facebook::jsi::Value *arguments,
                                                                                                            size_t count) -> facebook::jsi::Value {
-      if(this->OnDataV2Assignee.callback) {
-        throw facebook::jsi::JSError(rt_1, "Cannot reassign onFullDataText or assign it with existing onDataText handler");
+      if(this->OnDataV2Assignee.callbackStr) {
+        throw facebook::jsi::JSError(rt_1, "Cannot reassign onFullDataText handler");
       }
 
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
