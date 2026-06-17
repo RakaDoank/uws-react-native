@@ -12,6 +12,7 @@
 #include "AppRunner.h"
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
+#include "RecognizedString.h"
 
 namespace react_native_uws {
 
@@ -35,7 +36,7 @@ private:
                             facebook::jsi::Runtime &rt,
                             std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
                             const facebook::jsi::Value *arguments) {
-    auto pattern = arguments[0].asString(rt).utf8(rt);
+    auto pattern = RecognizedString(rt, arguments[0]).getString();
     auto callback = arguments[1].asObject(rt).asFunction(rt);
 
     /// This is not working if the route handler is
@@ -304,7 +305,7 @@ public:
       std::optional<int> options      = std::nullopt;
 
       if(arguments[0].isString()) {
-        host = arguments[0].asString(rt_1).utf8(rt_1);
+        host = RecognizedString(rt_1, arguments[0]).getString();
         if(arguments[1].isNumber()) {
           port = arguments[1].asNumber();
         }
