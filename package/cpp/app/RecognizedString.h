@@ -63,7 +63,7 @@ public:
   }
 
   std::string getString() {
-    return std::string(this->getStringView());
+    return {this->data, this->length};
   }
 
 };
