@@ -5,7 +5,7 @@
 project("react_native_uws")
 cmake_minimum_required(VERSION 3.14.0)
 
-include(FetchContent)
+# include(FetchContent)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_ANDROID_STL_TYPE "c++_static")
 set(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES ON)
 
-set(LIB_ANDROID_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(LIB_ANDROID_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../android")
 set(LIB_ANDROID_GENERATED_JNI_DIR ${LIB_ANDROID_DIR}/build/generated/source/codegen/jni)
 set(LIB_CODEGEN_SPEC_NAME "ReactNativeUwsSpecs")
 
@@ -23,6 +23,7 @@ endif()
 
 find_package(ReactAndroid REQUIRED CONFIG)
 find_package(fbjni REQUIRED CONFIG)
+find_package(ZLIB REQUIRED)
 
 file(
 	GLOB_RECURSE
@@ -79,86 +80,134 @@ target_include_directories(
 # +++++ uWebSockets C++ library +++++
 # Thanks to https://github.com/tony-go/cmake-uwebsockets/blob/main/CMakeLists.txt
 
-FetchContent_Declare(
-	rnuws_usockets_content
-	GIT_REPOSITORY https://github.com/uNetworking/uSockets
-	GIT_TAG v0.8.8
-	GIT_SHALLOW ON
-	GIT_SUBMODULES ""
-)
-FetchContent_MakeAvailable(rnuws_usockets_content)
+# FetchContent_Declare(
+# 	rnuws_usockets_content
+# 	GIT_REPOSITORY https://github.com/uNetworking/uSockets
+# 	GIT_TAG v0.8.8
+# 	GIT_SHALLOW ON
+# 	GIT_SUBMODULES ""
+# )
+# FetchContent_MakeAvailable(rnuws_usockets_content)
 
+# file(
+# 	GLOB_RECURSE
+# 	USOCKETS_SRCS
+# 	${rnuws_usockets_content_SOURCE_DIR}/src/*.c
+# )
+# add_library(
+# 	uSockets
+# 	${USOCKETS_SRCS}
+# )
+# target_include_directories(
+# 	uSockets
+# 	PUBLIC
+# 	"${rnuws_usockets_content_SOURCE_DIR}/src"
+# )
+# target_compile_definitions(
+# 	uSockets
+# 	PRIVATE
+# 	LIBUS_NO_SSL
+# )
+
+# FetchContent_Declare(
+# 	rnuws_uwebsockets_content
+# 	GIT_REPOSITORY https://github.com/uNetworking/uWebSockets
+# 	GIT_TAG v20.78.0
+# 	GIT_SHALLOW ON
+# 	GIT_SUBMODULES ""
+# )
+# FetchContent_MakeAvailable(rnuws_uwebsockets_content)
+# find_package(ZLIB REQUIRED)
+
+# # Create a folder to include the uWebSockets library with a scoped path
+# # like `#include "uWebSockets/App.h"
+
+# set(UWEBSOCKETS_WRAPPER_DIR ${CMAKE_BINARY_DIR}/uwebsockets_copy)
+
+# # 1.
+# # Remove existing directory "${CMAKE_BINARY_DIR}/uwebsockets_copy"
+# file(REMOVE_RECURSE ${UWEBSOCKETS_WRAPPER_DIR})
+
+# # 2.
+# # Make the directory again "${CMAKE_BINARY_DIR}/uwebsockets_copy"
+# file(
+# 	MAKE_DIRECTORY
+# 	${UWEBSOCKETS_WRAPPER_DIR}
+# )
+
+# # 3.
+# # Copy the "${rnuws_uwebsockets_content_SOURCE_DIR}/src" to "${UWEBSOCKETS_WRAPPER_DIR}"
+# # The result will be "${CMAKE_BINARY_DIR}/uwebsockets_copy/src/...cxxFiles..."
+# file(
+# 	COPY
+# 	"${rnuws_uwebsockets_content_SOURCE_DIR}/src"
+# 	DESTINATION
+# 	"${UWEBSOCKETS_WRAPPER_DIR}"
+# )
+
+# # 4.
+# # Rename "${UWEBSOCKETS_WRAPPER_DIR}/src" to ${UWEBSOCKETS_WRAPPER_DIR}/uWebSockets"
+# # Result from "${CMAKE_BINARY_DIR}/uwebsockets_copy/src" to "${CMAKE_BINARY_DIR}/uwebsockets_copy/uWebSockets"
+# file(
+# 	RENAME
+# 	"${UWEBSOCKETS_WRAPPER_DIR}/src"
+# 	"${UWEBSOCKETS_WRAPPER_DIR}/uWebSockets"
+# )
+
+# add_library(uWebSockets INTERFACE)
+# target_include_directories(uWebSockets INTERFACE ${UWEBSOCKETS_WRAPPER_DIR})
+# target_link_libraries(uWebSockets INTERFACE uSockets ${ZLIB_LIBRARIES})
+# target_compile_options(uWebSockets INTERFACE -Wno-deprecated-declarations)
+
+# ----- uWebSockets C++ library -----
+
+# +++++ uSockets +++++
 file(
 	GLOB_RECURSE
 	USOCKETS_SRCS
-	${rnuws_usockets_content_SOURCE_DIR}/src/*.c
+	CONFIGURE_DEPENDS
+	"./uSockets/*.c"
 )
+
 add_library(
 	uSockets
 	${USOCKETS_SRCS}
 )
+
 target_include_directories(
 	uSockets
 	PUBLIC
-	"${rnuws_usockets_content_SOURCE_DIR}/src"
+	"./uSockets"
 )
+
 target_compile_definitions(
 	uSockets
 	PRIVATE
 	LIBUS_NO_SSL
 )
+# ----- uSockets -----
 
-FetchContent_Declare(
-	rnuws_uwebsockets_content
-	GIT_REPOSITORY https://github.com/uNetworking/uWebSockets
-	GIT_TAG v20.78.0
-	GIT_SHALLOW ON
-	GIT_SUBMODULES ""
-)
-FetchContent_MakeAvailable(rnuws_uwebsockets_content)
-find_package(ZLIB REQUIRED)
-
-# Create a folder to include the uWebSockets library with a scoped path
-# like `#include "uWebSockets/App.h"
-
-set(UWEBSOCKETS_WRAPPER_DIR ${CMAKE_BINARY_DIR}/uwebsockets_copy)
-
-# 1.
-# Remove existing directory "${CMAKE_BINARY_DIR}/uwebsockets_copy"
-file(REMOVE_RECURSE ${UWEBSOCKETS_WRAPPER_DIR})
-
-# 2.
-# Make the directory again "${CMAKE_BINARY_DIR}/uwebsockets_copy"
-file(
-	MAKE_DIRECTORY
-	${UWEBSOCKETS_WRAPPER_DIR}
+# +++++ uWebSockets +++++
+add_library(
+	uWebSockets
+	INTERFACE
 )
 
-# 3.
-# Copy the "${rnuws_uwebsockets_content_SOURCE_DIR}/src" to "${UWEBSOCKETS_WRAPPER_DIR}"
-# The result will be "${CMAKE_BINARY_DIR}/uwebsockets_copy/src/...cxxFiles..."
-file(
-	COPY
-	"${rnuws_uwebsockets_content_SOURCE_DIR}/src"
-	DESTINATION
-	"${UWEBSOCKETS_WRAPPER_DIR}"
+target_include_directories(
+	uWebSockets
+	INTERFACE
+	"./uWebSockets"
 )
 
-# 4.
-# Rename "${UWEBSOCKETS_WRAPPER_DIR}/src" to ${UWEBSOCKETS_WRAPPER_DIR}/uWebSockets"
-# Result from "${CMAKE_BINARY_DIR}/uwebsockets_copy/src" to "${CMAKE_BINARY_DIR}/uwebsockets_copy/uWebSockets"
-file(
-	RENAME
-	"${UWEBSOCKETS_WRAPPER_DIR}/src"
-	"${UWEBSOCKETS_WRAPPER_DIR}/uWebSockets"
+target_link_libraries(
+	uWebSockets
+	INTERFACE
+	uSockets
+	${ZLIB_LIBRARIES}
 )
 
-add_library(uWebSockets INTERFACE)
-target_include_directories(uWebSockets INTERFACE ${UWEBSOCKETS_WRAPPER_DIR})
-target_link_libraries(uWebSockets INTERFACE uSockets ${ZLIB_LIBRARIES})
 target_compile_options(uWebSockets INTERFACE -Wno-deprecated-declarations)
-
-# ----- uWebSockets C++ library -----
+# ----- uWebSockets -----
 
 add_subdirectory(app)
 add_subdirectory(bridging)
