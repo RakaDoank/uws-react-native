@@ -88,13 +88,25 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(rnuws_usockets_content)
 
-file(GLOB_RECURSE SOURCES ${rnuws_usockets_content_SOURCE_DIR}/src/*.c)
+file(
+	GLOB_RECURSE
+	USOCKETS_SRCS
+	${rnuws_usockets_content_SOURCE_DIR}/src/*.c
+)
 add_library(
 	uSockets
-	${SOURCES}
+	${USOCKETS_SRCS}
 )
-target_include_directories(uSockets PUBLIC "${rnuws_usockets_content_SOURCE_DIR}/src")
-target_compile_definitions(uSockets PRIVATE LIBUS_NO_SSL)
+target_include_directories(
+	uSockets
+	PUBLIC
+	"${rnuws_usockets_content_SOURCE_DIR}/src"
+)
+target_compile_definitions(
+	uSockets
+	PRIVATE
+	LIBUS_NO_SSL
+)
 
 FetchContent_Declare(
 	rnuws_uwebsockets_content
