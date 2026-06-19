@@ -21,7 +21,7 @@ export default {
 
 	orientation: "default",
 
-	platforms: ["android"],
+	platforms: ["android", "ios"],
 
 	userInterfaceStyle: "automatic",
 

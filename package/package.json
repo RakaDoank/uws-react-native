@@ -49,6 +49,9 @@
 		"name": "ReactNativeUwsSpecs",
 		"type": "modules",
 		"jsSrcsDir": "./src/_internal/native-modules",
+		"outputDir": {
+			"ios": "./apple"
+		},
 		"android": {
 			"javaPackageName": "id.sufeni.oss.reactnativeuws"
 		}

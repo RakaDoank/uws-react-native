@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported, :osx => "10.14" }
   s.source       = { :git => package["repository"]["url"], :tag => "#{s.version}" }
 
-  s.source_files          = "apple/**/*.{h,m,mm,cpp}"
+  s.source_files          = "apple/**/*.{h,m,mm,cpp}", "cpp/*.{cpp,h}"
   s.ios.exclude_files     = "**/*.macos.{h,m,mm}"
   s.tvos.exclude_files    = "**/*.macos.{h,m,mm}"
   s.osx.exclude_files     = "**/*.ios.{h,m,mm}"
@@ -22,16 +22,19 @@ Pod::Spec.new do |s|
   s.subspec "app" do |ss|
     ss.source_files         = "cpp/app/**/*.h"
     ss.project_header_files = "cpp/app/**/*.h"
+    ss.header_mappings_dir  = "cpp"
   end
 
   s.subspec "bridging" do |ss|
     ss.source_files         = "cpp/bridging/**/*.h"
     ss.project_header_files = "cpp/bridging/**/*.h"
+    ss.header_mappings_dir  = "cpp"
   end
 
   s.subspec "jsi" do |ss|
     ss.source_files         = "cpp/jsi/**/*.h"
     ss.project_header_files = "cpp/jsi/**/*.h"
+    ss.header_mappings_dir  = "cpp"
   end
 
   s.subspec "uSockets" do |ss|
@@ -50,6 +53,7 @@ Pod::Spec.new do |s|
   s.subspec "uWebSockets" do |ss|
     ss.source_files         = "cpp/uWebSockets/uWebSockets/*.h"
     ss.project_header_files = "cpp/uWebSockets/uWebSockets/*.h"
+    ss.header_mappings_dir  = "cpp/uWebSockets"
   end
 
   s.dependency "React-jsi"
