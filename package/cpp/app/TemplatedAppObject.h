@@ -7,11 +7,11 @@
 #include <mutex>
 #include <sstream>
 #include <utility>
-#include <uWebSockets/App.h>
 #include "AppRunner.h"
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
 #include "RecognizedString.h"
+#include "uWebSockets/App.h"
 
 namespace react_native_uws {
 
@@ -202,6 +202,8 @@ public:
                      std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
 
                      /**
+                      * Important! Please pass a number larger than 0.
+                      * 
                       * This `id` number will be passed to the "listen" method handler.
                       * We don't actually pass the us_listen_socket_context_t there. The actual reason is
                       * we need to remove the AppHost instance which stored inside of vector.
@@ -325,8 +327,9 @@ public:
       auto callback = arguments[count - 1].asObject(rt_1).asFunction(rt_1);
 
       appRunner.listen(host, static_cast<int>(port), options, [id, asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](us_listen_socket_t *listenedSocket) {
-        asyncCallback.call([id](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-          cb.call(rt_2, static_cast<double>(id));
+        asyncCallback.call([id, listenedSocket](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
+          cb.call(rt_2,
+                  listenedSocket ? static_cast<double>(id) : 0);
         });
       });
 
