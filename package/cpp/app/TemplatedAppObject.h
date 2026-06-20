@@ -153,24 +153,6 @@ private:
           httpResponseObject->invokeOnDataV2();
         });
       }
-
-      /// This is a hacky way and probably temporary.
-      /// The "req->getParameter" does not working from JS call.
-      /// It always returned null data of string_view both by index and named.
-      {
-        std::stringstream ss = std::stringstream(pattern);
-        std::string token;
-
-        while(std::getline(ss, token, '/')) {
-          if(token[0] == ':') {
-            auto key = token.substr(1);
-            auto value = req->getParameter(key);
-            if(value.data() != nullptr) {
-              httpRequestObject->addParameter(std::move(key), value);
-            }
-          }
-        }
-      }
     };
 
     if(method == UwsRouteMethod::ANY) {

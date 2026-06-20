@@ -33,14 +33,6 @@ export interface HttpRequest {
 	/**
 	 * Returns the parsed parameter at index. Corresponds to route. Can also take the name of the parameter.
 	 * 
-	 * ---
-	 * 
-	 * **Note**
-	 * 
-	 * For this moment, find by an index number is much faster.
-	 * 
-	 * This is because we have to reimplement this method due to `req->getParameter()` problem internally in C++ that always returned `nullptr` data of `std::string_view` if we does it in JSI object.
-	 * 
 	 * @example
 	 * ```js
 	 * app.get("/profile/:userID/:type", (res, req) => {
