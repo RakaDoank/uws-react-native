@@ -19,6 +19,14 @@ Pod::Spec.new do |s|
   s.osx.exclude_files     = "**/*.ios.{h,m,mm}"
   s.private_header_files  = "apple/**/*.h"
 
+  # zlib
+  s.libraries    = "z"
+
+  s.pod_target_xcconfig = {
+    # Fix IPV6_RECVPKTINFO undeclared for uSockets
+    "GCC_PREPROCESSOR_DEFINITIONS" => "$(inherited) __APPLE_USE_RFC_3542"
+  }
+
   s.subspec "app" do |ss|
     ss.source_files         = "cpp/app/**/*.h"
     ss.project_header_files = "cpp/app/**/*.h"

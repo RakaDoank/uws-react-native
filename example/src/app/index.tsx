@@ -274,7 +274,8 @@ export default function Page() {
 			})
 		})
 
-		app.listen(5000, token => {
+		// iOS will fail to listen/run the server without explicit host 127.0.0.1
+		app.listen("127.0.0.1", 5000, token => {
 			if(token) {
 				console.log("Listening at 5000")
 			} else {
