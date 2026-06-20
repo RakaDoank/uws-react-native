@@ -35,6 +35,8 @@ react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Ru
   /// We pass increased number of the assignedIndex to the appHost->getTemplatedAppObject().
   /// When users use the listen method (app.listen)
   /// they got 1..n number, not zero at first.
+  /// It will passes 0 (zero) if the listen method is failed
+  /// that has been done internally in `app/TemplatedAppObject.h`.
 
   /// This is intentional to get similar behaviour from uWebSockets.js.
   /// And this is also for future usage kind of thing.
