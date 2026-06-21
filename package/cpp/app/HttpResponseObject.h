@@ -127,24 +127,28 @@ public:
                      std::shared_ptr<facebook::react::CallInvoker> &jsInvoker,
                      std::optional<HttpResponseObjectOptions> &&options = HttpResponseObjectOptions{ .disableBodyRead = false, .maxBodySize = 0 }) : facebook::jsi::Object(rt) {
 
-    this->setProperty(rt, "close", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "close"),
-                                                                                 1,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "close",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "close"),
+                                                                      1,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       res->close();
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "cork", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "cork"),
-                                                                                 1,
-                                                                                 [res, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                   const facebook::jsi::Value &thisValue,
-                                                                                                   const facebook::jsi::Value *arguments,
-                                                                                                   size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "cork",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "cork"),
+                                                                      1,
+                                                                      [res, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                        const facebook::jsi::Value &thisValue,
+                                                                                        const facebook::jsi::Value *arguments,
+                                                                                        size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
 
       res->cork([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)]() {
@@ -154,13 +158,14 @@ public:
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "end", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "end"),
-                                                                                 1,
-                                                                                 [this, res](facebook::jsi::Runtime &rt_1,
-                                                                                             const facebook::jsi::Value &thisValue,
-                                                                                             const facebook::jsi::Value *arguments,
-                                                                                             size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "end", facebook::jsi::Function::createFromHostFunction(rt,
+                                                                             facebook::jsi::PropNameID::forUtf8(rt, "end"),
+                                                                             1,
+                                                                             [this, res](facebook::jsi::Runtime &rt_1,
+                                                                                         const facebook::jsi::Value &thisValue,
+                                                                                         const facebook::jsi::Value *arguments,
+                                                                                         size_t count) -> facebook::jsi::Value {
       /// Due to JS run at different thread
       /// The race condition event is not avoidable under stress test
       /// Our predefined `res->onAborted` call earlier than JS callback
@@ -176,13 +181,15 @@ public:
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "endWithoutBody", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "endWithoutBody"),
-                                                                                 2,
-                                                                                 [this, res](facebook::jsi::Runtime &rt_1,
-                                                                                             const facebook::jsi::Value &thisValue,
-                                                                                             const facebook::jsi::Value *arguments,
-                                                                                             size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "endWithoutBody",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "endWithoutBody"),
+                                                                      2,
+                                                                      [this, res](facebook::jsi::Runtime &rt_1,
+                                                                                  const facebook::jsi::Value &thisValue,
+                                                                                  const facebook::jsi::Value *arguments,
+                                                                                  size_t count) -> facebook::jsi::Value {
       /// Due to JS run at different thread
       /// The race condition event is not avoidable under stress test
       /// Our predefined `res->onAborted` call earlier than JS callback
@@ -213,44 +220,52 @@ public:
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "getRemoteAddressAsText", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "getRemoteAddressAsText"),
-                                                                                 0,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "getRemoteAddressAsText",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "getRemoteAddressAsText"),
+                                                                      0,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       auto remoteAddress = res->getRemoteAddressAsText();
       return facebook::jsi::String::createFromUtf8(rt_1, std::string(remoteAddress));
     }));
     
-    this->setProperty(rt, "getRemotePort", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "getRemotePort"),
-                                                                                 0,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "getRemotePort",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "getRemotePort"),
+                                                                      0,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       return facebook::jsi::BigInt::fromUint64(rt_1, res->getRemotePort());
     }));
 
-    this->setProperty(rt, "getWriteOffset", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "getWriteOffset"),
-                                                                                 0,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "getWriteOffset",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "getWriteOffset"),
+                                                                      0,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       return facebook::jsi::BigInt::fromUint64(rt_1, res->getWriteOffset());
     }));
 
-    this->setProperty(rt, "onAborted", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                            facebook::jsi::PropNameID::forUtf8(rt, "onAborted"),
-                                                                                            1,
-                                                                                            [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                  const facebook::jsi::Value &thisValue,
-                                                                                                  const facebook::jsi::Value *arguments,
-                                                                                                  size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "onAborted",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onAborted"),
+                                                                      1,
+                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
 
       if(this->OnAbortedAssignee.alreadyAborted) {
@@ -262,13 +277,15 @@ public:
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "onData", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "onData"),
-                                                                                 1,
-                                                                                 [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                    const facebook::jsi::Value &thisValue,
-                                                                                                    const facebook::jsi::Value *arguments,
-                                                                                                    size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "onData",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onData"),
+                                                                      1,
+                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                        const facebook::jsi::Value &thisValue,
+                                                                                        const facebook::jsi::Value *arguments,
+                                                                                        size_t count) -> facebook::jsi::Value {
       if(this->OnDataV2Assignee.callback) {
         throw facebook::jsi::JSError(rt_1, "Cannot reassign onData or assign it with existing onDataV2 and/or onFullData handler");
       }
@@ -296,13 +313,15 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "onDataV2", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onDataV2"),
-                                                                                      1,
-                                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                         const facebook::jsi::Value &thisValue,
-                                                                                                         const facebook::jsi::Value *arguments,
-                                                                                                         size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "onDataV2",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onDataV2"),
+                                                                      1,
+                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                          const facebook::jsi::Value &thisValue,
+                                                                                          const facebook::jsi::Value *arguments,
+                                                                                          size_t count) -> facebook::jsi::Value {
       if(this->OnDataV2Assignee.callback) {
         throw facebook::jsi::JSError(rt_1, "Cannot reassign onDataV2 or assign it with existing onData and/or onFullData handler");
       }
@@ -331,13 +350,15 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "onFullData", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onFullData"),
-                                                                                      1,
-                                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                         const facebook::jsi::Value &thisValue,
-                                                                                                         const facebook::jsi::Value *arguments,
-                                                                                                         size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "onFullData",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onFullData"),
+                                                                      1,
+                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                          const facebook::jsi::Value &thisValue,
+                                                                                          const facebook::jsi::Value *arguments,
+                                                                                          size_t count) -> facebook::jsi::Value {
       if(this->OnDataV2Assignee.callback) {
         throw facebook::jsi::JSError(rt_1, "Cannot reassign onFullData or assign it with existing onData and/or onDataV2 handler");
       }
@@ -366,13 +387,15 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "onFullDataText", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                        facebook::jsi::PropNameID::forUtf8(rt, "onFullDataText"),
-                                                                                        1,
-                                                                                        [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                                           const facebook::jsi::Value &thisValue,
-                                                                                                           const facebook::jsi::Value *arguments,
-                                                                                                           size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "onFullDataText",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onFullDataText"),
+                                                                      1,
+                                                                      [this, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                          const facebook::jsi::Value &thisValue,
+                                                                                          const facebook::jsi::Value *arguments,
+                                                                                          size_t count) -> facebook::jsi::Value {
       if(this->OnDataV2Assignee.callbackStr) {
         throw facebook::jsi::JSError(rt_1, "Cannot reassign onFullDataText handler");
       }
@@ -399,35 +422,41 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "pause", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "pause"),
-                                                                                         0,
-                                                                                         [res](facebook::jsi::Runtime &rt_1,
-                                                                                               const facebook::jsi::Value &thisValue,
-                                                                                               const facebook::jsi::Value *arguments,
-                                                                                               size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "pause",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "pause"),
+                                                                      0,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       res->pause();
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "resume", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "resume"),
-                                                                                         0,
-                                                                                         [res](facebook::jsi::Runtime &rt_1,
-                                                                                               const facebook::jsi::Value &thisValue,
-                                                                                               const facebook::jsi::Value *arguments,
-                                                                                               size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "resume",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "resume"),
+                                                                      0,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       res->resume();
       return facebook::jsi::Value::undefined();
     }));
 
-    this->setProperty(rt, "tryEnd", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "tryEnd"),
-                                                                                         2,
-                                                                                         [this, res](facebook::jsi::Runtime &rt_1,
-                                                                                               const facebook::jsi::Value &thisValue,
-                                                                                               const facebook::jsi::Value *arguments,
-                                                                                               size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "tryEnd",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "tryEnd"),
+                                                                      2,
+                                                                      [this, res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       /// Due to JS run at different thread
       /// The race condition event is not avoidable under stress test
       /// Our predefined `res->onAborted` call earlier than JS callback
@@ -485,24 +514,28 @@ public:
 //      return facebook::jsi::Value::undefined();
 //    }));
 
-    this->setProperty(rt, "write", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "write"),
-                                                                                         2,
-                                                                                         [res](facebook::jsi::Runtime &rt_1,
-                                                                                               const facebook::jsi::Value &thisValue,
-                                                                                               const facebook::jsi::Value *arguments,
-                                                                                               size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "write",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "write"),
+                                                                      2,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       auto chunk = RecognizedString(rt_1, arguments[0]).getStringView();
       return res->write(std::string_view(chunk));
     }));
 
-    this->setProperty(rt, "writeHeader", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "writeHeader"),
-                                                                                         2,
-                                                                                         [res](facebook::jsi::Runtime &rt_1,
-                                                                                               const facebook::jsi::Value &thisValue,
-                                                                                               const facebook::jsi::Value *arguments,
-                                                                                               size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "writeHeader",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "writeHeader"),
+                                                                      2,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       auto headerKey = RecognizedString(rt_1, arguments[0]).getStringView();
       auto headerVal = RecognizedString(rt_1, arguments[1]).getStringView();
       res->writeHeader(headerKey, headerVal);
@@ -510,13 +543,15 @@ public:
       return {rt_1, thisValue};
     }));
 
-    this->setProperty(rt, "writeStatus", facebook::jsi::Function::createFromHostFunction(rt,
-                                                                                 facebook::jsi::PropNameID::forUtf8(rt, "writeStatus"),
-                                                                                 1,
-                                                                                 [res](facebook::jsi::Runtime &rt_1,
-                                                                                       const facebook::jsi::Value &thisValue,
-                                                                                       const facebook::jsi::Value *arguments,
-                                                                                       size_t count) -> facebook::jsi::Value {
+    this->setProperty(rt,
+                      "writeStatus",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "writeStatus"),
+                                                                      1,
+                                                                      [res](facebook::jsi::Runtime &rt_1,
+                                                                            const facebook::jsi::Value &thisValue,
+                                                                            const facebook::jsi::Value *arguments,
+                                                                            size_t count) -> facebook::jsi::Value {
       auto status = RecognizedString(rt_1, arguments[0]).getStringView();
       res->writeStatus(status);
 
