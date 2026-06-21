@@ -7,13 +7,33 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 
 > ⚠️ react-native-uws is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
 
+## Installation
+
+npm
+```
+npm install react-native-uws
+```
+
+yarn
+```
+yarn add react-native-uws
+```
+
+pnpm
+```
+pnpm install react-native-uws
+```
+
 ## Usage
+
 Since react-native-uws is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
 You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example.
 
 This repository does also contain the [example](https://github.com/RakaDoank/react-native-uws/blob/main/example/src/app/index.tsx) app. You can also refer to it, but it is currently for library development playground rather than proper example.
 
 ## Compatibility
+
+`react-native-uws` is compatible only compatible for new architecture of React Native.
 
 ### Platform
 
