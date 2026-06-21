@@ -8,12 +8,12 @@ module.exports = {
 				cmakeListsPath: "build/generated/source/codegen/jni/CMakeLists.txt",
 
 				// our CMake project name
-				cxxModuleCMakeListsModuleName: "react_native_uws",
+				cxxModuleCMakeListsModuleName: "uws_react_native",
 
 				// relative from android directory
 				cxxModuleCMakeListsPath: "../cpp/CMakeLists.txt",
 
-				cxxModuleHeaderName: "ReactNativeUwsModule",
+				cxxModuleHeaderName: "UwsReactNativeModule",
 			},
 		},
 	},

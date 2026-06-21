@@ -5,7 +5,7 @@
 #include "AppRunner.h"
 #include "TemplatedAppObject.h"
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 class AppHost {
 

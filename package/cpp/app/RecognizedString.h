@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 /// Inspired from the uWebSockets.js NativeString
 /// but, we don't do the arena allocator magic here.

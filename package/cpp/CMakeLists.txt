@@ -2,7 +2,7 @@
 # We need to adjust this build if this is getting used by other platforms
 # or to build Shared Object file.
 
-project("react_native_uws")
+project("uws_react_native")
 cmake_minimum_required(VERSION 3.14.0)
 
 # include(FetchContent)
@@ -15,7 +15,7 @@ set(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES ON)
 
 set(LIB_ANDROID_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../android")
 set(LIB_ANDROID_GENERATED_JNI_DIR ${LIB_ANDROID_DIR}/build/generated/source/codegen/jni)
-set(LIB_CODEGEN_SPEC_NAME "ReactNativeUwsSpecs")
+set(LIB_CODEGEN_SPEC_NAME "UwsReactNativeSpecs")
 
 if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a" OR CMAKE_ANDROID_ARCH_ABI STREQUAL "x86_64")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
@@ -144,11 +144,11 @@ target_link_libraries(
 	ReactAndroid::reactnative
 	ReactAndroid::jsi
 	fbjni::fbjni
-	react_codegen_ReactNativeUwsSpecs
+	react_codegen_UwsReactNativeSpecs
 	uWebSockets
 	android
 	log
-	react_native_uws::app
-	react_native_uws::bridging
-	react_native_uws::jsi
+	uws_react_native::app
+	uws_react_native::bridging
+	uws_react_native::jsi
 )

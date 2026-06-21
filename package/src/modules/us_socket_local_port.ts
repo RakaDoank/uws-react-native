@@ -1,4 +1,4 @@
-import NativeReactNativeUws from "../_internal/native-modules/NativeReactNativeUws";
+import NativeUwsReactNative from "../_internal/native-modules/NativeUwsReactNative";
 
 // import type {
 // 	us_listen_socket,
@@ -12,5 +12,5 @@ export function us_socket_local_port(
 	token: number,
 	// socket: us_socket | us_listen_socket,
 ) : number {
-	return NativeReactNativeUws._us_socket_local_port(token);
+	return NativeUwsReactNative._us_socket_local_port(token);
 }

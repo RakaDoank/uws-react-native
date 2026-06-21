@@ -1,4 +1,4 @@
-// import NativeReactNativeEcho from "../_internal/native-modules/NativeReactNativeUws"
+// import NativeReactNativeEcho from "../_internal/native-modules/NativeUwsReactNative"
 
 // /**
 //  * WebSocket compression options. Combine any compressor with any decompressor using bitwise OR.

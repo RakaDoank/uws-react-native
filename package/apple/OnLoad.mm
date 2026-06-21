@@ -1,16 +1,16 @@
 #import <Foundation/Foundation.h>
 #import <ReactCommon/CxxTurboModuleUtils.h>
-#import "ReactNativeUwsModule.h"
+#import "UwsReactNativeModule.h"
 
-@interface ReactNativeUwsOnLoad : NSObject
+@interface UwsReactNativeOnLoad : NSObject
 @end
 
-@implementation ReactNativeUwsOnLoad
+@implementation UwsReactNativeOnLoad
 
 + (void)load {
-  facebook::react::registerCxxModuleToGlobalModuleMap(std::string(facebook::react::ReactNativeUwsModule::kModuleName),
+  facebook::react::registerCxxModuleToGlobalModuleMap(std::string(facebook::react::UwsReactNativeModule::kModuleName),
                                                       [](std::shared_ptr<facebook::react::CallInvoker> jsInvoker) {
-    return std::make_shared<facebook::react::ReactNativeUwsModule>(jsInvoker);
+    return std::make_shared<facebook::react::UwsReactNativeModule>(jsInvoker);
   });
 }
 

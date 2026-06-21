@@ -1,4 +1,4 @@
-import NativeReactNativeUws from "../_internal/native-modules/NativeReactNativeUws"
+import NativeUwsReactNative from "../_internal/native-modules/NativeUwsReactNative"
 
 import type {
 	// AppOptions,
@@ -10,5 +10,5 @@ import type {
  * This is also where you listen and run your app, set any SSL options (in case of SSLApp) and the like.
  */
 export function App(/* options?: AppOptions */) : TemplatedApp {
-	return NativeReactNativeUws.App(/* options */) as unknown as TemplatedApp
+	return NativeUwsReactNative.App(/* options */) as unknown as TemplatedApp
 }

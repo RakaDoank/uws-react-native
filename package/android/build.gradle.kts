@@ -42,7 +42,7 @@ android {
   @Suppress("UNCHECKED_CAST")
   val getExtOrDefault = extra["getExtOrDefault"] as (String) -> Any
 
-  namespace = "id.sufeni.oss.reactnativeuws"
+  namespace = "id.sufeni.oss.uwsreactnative"
 
   compileSdk = getExtOrDefault("compileSdkVersion") as Int
 

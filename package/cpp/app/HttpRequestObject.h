@@ -7,7 +7,7 @@
 #include "RecognizedString.h"
 #include "uWebSockets/HttpContextData.h"
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 class HttpRequestObject : public facebook::jsi::Object {
 

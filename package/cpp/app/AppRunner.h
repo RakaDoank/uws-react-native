@@ -5,7 +5,7 @@
 #include <thread>
 #include "uWebSockets/App.h"
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 /**
  * This simple wrapper helps consumer to run the uWebSockets server in an another thread.

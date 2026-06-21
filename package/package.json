@@ -1,6 +1,6 @@
 {
 	"name": "uws-react-native",
-	"version": "0.0.1-beta.1",
+	"version": "0.0.1-alpha.1",
 	"description": "The port of uWebSockets library for React Native",
 	"license": "MIT",
 	"author": "RakaDoank <rakaaudira@gmail.com> (https://github.com/RakaDoank)",
@@ -49,14 +49,14 @@
 		"./package.json": "./package.json"
 	},
 	"codegenConfig": {
-		"name": "ReactNativeUwsSpecs",
+		"name": "UwsReactNativeSpecs",
 		"type": "modules",
 		"jsSrcsDir": "./src/_internal/native-modules",
 		"outputDir": {
 			"ios": "./apple"
 		},
 		"android": {
-			"javaPackageName": "id.sufeni.oss.reactnativeuws"
+			"javaPackageName": "id.sufeni.oss.uwsreactnative"
 		}
 	}
 }

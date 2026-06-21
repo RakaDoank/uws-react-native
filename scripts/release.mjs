@@ -12,7 +12,7 @@ const
 	libraryVersionPrerelease =
 		SemverPrelease(ReactNativeUwsPackageJson.version)
 
-let publishCommand = "pnpm publish --filter react-native-uws --access public --no-git-checks"
+let publishCommand = "pnpm publish --filter uws-react-native --access public --no-git-checks"
 
 if(typeof libraryVersionPrerelease?.[0] == "string") {
 	publishCommand += ` --tag ${libraryVersionPrerelease[0]}`

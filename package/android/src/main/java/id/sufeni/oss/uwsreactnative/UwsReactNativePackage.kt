@@ -1,4 +1,4 @@
-package id.sufeni.oss.reactnativeuws
+package id.sufeni.oss.uwsreactnative
 
 import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -6,7 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 
-class ReactNativeEchoPackage : BaseReactPackage() {
+class UwsReactNativePackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
     return null
   }

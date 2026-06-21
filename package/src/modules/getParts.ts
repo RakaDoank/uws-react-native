@@ -1,4 +1,4 @@
-import NativeReactNativeUws from "../_internal/native-modules/NativeReactNativeUws"
+import NativeUwsReactNative from "../_internal/native-modules/NativeUwsReactNative"
 
 import type {
 	MultipartField,
@@ -11,7 +11,7 @@ export function getParts(
 	body: ArrayBuffer,
 	contentType: string,
 ) : MultipartField[] | undefined {
-	const result = NativeReactNativeUws.getParts(body, contentType)
+	const result = NativeUwsReactNative.getParts(body, contentType)
 
 	// See /uws-react-native/package/cpp/ReactNativeUwsModule.cpp
 	// Codegen maps the `unknown` type to jsi::Object

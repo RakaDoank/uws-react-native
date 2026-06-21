@@ -1,16 +1,16 @@
 #pragma once
 
-#include <ReactNativeUwsSpecsJSI.h>
+#include <UwsReactNativeSpecsJSI.h>
 #include "app/TemplatedAppObject.h"
 
 namespace facebook::react {
 
-class ReactNativeUwsModule : public NativeReactNativeUwsCxxSpec<ReactNativeUwsModule> {
+class UwsReactNativeModule : public NativeUwsReactNativeCxxSpec<UwsReactNativeModule> {
 
 public:
-  ReactNativeUwsModule(std::shared_ptr<CallInvoker> jsInvoker);
+  UwsReactNativeModule(std::shared_ptr<CallInvoker> jsInvoker);
 
-  react_native_uws::TemplatedAppObject App(facebook::jsi::Runtime &rt,
+  uws_react_native::TemplatedAppObject App(facebook::jsi::Runtime &rt,
                                            std::optional<facebook::jsi::Object> appOptions);
 
   facebook::jsi::Object getParts(facebook::jsi::Runtime &rt,

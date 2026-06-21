@@ -1,4 +1,4 @@
-project("react_native_uws__app")
+project("uws_react_native__app")
 
 file(
 	GLOB_RECURSE
@@ -15,7 +15,7 @@ add_library(
 )
 
 add_library(
-	"react_native_uws::app"
+	"uws_react_native::app"
 	ALIAS
 	${PROJECT_NAME}
 )
@@ -34,6 +34,6 @@ target_link_libraries(
 	uWebSockets
 	android
 	log
-	react_native_uws::bridging
-	react_native_uws::jsi
+	uws_react_native::bridging
+	uws_react_native::jsi
 )

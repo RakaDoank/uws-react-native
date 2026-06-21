@@ -13,7 +13,7 @@
 #include "RecognizedString.h"
 #include "uWebSockets/App.h"
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 class TemplatedAppObject : public facebook::jsi::Object {
 
@@ -192,7 +192,7 @@ public:
 
       appRunner.app.filter([&jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](auto *res, int count) {
         asyncCallback.call([&jsInvoker, &res, count](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-          auto httpResponseObject = std::make_shared<react_native_uws::HttpResponseObject>(rt_2, res, jsInvoker);
+          auto httpResponseObject = std::make_shared<uws_react_native::HttpResponseObject>(rt_2, res, jsInvoker);
           cb.call(rt_2,
                   *httpResponseObject,
                   count);

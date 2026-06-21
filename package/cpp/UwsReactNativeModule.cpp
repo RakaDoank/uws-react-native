@@ -1,4 +1,4 @@
-#include "ReactNativeUwsModule.h"
+#include "UwsReactNativeModule.h"
 #include <memory>
 #include <vector>
 #include <jsi/jsi.h>
@@ -13,18 +13,18 @@ namespace facebook::react {
 
 namespace {
 
-std::vector<std::shared_ptr<react_native_uws::AppHost>> appHosts;
+std::vector<std::shared_ptr<uws_react_native::AppHost>> appHosts;
 
 } // namespace
 
-ReactNativeUwsModule::ReactNativeUwsModule(std::shared_ptr<CallInvoker> jsInvoker)
-  : NativeReactNativeUwsCxxSpec(std::move(jsInvoker)) {}
+UwsReactNativeModule::UwsReactNativeModule(std::shared_ptr<CallInvoker> jsInvoker)
+  : NativeUwsReactNativeCxxSpec(std::move(jsInvoker)) {}
 
-react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Runtime &rt,
+uws_react_native::TemplatedAppObject UwsReactNativeModule::App(facebook::jsi::Runtime &rt,
                                                                std::optional<facebook::jsi::Object> appOptions) {
   auto assignedIndex = appHosts.size();
 
-  auto appHost = std::make_shared<react_native_uws::AppHost>([assignedIndex]() {
+  auto appHost = std::make_shared<uws_react_native::AppHost>([assignedIndex]() {
     if(assignedIndex < appHosts.size()) {
       appHosts.erase(appHosts.begin() + assignedIndex);
     }
@@ -57,7 +57,7 @@ react_native_uws::TemplatedAppObject ReactNativeUwsModule::App(facebook::jsi::Ru
 
 /// Ported of uWebSockets.js `getParts`
 /// See https://github.com/uNetworking/uWebSockets.js/blob/master/src/addon.cpp#L45
-facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
+facebook::jsi::Object UwsReactNativeModule::getParts(facebook::jsi::Runtime &rt,
                                                      facebook::jsi::Object body,
                                                      facebook::jsi::String contentType) {
   /// Sucks
@@ -94,7 +94,7 @@ facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
 
       partObj.setProperty(rt,
                           "data",
-                          facebook::jsi::ArrayBuffer(rt, std::make_shared<react_native_uws::StringViewMutableBuffer>(part)));
+                          facebook::jsi::ArrayBuffer(rt, std::make_shared<uws_react_native::StringViewMutableBuffer>(part)));
 
       for(int i = 0; headers[i].first.length(); i++) {
         if(headers[i].first == "content-type") {
@@ -138,14 +138,14 @@ facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
 
 /// It's better to have different name than this.
 /// It doesn't use us_listen_socket_close from uSockets directly in this function
-void ReactNativeUwsModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
+void UwsReactNativeModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
                                                   double id
                                                   /*facebook::jsi::Object listenSocket*/) {
   if(id < 1) {
     return;
   }
 
-  /// Decreased one number. See notes above at ReactNativeUwsModule::App
+  /// Decreased one number. See notes above at UwsReactNativeModule::App
   auto assignedIndex = id - 1;
 
   auto appHost = appHosts.at(assignedIndex);
@@ -163,14 +163,14 @@ void ReactNativeUwsModule::_us_listen_socket_close(facebook::jsi::Runtime &rt,
 
 /// It's better to have different name than this.
 /// JS side doesn't pass the actual us_socket_t or us_listen_socket_t to this function.
-double ReactNativeUwsModule::_us_socket_local_port(facebook::jsi::Runtime &rt,
+double UwsReactNativeModule::_us_socket_local_port(facebook::jsi::Runtime &rt,
                                                 double id
                                                 /*facebook::jsi::Object socket*/) {
   if(id < 1) {
     return -1;
   }
 
-  /// Decreased one number. See notes above at ReactNativeUwsModule::App
+  /// Decreased one number. See notes above at UwsReactNativeModule::App
   auto assignedIndex = id - 1;
 
   auto appHost = appHosts.at(assignedIndex);

@@ -6,7 +6,7 @@
 #include "RecognizedString.h"
 #include "uWebSockets/HttpResponse.h"
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 struct HttpResponseObjectOptions {
   bool disableBodyRead;
@@ -559,7 +559,7 @@ public:
     }));
 
     /// We have to make JS call asynchronously because the uWebSockets app run at different thread.
-    /// See the `react_native_uws::AppRunner`, and `facebook::react::AsyncCallback`.
+    /// See the `uws_react_native::AppRunner`, and `facebook::react::AsyncCallback`.
     /// So this predefined `onAborted` assignment below is to tell that
     /// uWebSockets has to wait until JS call finished with the `res.end() or res.tryEnd()`.
     ///

@@ -3,7 +3,7 @@
 #include <jsi/jsi.h>
 #include <utility>
 
-namespace react_native_uws {
+namespace uws_react_native {
 
 // Probably bad name and usage.
 // I can't figure it how create JS ArrayBuffer with faster buffer

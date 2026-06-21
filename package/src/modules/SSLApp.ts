@@ -1,4 +1,4 @@
-// import NativeReactNativeUws from "../_internal/native-modules/NativeReactNativeUws"
+// import NativeUwsReactNative from "../_internal/native-modules/NativeUwsReactNative"
 
 // import type {
 // 	AppOptions,
@@ -9,5 +9,5 @@
 //  * Constructs an SSL app. See `App`.
 //  */
 // export function SSLApp(options: AppOptions) : TemplatedApp {
-// 	return NativeReactNativeUws.SSLApp(options) as unknown as TemplatedApp
+// 	return NativeUwsReactNative.SSLApp(options) as unknown as TemplatedApp
 // }
