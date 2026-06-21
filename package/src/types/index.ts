@@ -1,5 +1,5 @@
 // export type * from "./AppDescriptor"
-export type * from "./AppOptions"
+// export type * from "./AppOptions"
 export type * from "./HttpRequest"
 export type * from "./HttpResponse"
 export type * from "./MultipartField"
