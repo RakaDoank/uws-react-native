@@ -65,7 +65,7 @@ facebook::jsi::Object ReactNativeUwsModule::getParts(facebook::jsi::Runtime &rt,
   /// We can't return Array | Undefined
   /// If an empty object, it indicates undefined.
   /// Empty object needs to be remapped to undefined.
-  /// See /react-native-uws/package/src/modules/getParts.ts
+  /// See /uws-react-native/package/src/modules/getParts.ts
 
   if(!body.isArrayBuffer(rt)) {
     /// undefined

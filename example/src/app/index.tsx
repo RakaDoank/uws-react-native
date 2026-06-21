@@ -11,7 +11,7 @@ import {
 	Text,
 } from "@audira/carbon-react-native"
 
-import * as uWS from "react-native-uws"
+import * as uWS from "uws-react-native"
 
 export default function Page() {
 

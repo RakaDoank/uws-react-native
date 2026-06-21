@@ -172,7 +172,7 @@ export interface HttpResponse {
 	 * A good case for a simple route handler that only needs to read complete body data.
 	 * 
 	 * Not like the `onData` and `onDataV2`, this is a good option to save a bit of operation cost
-	 * because react-native-uws passes an ArrayBuffer from C++ to JS only once when it is finished.
+	 * because uws-react-native passes an ArrayBuffer from C++ to JS only once when it is finished.
 	 * 
 	 * This is an equivalent of `res.collectBody()` method from uWebSockets.js for Node.js,
 	 * but to set max byte of body size, you have to set it through router options at the third arguments.

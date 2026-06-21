@@ -67,7 +67,7 @@ private:
     bool disableBodyRead = false;
     unsigned long maxBodySize = 0;
 
-    /// See /react-native-uws/package/src/types/HttpRouterOptions.ts
+    /// See /uws-react-native/package/src/types/HttpRouterOptions.ts
     if(arguments[2].isObject()) {
       auto httpRouterOptions = arguments[2].asObject(rt);
 

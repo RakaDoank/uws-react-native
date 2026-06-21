@@ -36,7 +36,7 @@ const config = {
 		...defaultConfig.resolver,
 		extraNodeModules: {
 			...(defaultConfig.resolver?.extraNodeModules ?? {}),
-			"react-native-uws": node_path.join(workspaceRoot, "package", "src"),
+			"uws-react-native": node_path.join(workspaceRoot, "package", "src"),
 		},
 	},
 

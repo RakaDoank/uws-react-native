@@ -13,7 +13,7 @@ export function getParts(
 ) : MultipartField[] | undefined {
 	const result = NativeReactNativeUws.getParts(body, contentType)
 
-	// See /react-native-uws/package/cpp/ReactNativeUwsModule.cpp
+	// See /uws-react-native/package/cpp/ReactNativeUwsModule.cpp
 	// Codegen maps the `unknown` type to jsi::Object
 	// We can't return Array | undefined in that getParts function.
 	// So we have to remap it.
