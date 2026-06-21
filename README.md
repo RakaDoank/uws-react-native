@@ -1,43 +1,43 @@
-# react-native-uws
+# uws-react-native
 
 The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) library for React Native. Inspired by the [**uWebSockets.js**](https://github.com/uNetworking/uWebSockets.js) for Node.js and tailored for React Native app.
 
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
-- **react-native-uws** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
+- **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
 
-> ⚠️ react-native-uws is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
+> ⚠️ uws-react-native is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
 
 ## Installation
 
 npm
 ```
-npm install react-native-uws
+npm install uws-react-native
 ```
 
 yarn
 ```
-yarn add react-native-uws
+yarn add uws-react-native
 ```
 
 pnpm
 ```
-pnpm install react-native-uws
+pnpm install uws-react-native
 ```
 
 ## Usage
 
-Since react-native-uws is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
+Since uws-react-native is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
 You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example.
 
-This repository does also contain the [example](https://github.com/RakaDoank/react-native-uws/blob/main/example/src/app/index.tsx) app. You can also refer to it, but it is currently for library development playground rather than proper example.
+This repository does also contain the [example](https://github.com/RakaDoank/uws-react-native/blob/main/example/src/app/index.tsx) app. You can also refer to it, but it is currently for library development playground rather than proper example.
 
 ## Compatibility
 
-`react-native-uws` is compatible only compatible for new architecture of React Native.
+`uws-react-native` is compatible only compatible for new architecture of React Native.
 
 ### Platform
 
-react-native-uws is supported in Android, iOS, and macOS. Windows is currently not supported, and Web is impossible.
+uws-react-native is supported in Android, iOS, and macOS. Windows is currently not supported, and Web is impossible.
 
 ### Unsupported APIs
 
@@ -46,22 +46,22 @@ react-native-uws is supported in Android, iOS, and macOS. Windows is currently n
 
 ### New APIs
 
-There are some new APIs in react-native-uws. The most reason is because of the differentiation of React Native's architecture compared to the casual server program
+There are some new APIs in uws-react-native. The most reason is because of the differentiation of React Native's architecture compared to the casual server program
 
-- The route method handler like `any`, `get`, `post` and others expects third argument as the handler options optionally. See [`HttpRouterOptions`](https://github.com/RakaDoank/react-native-uws/blob/main/package/src/types/HttpRouterOptions.ts)
-- In [`HttpResponse`](https://github.com/RakaDoank/react-native-uws/blob/main/package/src/types/HttpResponse.ts) object,
+- The route method handler like `any`, `get`, `post` and others expects third argument as the handler options optionally. See [`HttpRouterOptions`](https://github.com/RakaDoank/uws-react-native/blob/main/package/src/types/HttpRouterOptions.ts)
+- In [`HttpResponse`](https://github.com/RakaDoank/uws-react-native/blob/main/package/src/types/HttpResponse.ts) object,
   - `onFullData`. This is an equivalent of `res.collectBody` from uWebSockets.js, but to set the max size, provide it through route method handler options
   - `onFullDataText`. Same as the `onFullData`, but provides the body data in raw text instead of ArrayBuffer. This is useful if you are using React Native 0.84 version or older because TextDecoder is natively supported only in React Native 0.85 version
 
 ## Development & Research
 
-react-native-uws is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
+uws-react-native is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
 
 There are development and research things that you can read for your informations, especially if you are already familiar with uWebSockets. The most things are because of the React Native's architecture differentiation compared to the casual uWebSockets server program.
 
 ### Performance & Stability
 
-This library is indeed focusing on performance, but we will focus more of it later until we reach the stability of react-native-uws due to [threading](#threading) issue. It does not mean react-native-uws will performs badly in terms of performance speed, but it is not stable enough in under a stress situation.
+This library is indeed focusing on performance, but we will focus more of it later until we reach the stability of uws-react-native due to [threading](#threading) issue. It does not mean uws-react-native will performs badly in terms of performance speed, but it is not stable enough in under a stress situation.
 
 I have tested a stress test in an Android device. A lot of incoming request roughly 100 requests per second in roughly 10 seconds for files uploading (multipart/form-data) may crash the app. We do not have the proper benchmark yet, but it is as I expected from a platform restriction of memory usage for an app. An Android device with 12GB RAM does not mean an app can use all of it. I am keeping my eyes on this issue to keep improving this stress test.
 
