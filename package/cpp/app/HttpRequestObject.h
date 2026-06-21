@@ -94,8 +94,6 @@ public:
         return facebook::jsi::Value::undefined();
       }
 
-      /// Doesn't work. I don't know why.
-      /// req->getParameter() always returned string_view null data
       std::string_view parameter;
 
       if(arguments[0].isNumber()) {
@@ -113,41 +111,6 @@ public:
       }
       return facebook::jsi::String::createFromAscii(rt_1,
                                                     std::string(parameter));
-
-      /// This is temporary solution
-
-//      if(this->parameters.empty()) {
-//        return facebook::jsi::Value::undefined();
-//      }
-//
-//      std::string_view it;
-//
-//      if(arguments[0].isNumber()) {
-//        /// get by index
-//        /// this is much faster
-//
-//        auto index = arguments[0].asNumber();
-//        if(index < this->parameters.size()) {
-//          it = this->parameters.at(static_cast<int>(index)).second;
-//        }
-//      } else {
-//        /// get by name
-//        /// Do we really need std::unordered_map for the faster lookup here?
-//
-//        auto _it = std::find_if(this->parameters.begin(), this->parameters.end(), [key = RecognizedString(rt_1, arguments[0]).getString()](auto &item) -> bool {
-//          return item.first == key;
-//        });
-//        if(_it != this->parameters.end()) {
-//          it = _it->second;
-//        }
-//      }
-//
-//      if(it.data() == nullptr) {
-//        return facebook::jsi::Value::undefined();
-//      }
-//
-//      return facebook::jsi::String::createFromAscii(rt_1,
-//                                                    std::string(it));
     }));
 
     this->setProperty(rt,
@@ -204,11 +167,6 @@ public:
     req.reset();
 
   } // HttpRequestObject
-
-//  void addParameter(std::string &&key,
-//                    std::string_view value) {
-//    this->parameters.emplace_back(key, value);
-//  }
 
 };
 

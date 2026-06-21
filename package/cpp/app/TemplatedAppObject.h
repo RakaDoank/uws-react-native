@@ -42,6 +42,7 @@ private:
     /// doing long operation or async function.
     /// It may throw an Error
     /// `terminating due to uncaught exception of type facebook::jsi::JSError: Exception in HostFunction: Unable to retrieve jni environment. Is the thread attached?`
+
 //      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&rt, &jsInvoker, cb = std::make_shared<facebook::jsi::Function>(std::move(callback))](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
 //        auto httpResponseObject = std::make_shared<HttpResponseObject>(rt, res, jsInvoker);
 //        auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
@@ -55,6 +56,7 @@ private:
     /// We can't make a sync call to JS
     /// from arbitrary thread where the uWebSockets runner lives,
     /// even the route handler is not doing anything long opt
+
 //      std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&rt, syncCallback = std::make_shared<facebook::react::SyncCallback<void (facebook::jsi::Value, facebook::jsi::Value)>>(rt, std::move(callback), jsInvoker)](auto *res, auto *req) {
 //        auto httpResponseObject = std::make_shared<HttpResponseObject>(rt, res);
 //        auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
