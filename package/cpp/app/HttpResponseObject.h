@@ -328,16 +328,6 @@ public:
         });
       }
 
-      /// Sadly, we can't assign onDataV2 so late
-//      res->onDataV2([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](std::string_view chunk, auto maxRemainingBodyLength) {
-//        asyncCallback.call([chunk, maxRemainingBodyLength](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
-//          auto stringMutableBuffer = std::make_shared<facebook::jsi::StringMutableBuffer>(std::string(chunk));
-//          cb.call(rt_2,
-//                  facebook::jsi::ArrayBuffer(rt_2, stringMutableBuffer),
-//                  facebook::jsi::BigInt::fromUint64(rt_2, maxRemainingBodyLength));
-//        });
-//      });
-
       return facebook::jsi::Value::undefined();
     }));
 
