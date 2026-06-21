@@ -1,38 +1,12 @@
 import node_fs from "node:fs"
 import node_path from "node:path"
 
-import SemverValid from "semver/functions/valid.js"
-
-import ReactNativeUwsPackageJson from "../../../package/package.json" with { type: "json" }
-
 /**
  * @param {string} workspaceDir 
  */
 export async function prepack(
 	workspaceDir,
 ) {
-
-	{
-		// Replace placeholder version at the
-		// /react-native-uws/package/src/_internal/const/version.ts
-
-		const libraryVersion = SemverValid(ReactNativeUwsPackageJson.version)
-
-		if(!libraryVersion) {
-			throw new TypeError("Library version is not a valid semver")
-		}
-
-		const filePath = node_path.join(workspaceDir, "package", "src", "_internal", "const", "echo", "version.ts")
-
-		if(!node_fs.existsSync(filePath)) {
-			throw new Error(`${filePath} doesn't exist`)
-		}
-
-		let fileStr = node_fs.readFileSync(filePath).toString()
-		fileStr = fileStr.replace(/(export const VERSION = )("X\.X\.X")/, `$1"${libraryVersion}"`)
-
-		node_fs.writeFileSync(filePath, fileStr, { encoding: "utf8" })
-	}
 
 	{
 		// Copy files
