@@ -47,29 +47,16 @@ export default function Page() {
 				console.log("onAbort")
 			})
 
-			const headers: Record<string, string> = {}
+			const forEachResult: Record<string, string> = {}
 
 			req.forEach((key, val) => {
-				headers[key] = val
+				forEachResult[key] = val
 			})
-
-			// console.log("getCaseSensitiveMethod", req.getCaseSensitiveMethod())
-
-			// console.log("getMethod", req.getMethod())
-
-			// console.log("getParameter", req.getParameter(0), req.getParameter("foo"))
-			// console.log("getParameter", req.getParameter(1), req.getParameter("bar"))
-
-			// // This is only work in debugOptimized and release/production build
-			// // I don't know why this doesn't work on the basic debug build
-			// // console.log("getQuery", req.getQuery(), req.getQuery("foo"))
-
-			// console.log("getUrl", req.getUrl(), req.getUrl().length)
 
 			res.writeHeader("content-type", "application/json")
 			res.end(
 				JSON.stringify({
-					forEach: headers,
+					forEach: forEachResult,
 					getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
 					getHeader: req.getHeader("connection"),
 					getParameter: `${req.getParameter(0)} - ${req.getParameter("foo")} | ${req.getParameter(1)} - ${req.getParameter("bar")}`,
