@@ -3,14 +3,14 @@ import node_path from "node:path"
 
 import SemverPrelease from "semver/functions/prerelease.js"
 
-import ReactNativeEchoPackageJson from "../package/package.json" with { type: "json" }
+import ReactNativeUwsPackageJson from "../package/package.json" with { type: "json" }
 
 const
 	rootDir =
 		node_path.join(import.meta.dirname, ".."),
 
 	libraryVersionPrerelease =
-		SemverPrelease(ReactNativeEchoPackageJson.version)
+		SemverPrelease(ReactNativeUwsPackageJson.version)
 
 let publishCommand = "pnpm publish --filter react-native-uws --access public --no-git-checks"
 
