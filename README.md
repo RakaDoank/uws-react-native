@@ -33,7 +33,7 @@ This repository does also contain the [example](https://github.com/RakaDoank/uws
 
 ## Compatibility
 
-`uws-react-native` is compatible only compatible for new architecture of React Native.
+`uws-react-native` is only compatible for new architecture of React Native.
 
 ### Platform
 
