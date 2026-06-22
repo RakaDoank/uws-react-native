@@ -33,7 +33,7 @@ This repository does also contain the [example](https://github.com/RakaDoank/uws
 
 ## Compatibility
 
-`uws-react-native` is compatible only compatible for new architecture of React Native.
+`uws-react-native` is only compatible for new architecture of React Native.
 
 ### Platform
 
@@ -52,6 +52,8 @@ There are some new APIs in uws-react-native. The most reason is because of the d
 - In [`HttpResponse`](https://github.com/RakaDoank/uws-react-native/blob/main/package/src/types/HttpResponse.ts) object,
   - `onFullData`. This is an equivalent of `res.collectBody` from uWebSockets.js, but to set the max size, provide it through route method handler options
   - `onFullDataText`. Same as the `onFullData`, but provides the body data in raw text instead of ArrayBuffer. This is useful if you are using React Native 0.84 version or older because TextDecoder is natively supported only in React Native 0.85 version
+
+---
 
 ## Development & Research
 
@@ -73,7 +75,11 @@ Intentionally, we make the uWebSockets runs in another thread, therefore we have
 
 We have another issue because of the uWebSockets runs in another thread. From the JSI C++ side, we have to assume any JS function as a callback especially the route method handler is asynchronous. We cannot make a sync call to the JS function from an arbitrary thread to the JS thread, and it makes JS call to the uWebSockets runner is also late.
 
-For this case especially, we have to predefined two instances in the C++ uWebSockets route method handler because of the late call, and the late call would not be tolerated by the uWebSockets internally for some instances
+There some topics you may to read regarding this threading research
+
+#### Predefined Instances
+
+For the threading case especially, we have to predefined two instances in the C++ uWebSockets route method handler because of the late call, and the late call would not be tolerated by the uWebSockets internally for some cases
 
 - `res.onAborted`
 
@@ -82,3 +88,9 @@ We have to predefined the `onAborted` callback in C++ side and prevent `res.end`
 - `res.onDataV2`
 
 For the `onData` and `onDataV2`, we have predefined it with a single `onDataV2` callback in C++ side. If this method is not predefined, uWebSockets will not collect any incoming body data. If a route method handler is sure that it doesn't expect any body data at all, a route method handler can disable the body reading through the third argument in `any`, `get`, `post`, and other route methods.
+
+#### About Worker Thread
+
+In theory, we can create another JavaScript runtime with [react-native-worklets](https://docs.swmansion.com/react-native-worklets/) and tie with our uWebSockets runner. It would solve a lot of late communication problem between uWebSockets runner and JavaScript thread that we embrace right now, but it also introduces new major issue, which is developer experience. It sounds like not a big problem, but it may bigger than you think.
+
+Think of this sample case, you want to use uws-react-native server for a simple CRUD with a local database in an app. You probably know SQLite can be used in Android, iOS, macOS, even Windows app, with your own adapter or a known library that support SQLite integration in React Native such as [op-sqlite](https://github.com/OP-Engineering/op-sqlite), and [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite). If you want to use that known library, this case would not works at all, because op-sqlite and/or Expo SQLite is tied to the default JavaScript runtime. Even, you cannot use any React Native non-JS-only libraries in arbitrary JavaScript thread that has created by react-native-worklets if the library you want to use is using the default JavaScript runtime. If you really want to achieve the goal of this case, you have to create your own library for the SQLite database by yourself and tie-up with the JavaScript runtime. Probably, in the future we would still provide that worker thread with react-native-worklets.
