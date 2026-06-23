@@ -90,7 +90,7 @@ private:
       }
     }
 
-    std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [pattern, disableBodyRead, maxBodySize, &rt, &jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
+    std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [disableBodyRead, maxBodySize, &rt, &jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
       auto httpResponseObject = std::make_shared<HttpResponseObject>(rt,
                                                                      res,
                                                                      jsInvoker,
