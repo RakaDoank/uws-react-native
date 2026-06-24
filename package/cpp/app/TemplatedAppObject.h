@@ -96,7 +96,7 @@ private:
                                                                      jsInvoker,
                                                                      HttpResponseObjectOptions{ .disableBodyRead = disableBodyRead, .maxBodySize = maxBodySize });
 
-      auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req, jsInvoker);
+      auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
 
       asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObject, httpRequestObject](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
         cb.call(rt_1,
