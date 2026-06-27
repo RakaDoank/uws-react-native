@@ -101,7 +101,7 @@ private:
       auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
       auto sharedRequest = std::make_shared<uWS::HttpRequest>(*req);
 
-      asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, &sharedRequest, &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+      asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, sharedRequest, &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
         cb.call(rt_1,
                 HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
                 HttpRequestObject(rt_1, sharedRequest));
