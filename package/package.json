@@ -2,7 +2,7 @@
 	"name": "uws-react-native",
 	"version": "0.0.5",
 	"description": "The port of uWebSockets library for React Native",
-	"license": "MIT",
+	"license": "Apache-2.0",
 	"author": "RakaDoank <rakaaudira@gmail.com> (https://github.com/RakaDoank)",
 	"homepage": "https://github.com/RakaDoank/uws-react-native",
 	"repository": {
