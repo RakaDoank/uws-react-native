@@ -41,5 +41,5 @@ jobs:
           node ./scripts/release-npm.mjs
       - name: Release to GitHub Packages
         run: |
-          pnpm config set //registry.npmjs.org/:_authToken "${{ secrets.GITHUB_TOKEN }}"
+          pnpm config set //npm.pkg.github.com/:_authToken "${{ secrets.GITHUB_TOKEN }}"
           node ./scripts/release-github.mjs
