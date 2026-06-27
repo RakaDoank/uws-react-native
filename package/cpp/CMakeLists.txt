@@ -135,7 +135,6 @@ target_compile_options(uWebSockets INTERFACE -Wno-deprecated-declarations)
 # ----- uWebSockets -----
 
 add_subdirectory(app)
-add_subdirectory(bridging)
 add_subdirectory(jsi)
 
 # Link Libraries
@@ -149,6 +148,5 @@ target_link_libraries(
 	android
 	log
 	uws_react_native::app
-	uws_react_native::bridging
 	uws_react_native::jsi
 )

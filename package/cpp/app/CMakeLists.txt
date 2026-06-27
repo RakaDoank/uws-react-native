@@ -34,6 +34,5 @@ target_link_libraries(
 	uWebSockets
 	android
 	log
-	uws_react_native::bridging
 	uws_react_native::jsi
 )
