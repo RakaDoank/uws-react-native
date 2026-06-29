@@ -36,14 +36,12 @@ public:
                       facebook::jsi::Function::createFromHostFunction(rt,
                                                                       facebook::jsi::PropNameID::forUtf8(rt, "cork"),
                                                                       1,
-                                                                      [provider, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                      [provider](facebook::jsi::Runtime &rt_1,
                                                                                              const facebook::jsi::Value &thisValue,
                                                                                              const facebook::jsi::Value *arguments,
                                                                                              size_t count) -> facebook::jsi::Value {
-      auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
-
-      provider->res->cork([asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)]() {
-        asyncCallback.call();
+      provider->res->cork([&rt_1, callback = arguments[0].asObject(rt_1).asFunction(rt_1)]() {
+        callback.call(rt_1);
       });
 
       return {rt_1, thisValue};

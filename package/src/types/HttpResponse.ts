@@ -26,11 +26,13 @@ export interface HttpResponse {
      *
      * Example usage:
      *
-     * ```
+     * ```js
      * res.cork(() => {
      *   res.writeStatus("200 OK").writeHeader("Some", "Value").write("Hello world!"),
      * }),
      * ```
+	 * 
+	 * @see https://github.com/uNetworking/uWebSockets/blob/master/misc/READMORE.md#corking
 	 */
 	cork(
 		cb: () => void,
