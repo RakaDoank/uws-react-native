@@ -6,7 +6,7 @@ Thank you for your support to this library. This documentation will help you how
 - [Clone](#clone)
 - [Setup](#setup)
   - [1. Dependencies Installation](#1-dependencies-installation)
-  - [2. Library Installation with Example App](#2-ide-setup-for-library-development-with-example-app)
+  - [2. IDE Setup for Library Development with Example App](#2-ide-setup-for-library-development-with-example-app)
     - [Android](#android)
     - [iOS](#ios)
     - [macOS](#macos)
