@@ -3,6 +3,10 @@ Thank you for your support to this library. This documentation will help you how
 
 - [Knowledges](#knowledges)
 - [Environments](#environments)
+  - [macOS](#macos)
+  - [Linux](#linux)
+  - [Windows](#windows)
+  - [IDE for TypeScript and JavaScript](#ide-for-typescript-and-javascript)
 - [Clone](#clone)
 - [Setup](#setup)
   - [1. Dependencies Installation](#1-dependencies-installation)
