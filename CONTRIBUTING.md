@@ -214,12 +214,12 @@ In this project, the example app at the `uws-react-native/example` directory is 
 ⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
 
 ### 3. IDE Setup for React Native and Node.js
-The entire repository is containing actual React Native files, and our Node.js files. The Node.js part files are just our tooling files which not included in the final build or in NPM registry or GitHub Packages, and some React Native files like in the example directory is not part of the final build.
+The entire repository is containing actual React Native files, and our Node.js files. The Node.js part files are just our tooling files which not included in the final build or in NPM registry and GitHub Packages, and some React Native files like in the example directory is not part of the final build.
 
 To open React Native and Node.js files
 1. Open **Visual Studio Code**
-2. Open `uws-react-native` directory
-   The `package` directory is the actual `uws-react-native` library code, and the `example` directory is the example React Native app as the playground. Feel free to do any improvements and tests there.
+2. Open `uws-react-native` directory.  
+   See [Directories](#directories). The `package` directory is the actual `uws-react-native` library code, and the `example` directory is the example React Native app as the playground. Feel free to do any improvements and tests there.
 4. Happy Coding :)
 
 ---
@@ -256,7 +256,7 @@ Please, follow the [Google Objective-C Style Guide](https://google.github.io/sty
 ## Directories
 - `.github`: GitHub conventional directory, such as for GitHub Actions, pull request template, etc.
 - `example`: This is the React Native app as the playground of the library development
-- `package`: This is the actual `uws-react-native` library source code lives. This directory will be used as the actual `uws-react-native` library in the npm registry
+- `package`: This is the actual `uws-react-native` library source code lives. This directory will be used as the actual `uws-react-native` library in the NPM registry and GitHub Packages
 - `package-builder`: This directory is our custom scripts for the builder of the actual library with hard-coded path configuration to the `package` directory (you can read [this documentation](https://callstack.github.io/react-native-builder-bob/build)).
   This directory does also contain our `uws-mod` script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
 and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository
