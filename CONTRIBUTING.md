@@ -19,6 +19,8 @@ Thank you for your support to this library. This documentation will help you how
   - [Objective-C](#objective-c)
 - [About the Example App and the Library in Monorepo Setup](#about-the-example-app-and-the-library-in-monorepo-setup)
 
+---
+
 ## Knowledges
 To contribute to this project, we assummed that you know about app development with React Native including:
 - **JavaScript** or **TypeScript** language as the bridge for library users to consume native modules of platform and for the build user interface with [React.js](https://react.dev) in the React Native app
@@ -29,6 +31,8 @@ To contribute to this project, we assummed that you know about app development w
 - A bit of [react-native-builder-bob](https://callstack.github.io/react-native-builder-bob) knowledges as the builder for React Native libraries for various targets
 
 You do not have to know it all at advanced level. **Feel free to learn and embrace it**. Do the actual fix and any improvements. I encourage you.
+
+---
 
 ## Environments
 Beforehand, let's admit that there are no perfect environment guides for your machine and your preferences.
@@ -144,11 +148,15 @@ You can open Android Studio > Settings > Language & Frameworks > Android SDK, an
 ### IDE for TypeScript and JavaScript
 Install [Visual Studio Code](https://code.visualstudio.com/) in your macOS, Linux, or Windows machine. In addition, install [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) in your Visual Studio Code. TypeScript compiler and ESLint will check our code quickly without manually run `tsc` and `eslint` command to check the cleaness and potential bug by ESLint, and compiler warn and error by TypeScript.
 
+---
+
 ## Clone
 Clone this repository in your machine
 ```
 git clone https://github.com/RakaDoank/uws-react-native.git
 ```
+
+---
 
 ## Setup
 Make your environment is ready and the repository has been cloned. After that, do these next steps
@@ -197,6 +205,8 @@ To setup the React Native app and link the actual (`uwas-react-native`) library 
 #### macOS
 ⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
 
+---
+
 ## Run the Example App
 
 ### Android
@@ -206,6 +216,8 @@ Run your Android emulator first, and then go to the `example` directory, run `np
 For iOS, you need to run your iPhone/iPad Simulator first.
 
 After it's completely booted up, you can run the app. Go the `example` directory, run `npm run ios`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run ios` later.
+
+---
 
 ## Conventions
 
@@ -222,13 +234,17 @@ Please, follow the [Google Objective-C Style Guide](https://google.github.io/sty
 ### Objective-C
 Please, follow the [Google Objective-C Style Guide](https://google.github.io/styleguide/objcguide.html).
 
+---
+
 ## Directories
 - `.github`: GitHub conventional directory, such as for GitHub Actions, pull request template, etc.
 - `example`: This is the React Native app as the playground of the library development
 - `package`: This is the actual `uws-react-native` library source code lives. This directory will be used as the actual `uws-react-native` library in the npm registry
 - `package-builder`: This directory is our custom scripts for the builder of the actual library with hard-coded path configuration to the `package` directory (you can read [this documentation](https://callstack.github.io/react-native-builder-bob/build)).
   This directory does also contain our `uws-mod` script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
-and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository 
+and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository
+
+---
 
 ## About the Example App and the Library in Monorepo Setup
 The app was actually bootstrapped with [npx create-expo-app@latest](https://github.com/react-native-community/cli), but since this project is a monorepo setup with `PNPM` to scaffold both app and actual library deployment. There are modifications that have been done in the example app to split between the app, the actual `uws-react-native` library, and other development tools or the `devDependencies`
