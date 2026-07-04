@@ -141,6 +141,9 @@ You can open Android Studio > Settings > Language & Frameworks > Android SDK, an
 - NDK version >= 27.1.x
 - CMake version >= 3.22.1
 
+### IDE for TypeScript and JavaScript
+Install [Visual Studio Code](https://code.visualstudio.com/) in your macOS, Linux, or Windows machine. In addition, install [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) in your Visual Studio Code. TypeScript compiler and ESLint will check our code quickly without manually run `tsc` and `eslint` command to check the cleaness and potential bug by ESLint, and compiler warn and error by TypeScript.
+
 ## Clone
 Clone this repository in your machine
 ```
