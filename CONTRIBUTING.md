@@ -9,7 +9,7 @@ Thank you for your support to this library. This documentation will help you how
   - [2. IDE Setup for Library Development with Example App](#2-ide-setup-for-library-development-with-example-app)
     - [Android](#android)
     - [iOS](#ios)
-    - [macOS](#macos)
+    - [macOS](#macos-1)
 - [Run the Example App](#run-the-example-app)
   - [Android](#android-1)
   - [iOS](#ios-1)
