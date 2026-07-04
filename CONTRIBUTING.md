@@ -10,11 +10,11 @@ Thank you for your support to this library. This documentation will help you how
 - [Clone](#clone)
 - [Setup](#setup)
   - [1. Dependencies Installation](#1-dependencies-installation)
-  - [2. IDE Setup for Library Development with Example App](#2-ide-setup-for-library-development-with-example-app)
+  - [2. IDE Setup for Native Library Development](#2-ide-setup-for-native-library-development)
     - [Android](#android)
     - [iOS](#ios)
     - [macOS](#macos-1)
-    - [React Native, Node.js](#react-native-nodejs)
+  - [3. IDE Setup for React Native and Node.js](#3-ide-setup-for-react-native-and-nodejs)
 - [Run the Example App](#run-the-example-app)
   - [Android](#android-1)
   - [iOS](#ios-1)
@@ -186,9 +186,8 @@ and write it in our repository with correct directory setup. We prefer this rath
    ```
    This is an Expo script known as [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/) to build and write necessary Android and iOS files since those are ignored by GIT.
 
-### 2. IDE Setup for Library Development with Example App
-In this project, the example app at the `uws-react-native/example` directory is the app we will use as the library playground to use for the library development. The app was bootstrapped [Expo](https://expo.dev).
-To setup the React Native app and link the actual (`uwas-react-native`) library itself are similar like the usual React Native or Expo CLI installation with autolinking of React Native libraries
+### 2. IDE Setup for Native Library Development
+In this project, the example app at the `uws-react-native/example` directory is the app we will use as the library playground to use for the library development. We do not do the development of React Native app there, instead we only writing our actual `uws-react-native` native library code
 
 #### Android
 1. Open **Android Studio**
@@ -214,10 +213,14 @@ To setup the React Native app and link the actual (`uwas-react-native`) library 
 #### macOS
 ⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
 
-#### React Native, Node.js
+### 3. IDE Setup for React Native and Node.js
+The entire repository is containing actual React Native files, and our Node.js files. The Node.js part files are just our tooling files which not included in the final build or in NPM registry or GitHub Packages, and some React Native files like in the example directory is not part of the final build.
+
+To open React Native and Node.js files
 1. Open **Visual Studio Code**
 2. Open `uws-react-native` directory
-3. Happy Coding :)
+   The `package` directory is the actual `uws-react-native` library code, and the `example` directory is the example React Native app as the playground. Feel free to do any improvements and tests there.
+4. Happy Coding :)
 
 ---
 
