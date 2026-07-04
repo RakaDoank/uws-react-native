@@ -194,6 +194,7 @@ To setup the React Native app and link the actual (`uwas-react-native`) library 
 2. Sync project with gradle files
    > If you have encountered a problem issue such as `cannot run program 'node'` or similar, you can run the example android app first, see [run the example app](#run-the-example-app), and retry the Gradle sync in Android Studio
 4. In the sidebar explorer of Android Studio with `Android` mode directory, you should can see our `cpp` directory in the `app` directory. The `cpp` directory is where the library C++ code lives you can actually do any fixes
+5. Happy Coding :)
 
 #### iOS
 1. Open your terminal
@@ -203,8 +204,9 @@ To setup the React Native app and link the actual (`uwas-react-native`) library 
    pod install
    ```
    You do not have do this everytime. Running `npm run prebuild` in the example directory is also doing pod installation internally
-4. Open the `uws-react-native/example/ios/example.xcworkspace` directory with **Xcode**
-5. You should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
+4. Open **Xcode**, and open the `uws-react-native/example/ios/example.xcworkspace` file
+5. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
+6. Happy Coding :)
 
 #### macOS
 ⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
