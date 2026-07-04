@@ -14,6 +14,7 @@ Thank you for your support to this library. This documentation will help you how
     - [Android](#android)
     - [iOS](#ios)
     - [macOS](#macos-1)
+    - [React Native, Node.js](#react-native-nodejs)
 - [Run the Example App](#run-the-example-app)
   - [Android](#android-1)
   - [iOS](#ios-1)
@@ -212,6 +213,11 @@ To setup the React Native app and link the actual (`uwas-react-native`) library 
 
 #### macOS
 ⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
+
+#### React Native, Node.js
+1. Open **Visual Studio Code**
+2. Open `uws-react-native` directory
+3. Happy Coding :)
 
 ---
 
