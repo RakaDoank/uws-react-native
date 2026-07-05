@@ -7,6 +7,16 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 
 > ⚠️ uws-react-native is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
 
+- [Installation](#installation)
+  - [From NPM Registry](#from-npm-registry)
+  - [From GitHub Packages](#from-github-packages)
+- [Usage](#usage)
+- [Compatibility](#compatibility)
+  - [Platform](#platform)
+  - [Unsupported APIs](#unsupported-apis)
+  - [New APIs](#new-apis)
+  - [Development & Research](#development--research)
+
 ## Installation
 
 We provide two registry homes where this library lives which can be used for your project. You can use either it's from NPM registry or GitHub Packages
