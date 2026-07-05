@@ -22,6 +22,7 @@ Thank you for your support to this library. This documentation will help you how
   - [JavaScript/TypeScript](#javascripttypescript)
   - [Java/Kotlin](#javakotlin)
   - [Objective-C](#objective-c)
+- [Directories](#directories)
 - [About the Example App and the Library in Monorepo Setup](#about-the-example-app-and-the-library-in-monorepo-setup)
 
 ---
