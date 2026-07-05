@@ -108,7 +108,7 @@ There are some new APIs in uws-react-native. The most reason is because of the d
 ## Contributing
 
 Thank you for your support to this project.
-See [Contributing](https://github.com/RakaDoank/uws-react-native?tab=contributing-ov-file) for more information to help you get started with your contributions.
+See [Contributing](https://github.com/RakaDoank/uws-react-native?tab=contributing-ov-file#contributing) for more information to help you get started with your contributions.
 
 ## Development & Research
 
