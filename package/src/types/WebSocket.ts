@@ -6,23 +6,20 @@ import type {
  * A WebSocket connection that is valid from open to close event.
  * Read more about this in the user manual.
  */
-export interface WebSocket/* <UserData> */ {
+export interface WebSocket<UserData> {
 	/**
-	 * Sends a message. Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure that will drain over time. You can check backpressure before or after sending by calling getBufferedAmount().
-     *
-     * Make sure you properly understand the concept of backpressure. Check the backpressure example file.
+	 * Forcefully closes this WebSocket. Immediately calls the close handler.
+     * No WebSocket close message is sent.
      */
-	send(
-		message: RecognizedString,
-		isBinary?: boolean,
-		compress?: boolean,
-	) : number,
+	close() : void,
 
 	/**
-	 * Returns the bytes buffered in backpressure. This is similar to the bufferedAmount property in the browser counterpart.
-     * Check backpressure example.
-     */
-	getBufferedAmount() : number,
+	 * See `HttpResponse.cork`.
+	 * Takes a function in which the socket is corked (packing many sends into one single syscall/SSL block)
+	 */
+	cork(
+		cb: () => void,
+	) : WebSocket<UserData>,
 
 	/**
 	 * Gracefully closes this WebSocket. Immediately calls the close handler.
@@ -34,31 +31,40 @@ export interface WebSocket/* <UserData> */ {
 	) : void,
 
 	/**
-	 * Forcefully closes this WebSocket. Immediately calls the close handler.
-     * No WebSocket close message is sent.
+	 * Returns the bytes buffered in backpressure. This is similar to the bufferedAmount property in the browser counterpart.
+     * Check backpressure example.
      */
-	close() : void,
+	getBufferedAmount() : number,
 
 	/**
-	 * Sends a ping control message. Returns sendStatus similar to WebSocket.send (regarding backpressure). This helper function correlates to WebSocket::send(message, uWS::OpCode::PING, ...) in C++.
-	 */
-	ping(
-		message?: RecognizedString,
-	) : number,
+	 * Returns the remote IP address. Note that the returned IP is binary, not text.
+     *
+     * IPv4 is 4 byte long and can be converted to text by printing every byte as a digit between 0 and 255.
+     * IPv6 is 16 byte long and can be converted to text in similar ways, but you typically print digits in HEX.
+     *
+     * See getRemoteAddressAsText() for a text version.
+     */
+	getRemoteAddress() : ArrayBuffer,
 
 	/**
-	 * Subscribe to a topic.
+	 * Returns the remote IP address as text.
 	 */
-	subscribe(
-		topic: RecognizedString,
-	) : boolean,
+	getRemoteAddressAsText() : string,
 
 	/**
-	 * Unsubscribe from a topic. Returns true on success, if the WebSocket was subscribed.
+	 * Returns the remote port number.
 	 */
-	unsubscribe(
-		topic: RecognizedString,
-	) : boolean,
+	getRemotePort() : number,
+
+	/**
+	 * Returns a list of topics this websocket is subscribed to.
+	 */
+	getTopics() : string[],
+
+	/**
+	 * Returns the UserData object.
+	 */
+	getUserData() : UserData,
 
 	/**
 	 * Returns whether this websocket is subscribed to topic.
@@ -68,9 +74,11 @@ export interface WebSocket/* <UserData> */ {
 	) : boolean,
 
 	/**
-	 * Returns a list of topics this websocket is subscribed to.
+	 * Sends a ping control message. Returns sendStatus similar to WebSocket.send (regarding backpressure). This helper function correlates to WebSocket::send(message, uWS::OpCode::PING, ...) in C++.
 	 */
-	getTopics() : string[],
+	ping(
+		message?: RecognizedString,
+	) : number,
 
 	/**
 	 * Publish a message under topic. Backpressure is managed according to maxBackpressure, closeOnBackpressureLimit settings.
@@ -84,38 +92,15 @@ export interface WebSocket/* <UserData> */ {
 	) : boolean,
 
 	/**
-	 * See `HttpResponse.cork`. Takes a function in which the socket is corked (packing many sends into one single syscall/SSL block)
-	 */
-	cork(
-		cb: () => void,
-	) : WebSocket/* <UserData> */,
-
-	/**
-	 * Returns the remote IP address. Note that the returned IP is binary, not text.
+	 * Sends a message. Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure that will drain over time. You can check backpressure before or after sending by calling getBufferedAmount().
      *
-     * IPv4 is 4 byte long and can be converted to text by printing every byte as a digit between 0 and 255.
-     * IPv6 is 16 byte long and can be converted to text in similar ways, but you typically print digits in HEX.
-     *
-     * See getRemoteAddressAsText() for a text version.
-	 * 
-	 * @experimental It's an experimental due to unstable of ArrayBuffer support from React Native.
+     * Make sure you properly understand the concept of backpressure. Check the backpressure example file.
      */
-	getRemoteAddress() : ArrayBuffer,
-
-	/**
-	 * Returns the remote IP address as text.
-	 */
-	getRemoteAddressAsText() : /* ArrayBuffer */string,
-
-	/**
-	 * Returns the remote port number.
-	 */
-	getRemotePort() : number,
-
-	/**
-	 * Returns the UserData ~object~ string.
-	 */
-	getUserData() : /* UserData */string,
+	send(
+		message: RecognizedString,
+		isBinary?: boolean,
+		compress?: boolean,
+	) : number,
 
 	/**
 	 * Sends the first fragment of a fragmented message. Use for sending large messages in chunks.
@@ -144,4 +129,18 @@ export interface WebSocket/* <UserData> */ {
 		message: RecognizedString,
 		compress?: boolean,
 	) : number,
+
+	/**
+	 * Subscribe to a topic.
+	 */
+	subscribe(
+		topic: RecognizedString,
+	) : boolean,
+
+	/**
+	 * Unsubscribe from a topic. Returns true on success, if the WebSocket was subscribed.
+	 */
+	unsubscribe(
+		topic: RecognizedString,
+	) : boolean,
 }

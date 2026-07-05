@@ -8,6 +8,7 @@
 #include "HttpResponseObject.h"
 #include "HttpResponseObjectProvider.h"
 #include "RecognizedString.h"
+#include "WebSocketBehaviorImpl.h"
 #include "uWebSockets/App.h"
 
 namespace uws_react_native {
@@ -368,6 +369,33 @@ public:
                              isBinary ? uWS::OpCode::BINARY : uWS::TEXT,
                              compress);
     }));
+
+    // TODO `WebSocketObject` and `WebSocketBehaviorImpl` are not properly implemented yet
+//    this->setProperty(rt,
+//                      "ws",
+//                      facebook::jsi::Function::createFromHostFunction(rt,
+//                                                                      facebook::jsi::PropNameID::forUtf8(rt, "ws"),
+//                                                                      2,
+//                                                                      [&appRunner, &jsInvoker](facebook::jsi::Runtime &rt_1,
+//                                                                                               const facebook::jsi::Value &thisValue,
+//                                                                                               const facebook::jsi::Value *arguments,
+//                                                                                               size_t count) -> facebook::jsi::Value {
+//#ifdef REACT_NATIVE_DEBUG
+//      if(!arguments) {
+//        throw facebook::jsi::JSError(rt_1, "Expected pattern and WebSocketBehaviour argument");
+//      }
+//      if(!arguments[1].isObject()) {
+//        throw facebook::jsi::JSError(rt_1, "Expected a WebSocketBehaviour object in the second argument");
+//      }
+//#endif
+//
+//      auto pattern = RecognizedString(rt_1, arguments[0]).getString();
+//      auto behavior = WebSocketBehaviorImpl(rt_1, jsInvoker, arguments[1].asObject(rt_1));
+//
+//      appRunner.app.ws(pattern, std::move(behavior));
+//
+//      return {rt_1, thisValue};
+//    }));
 
     // +++++ ROUTER +++++
 

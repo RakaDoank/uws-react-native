@@ -28,7 +28,7 @@ import type {
 
 // import type {
 // 	WebSocketBehavior,
-// } from "./WebSocketBehaviour"
+// } from "./WebSocketBehavior"
 
 // import type {
 // 	us_listen_socket,
@@ -175,9 +175,9 @@ export interface TemplatedApp {
 	// /**
 	//  * Registers a handler matching specified URL pattern where WebSocket upgrade requests are caught.
 	//  */
-	// ws/* <UserData> */(
+	// ws<UserData>(
 	// 	pattern: RecognizedString,
-	// 	behavior: WebSocketBehavior/* <UserData> */,
+	// 	behavior: WebSocketBehavior<UserData>,
 	// ) : TemplatedApp,
 
 	// we can't provide this in Reaact Native
