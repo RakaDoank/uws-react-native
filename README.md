@@ -15,7 +15,8 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
   - [Platform](#platform)
   - [Unsupported APIs](#unsupported-apis)
   - [New APIs](#new-apis)
-  - [Development & Research](#development--research)
+- [Contributing](#contributing)
+- [Development & Research](#development--research)
 
 ## Installation
 
@@ -103,6 +104,11 @@ There are some new APIs in uws-react-native. The most reason is because of the d
   - `onFullDataText`. Same as the `onFullData`, but provides the body data in raw text instead of ArrayBuffer. This is useful if you are using React Native 0.84 version or older because TextDecoder is natively supported only in React Native 0.85 version
 
 ---
+
+## Contributing
+
+Thank you for your support to this project.
+See [Contributing](https://github.com/RakaDoank/uws-react-native?tab=contributing-ov-file) for more information to help you get started with your contributions.
 
 ## Development & Research
 
