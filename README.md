@@ -5,7 +5,7 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
 - **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
 
-> ⚠️ uws-react-native is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
+> ⚠️ WebSocket server is not implemented yet
 
 - [Installation](#installation)
   - [From NPM Registry](#from-npm-registry)
@@ -20,7 +20,7 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 
 ## Installation
 
-We provide two registry homes where this library lives which can be used for your project. You can use either it's from NPM registry or GitHub Packages
+We provide two registry homes where this library lives which can be used for your project. You can use either it is from NPM registry or GitHub Packages. It has absolutely **no external JavaScript dependencies**
 
 ### From NPM Registry
 
@@ -122,11 +122,11 @@ We are embracing the main chaos of supporting uWebSockets in React Native archit
 
 Intentionally, we make the uWebSockets will runs in another thread, therefore we have to make sure the communication safety between uWebSockets runner thread to the JS thread and vice versa. In theory, we can make uWebSockets runs in the main thread, but the app will be unusable, and then force closing the app is the only way to stop the server.
 
-Yet, we only use one dedicated thread per uWebSockets run. I am in my own research to improve this by maximizing it to the hardware concurrency limit, but also to be careful about JavaScript runtime, because we have no control of it.
+Yet, we only use one dedicated thread per uWebSockets runner. I am in my own research to find better way to improve this by maximizing it to the hardware concurrency limit. Basically, if you run the `App` with two instance or more in JavaScript side, and with the same port listening number, you actually run the uWebSockets in multiple thread, but the JavaScript is still in single thread. It is single thread by default in React Native, we have no control of it.
 
 We have another issue because of the uWebSockets runs in another thread. From the JSI C++ side, we have to assume any JavaScript functions as a callback especially the route method handler are asynchronous. We cannot make a sync call to the JavaScript function from an arbitrary thread to the JavaScript thread, and due to the asynchronous call, it makes the JavaScript call to the uWebSockets instances is late.
 
-There some topics you may to read regarding this threading research
+There some topics regarding the threading
 
 #### Predefined Instances
 
@@ -142,6 +142,10 @@ For the `onData` and `onDataV2`, we have predefined it with a single `onDataV2` 
 
 #### About Worker Thread
 
-In theory, we can create another JavaScript runtime with [react-native-worklets](https://docs.swmansion.com/react-native-worklets/) and tie with our uWebSockets runner. It would solve a lot of late communication problem between uWebSockets runner and JavaScript thread that we embrace right now, but it also introduces new major issue, which is developer experience. It sounds like not a big problem, but it may bigger than you think.
+In theory, we can create another JavaScript runtime with [react-native-worklets](https://docs.swmansion.com/react-native-worklets/) and tie with our uWebSockets runner. It would solve a lot of late communication problem between uWebSockets runner and JavaScript thread that we embrace right now, but it also introduces new major issue, which is making other native libraries unavailable.
 
-Think of this sample case, you want to use uws-react-native server for a simple CRUD with a local database in an app. You probably know SQLite can be used in Android, iOS, macOS, even Windows app, with your own adapter or a known library that support SQLite integration in React Native such as [op-sqlite](https://github.com/OP-Engineering/op-sqlite), and [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite). If you want to use that known library, this case would not works at all, because op-sqlite and/or Expo SQLite is tied to the default JavaScript runtime. Even, you cannot use any React Native non-JS-only libraries in arbitrary JavaScript thread that has created by react-native-worklets if the library you want to use is using the default JavaScript runtime. If you really want to achieve the goal of this case, you have to create your own library for the SQLite database by yourself and tie-up with the JavaScript runtime. Probably, in the future we would still provide that worker thread with react-native-worklets.
+Think of this sample case, you want to use `uws-react-native` server for a simple CRUD with a local database in an app. You probably know SQLite can be used in Android, iOS, macOS, even Windows app, with your own adapter or a known library that support SQLite integration in React Native such as [op-sqlite](https://github.com/OP-Engineering/op-sqlite), and [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite). If you want to use that known library, this case would not works at all, because [op-sqlite](https://github.com/OP-Engineering/op-sqlite) and/or [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite) is tied to the default JavaScript runtime. Even, you cannot use any React Native native libraries in arbitrary JavaScript thread that has created by [react-native-worklets](https://docs.swmansion.com/react-native-worklets/) if the library you want to use is using the default JavaScript runtime. If you really want to achieve the goal of this case, you have to create your own library for the SQLite database by yourself and tie-up with the JavaScript runtime. Probably, in the future we would still provide that worker thread with [react-native-worklets](https://docs.swmansion.com/react-native-worklets/).
+
+##### Possibility Fixes
+
+If the native library you want to use is using [react-native-nitro-modules](https://github.com/mrousavy/nitro), you can use the library in arbitrary JavaScript thread that created by [react-native-worklets](https://docs.swmansion.com/react-native-worklets/), because the [Nitro itself is fully runtime-agnostic](https://nitro.margelo.com/docs/guides/worklets). In short, our uWebSockets runner can run in truly multiple threads approach by making your JavaScript thread also run in multiple threads with [react-native-worklets](https://docs.swmansion.com/react-native-worklets/).
