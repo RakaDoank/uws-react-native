@@ -20,6 +20,7 @@ Thank you for your support to this library. This documentation will help you how
   - [iOS](#ios-1)
 - [Conventions](#conventions)
   - [JavaScript/TypeScript](#javascripttypescript)
+  - [C++](#c)
   - [Java/Kotlin](#javakotlin)
   - [Objective-C](#objective-c)
 - [Directories](#directories)
