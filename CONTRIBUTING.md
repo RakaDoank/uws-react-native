@@ -246,8 +246,22 @@ While development, ensure that your ESLint Extension of your Visual Studio Code 
 
 You can check the lint rules at [uws-react-native/eslint.config.mjs](https://github.com/RakaDoank/uws-react-native/blob/main/eslint.config.mjs) and the `compilerOptions` of TypeScript at [uws-react-native/tsconfig.json](https://github.com/RakaDoank/uws-react-native/blob/main/tsconfig.base.json) and other `tsconfig.json` files in the `example` and `package` directory.
 
+### C++
+
+Follow the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions), except the [Pointer and Reference Expressions and Types](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions).
+
+In this project, the pointer and reference expression is close to the variable name
+```cpp
+int *fooNumber = new int(67);
+```
+
+We do not express pointer and reference close to the data type like this below
+```cpp
+int* fooNumber = new int(67);
+```
+
 ### Java/Kotlin
-Please, follow the [Google Objective-C Style Guide](https://google.github.io/styleguide/).
+Please, follow the [Google Java Style Guide](https://google.github.io/styleguide/) and [Kotlin Style Guide](https://developer.android.com/kotlin/style-guide).
 
 ### Objective-C
 Please, follow the [Google Objective-C Style Guide](https://google.github.io/styleguide/objcguide.html).
