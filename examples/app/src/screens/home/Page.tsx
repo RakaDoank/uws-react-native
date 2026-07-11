@@ -173,33 +173,14 @@ export function Page() {
 
 				try {
 					const
-						json =
-							JSON.stringify({
-								boolean: {
-									true: true,
-									false: false,
-								},
-								number: {
-									negative: -1,
-									zero: 0,
-									positive: 1,
-								},
-								string: "Ich liebe dich",
-								array: {
-									boolean: [true, false, true, false],
-									number: [-1024, 0, 1024],
-									string: ["Ich", "liebe", "dich"],
-								},
-							}),
-
 						resJson =
 							await fetch(`${SERVER_BASE_URL}/read-json-from-arraybuffer`, {
 								method: "POST",
-								body: json,
+								body: jsonString,
 							})
 								.then(res => res.text())
 
-					if(resJson === json) {
+					if(resJson === jsonString) {
 						itemRefs.current[3]?.setState({
 							status: "finished",
 							message: "Valid JSON",
@@ -223,33 +204,14 @@ export function Page() {
 
 				try {
 					const
-						json =
-							JSON.stringify({
-								boolean: {
-									true: true,
-									false: false,
-								},
-								number: {
-									negative: -1,
-									zero: 0,
-									positive: 1,
-								},
-								string: "Ich liebe dich",
-								array: {
-									boolean: [true, false, true, false],
-									number: [-1024, 0, 1024],
-									string: ["Ich", "liebe", "dich"],
-								},
-							}),
-
 						resJson =
 							await fetch(`${SERVER_BASE_URL}/read-json-from-text`, {
 								method: "POST",
-								body: json,
+								body: jsonString,
 							})
 								.then(res => res.text())
 
-					if(resJson === json) {
+					if(resJson === jsonString) {
 						itemRefs.current[4]?.setState({
 							status: "finished",
 							message: "Valid JSON",
@@ -387,4 +349,23 @@ const
 		5000,
 
 	SERVER_BASE_URL =
-		`http://localhost:${PORT}`
+		`http://localhost:${PORT}`,
+
+	jsonString =
+		JSON.stringify({
+			boolean: {
+				true: true,
+				false: false,
+			},
+			number: {
+				negative: -1,
+				zero: 0,
+				positive: 1,
+			},
+			string: "Ich liebe dich",
+			array: {
+				boolean: [true, false, true, false],
+				number: [-1024, 0, 1024],
+				string: ["Ich", "liebe", "dich"],
+			},
+		})
