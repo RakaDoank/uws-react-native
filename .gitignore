@@ -27,8 +27,8 @@ yarn-error.log
 expo-env.d.ts
 
 # Example App
-/example/android/
-/example/ios/
+/examples/*/android/
+/examples/*/ios/
 
 # Package
 /package/android/build/

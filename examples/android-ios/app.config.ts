@@ -62,9 +62,24 @@ export default {
 			},
 		],
 		[
-			"expo-image-picker",
+			"expo-font",
 			{
-				photosPermission: "The app accesses your photos to build Material Color from the selected photo.",
+				"fonts": [
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Thin.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Thin-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-ExtraLight.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-ExtraLight-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Light.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Light-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Regular.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Medium.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Medium-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-SemiBold.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-SemiBold-Italic.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Bold.ttf",
+					"../../node_modules/@audira/carbon-react-native/assets/fonts/IBMPlexSans-Bold-Italic.ttf",
+				],
 			},
 		],
 		[
@@ -83,7 +98,7 @@ export default {
 
 	experiments: {
 		autolinkingModuleResolution: true,
-		typedRoutes: true,
+		typedRoutes: false,
 		reactCompiler: false,
 	},
 

@@ -79,7 +79,7 @@ pnpm install @rakadoank/uws-react-native
 Since uws-react-native is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
 You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example.
 
-This repository does also contain the [example](https://github.com/RakaDoank/uws-react-native/blob/main/example/src/app/index.tsx) app. You can also refer to it, but it is currently for library development playground rather than proper example.
+This repository does also contain the [server example](https://github.com/RakaDoank/uws-react-native/blob/main/examples/app/screens/home/_use-server.ts). You can also refer to it, but it is currently for library development playground rather than proper example.
 
 ## Compatibility
 

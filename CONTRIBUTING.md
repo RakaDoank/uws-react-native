@@ -182,7 +182,7 @@ Make your environment is ready and the repository has been cloned. After that, d
    This is our custom script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
 and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository.
 
-3. Finally, locate to the `uws-react-native/example` directory in your terminal, and then run
+3. Finally, locate to the `uws-react-native/examples/android-ios` directory in your terminal, and then run
    ```
    pnpm run prebuild
    ```
@@ -193,7 +193,7 @@ In this project, the example app at the `uws-react-native/example` directory is 
 
 #### Android
 1. Open **Android Studio**
-2. Open `uws-react-native/example/android` directory
+2. Open `uws-react-native/examples/android-ios/android` directory
 3. Sync project with gradle files
    > If you have encountered a problem issue such as `cannot run program 'node'` or similar, you can run the example android app first, see [run the example app](#run-the-example-app), and retry the Gradle sync in Android Studio
 4. In the sidebar explorer of Android Studio with `Android` mode directory, you should can see our `cpp` directory inside of `app` directory. The `cpp` directory is where the library C++ code lives you can actually do any fixes
@@ -201,14 +201,14 @@ In this project, the example app at the `uws-react-native/example` directory is 
 
 #### iOS
 1. Open your terminal
-2. Go to `uws-react-native/example/ios` directory
+2. Go to `uws-react-native/examples/android-ios/ios` directory
 3. Install the pods by run this command
    ```
    pod install
    ```
    You do not have do this everytime. Running `npm run prebuild` in the example directory is also doing pod installation internally
 4. Open **Xcode**
-5. Open `uws-react-native/example/ios/example.xcworkspace` file
+5. Open `uws-react-native/examples/android-ios/ios/example.xcworkspace` file
 6. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
 7. Happy Coding :)
 
@@ -221,7 +221,7 @@ The entire repository is containing actual React Native files, and our Node.js f
 To open React Native and Node.js files
 1. Open **Visual Studio Code**
 2. Open `uws-react-native` directory.  
-   See [Directories](#directories). The `package` directory is the actual `uws-react-native` library code, and the `example` directory is the example React Native app as the playground. Feel free to do any improvements and tests there.
+   See [Directories](#directories). The `package` directory is the actual `uws-react-native` library code, and the `examples` directory is the example React Native app as the playground. Feel free to do any improvements and tests there.
 4. Happy Coding :)
 
 ---
@@ -229,12 +229,12 @@ To open React Native and Node.js files
 ## Run the Example App
 
 ### Android
-Run your Android emulator first, and then go to the `example` directory, run `npm run android`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run android` later.
+Run your Android emulator first, and then go to the `examples/android-ios` directory, run `npm run android`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run android` later.
 
 ### iOS
 For iOS, you need to run your iPhone/iPad Simulator first.
 
-After it's completely booted up, you can run the app. Go the `example` directory, run `npm run ios`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run ios` later.
+After it's completely booted up, you can run the app. Go the `examples/android-ios` directory, run `npm run ios`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run ios` later.
 
 ---
 
@@ -271,7 +271,9 @@ Please, follow the [Google Objective-C Style Guide](https://google.github.io/sty
 
 ## Directories
 - `.github`: GitHub conventional directory, such as for GitHub Actions, pull request template, etc.
-- `example`: This is the React Native app as the playground of the library development
+- `examples`: This is the React Native app as the playground of the library development
+  - `android-ios`: An example React Native app with Expo
+  - `app`: A shared module for uws-react-native server and client example that can be used for multiple example host apps
 - `package`: This is the actual `uws-react-native` library source code lives. This directory will be used as the actual `uws-react-native` library in the NPM registry and GitHub Packages
 - `package-builder`: This directory is our custom scripts for the builder of the actual library with hard-coded path configuration to the `package` directory (you can read [this documentation](https://callstack.github.io/react-native-builder-bob/build)).
   This directory does also contain our `uws-mod` script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
@@ -280,7 +282,7 @@ and write it in our repository with correct directory setup. We prefer this rath
 ---
 
 ## About the Example App and the Library in Monorepo Setup
-The app was actually bootstrapped with [npx create-expo-app@latest](https://github.com/react-native-community/cli), but since this project is a monorepo setup with `PNPM` to scaffold both app and actual library deployment. There are modifications that have been done in the example app to split between the app, the actual `uws-react-native` library, and other development tools or the `devDependencies`
-- `uws-react-native/example/metro.config.js`: The example app has to know where the actual `uws-react-native` directory lives without including the `uws-react-native` in the `dependencies` of the `package.json` example app
-- `uws-react-native/example/react-native.config.js`: Since the actual `uws-react-native` library is not included as `dependencies` in the `package.json` file of example app, we have to tell React Native CLI where the `uws-react-native` directory lives to auto-linked the example app with `uws-react-native` library in development
-- `@react-native/eslint-config` development dependency (`devDependencies`) was moved out to the root of `package.json` (repository) from the `example` app
+The app was actually bootstrapped with [npx create-expo-app@latest](https://github.com/react-native-community/cli), but since this project is a monorepo setup with `PNPM` to scaffold both app and actual library deployment. There are modifications that have been done in the examples app to split between the app, the actual `uws-react-native` library, and other development tools or the `devDependencies`
+- `uws-react-native/examples/android-ios/metro.config.js`: The example app has to know where the actual `uws-react-native` directory lives without including the `uws-react-native` in the `dependencies` of the `package.json` example app
+- `uws-react-native/examples/android-ios/react-native.config.js`: Since the actual `uws-react-native` library is not included as `dependencies` in the `package.json` file of example app, we have to tell React Native CLI where the `uws-react-native` directory lives to auto-linked the example app with `uws-react-native` library in development
+- `@react-native/eslint-config` development dependency (`devDependencies`) was moved out to the root of `package.json` (repository) from the `examples/android-ios` app

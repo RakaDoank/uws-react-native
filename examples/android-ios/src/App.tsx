@@ -4,26 +4,34 @@ import {
 } from "react-native"
 
 import {
-	Stack,
-} from "expo-router"
-
-import {
 	CarbonReactNative,
 	CarbonStyleSheet,
+	DialogProvider,
+	ToastProvider,
 } from "@audira/carbon-react-native"
 
-export default function Layout() {
+import {
+	Screens,
+} from "@examples/app"
+
+import {
+	SafeAreaProvider,
+} from "react-native-safe-area-context"
+
+export function App() {
 
 	return (
-		<CarbonReactNative>
-			<BgView>
-				<Stack
-					screenOptions={{
-						headerShown: false,
-					}}
-				/>
-			</BgView>
-		</CarbonReactNative>
+		<SafeAreaProvider>
+			<CarbonReactNative>
+				<ToastProvider>
+					<DialogProvider>
+						<BgView>
+							<Screens.Home.Page/>
+						</BgView>
+					</DialogProvider>
+				</ToastProvider>
+			</CarbonReactNative>
+		</SafeAreaProvider>
 	)
 
 }

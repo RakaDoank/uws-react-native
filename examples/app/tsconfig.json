@@ -1,0 +1,16 @@
+{
+	"extends": [
+		"expo/tsconfig.base",
+		"../../tsconfig.base.json"
+	],
+	"compilerOptions": {
+		"jsx": "react-native",
+		"paths": {
+			"uws-react-native": ["../../package/src/index.ts"]
+		}
+	},
+	"include": [
+		"../../package/src/**/*",
+		"./src/**/*"
+	]
+}

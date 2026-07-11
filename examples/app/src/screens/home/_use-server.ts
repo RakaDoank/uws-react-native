@@ -2,20 +2,23 @@ import {
 	useEffect,
 } from "react"
 
-import {
-	View,
-} from "react-native"
-
-import {
-	CarbonStyleSheet,
-	Text,
-} from "@audira/carbon-react-native"
-
 import * as uWS from "uws-react-native"
 
-export default function Page() {
-
-	CarbonStyleSheet.use()
+/**
+ * This is the actual uWebSockets server.
+ * 
+ * You need to run the server inside of useEffect.
+ * Otherwise, your server may run forever until the app is killed.
+ * 
+ * `useEffect` is a perfect tool for production usage, and even in development.
+ * 
+ * In development mode, you can try update these code below, and the server will be restarted automatically because of the `useEffect` cycle
+ */
+export function useServer({
+	port,
+}: {
+	port: number,
+}) {
 
 	useEffect(() => {
 		const app = uWS.App()
@@ -40,31 +43,6 @@ export default function Page() {
 			if(!isAborted) {
 				res.end("long operation")
 			}
-		})
-
-		app.get("/data/:foo/:bar", (res, req) => {
-			res.onAborted(() => {
-				console.log("onAbort")
-			})
-
-			const forEachResult: Record<string, string> = {}
-
-			req.forEach((key, val) => {
-				forEachResult[key] = val
-			})
-
-			res.writeHeader("content-type", "application/json")
-			res.end(
-				JSON.stringify({
-					forEach: forEachResult,
-					getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
-					getHeader: req.getHeader("connection"),
-					getParameter: `${req.getParameter(0)} - ${req.getParameter("foo")} | ${req.getParameter(1)} - ${req.getParameter("bar")}`,
-					getMethod: req.getMethod(),
-					getUrl: req.getUrl(),
-					getQuery: req.getQuery() || null,
-				}),
-			)
 		})
 
 		app.get("/headers", (res, req) => {
@@ -152,61 +130,6 @@ export default function Page() {
 			})
 		})
 
-		// TextDecoder is supported only for React Native 0.85 and latest
-		app.post("/read-json-from-arraybuffer", res => {
-			let isAborted = false
-			res.onAborted(() => {
-				isAborted = true
-			})
-
-			if(!isAborted) {
-				res.onFullData(chunk => {
-					const textDecoder = new TextDecoder("utf-8")
-					const text = textDecoder.decode(chunk)
-					try {
-						const json = JSON.parse(text) as unknown
-
-						console.log("json", json)
-
-						if(!isAborted) {
-							// send it back in JSON
-							res.writeHeader("content-type", "application/json")
-							res.end(
-								JSON.stringify(json),
-							)
-						}
-					} catch {
-						res.end("not valid data")
-					}
-				})
-			}
-		})
-
-		app.post("/read-json-from-text", res => {
-			let isAborted = false
-			res.onAborted(() => {
-				isAborted = true
-			})
-
-			if(!isAborted) {
-				res.onFullDataText(body => {
-					try {
-						const json = JSON.parse(body) as unknown
-
-						if(!isAborted) {
-							// send it back in JSON
-							res.writeHeader("content-type", "application/json")
-							res.end(
-								JSON.stringify(json),
-							)
-						}
-					} catch {
-						res.end("not valid data")
-					}
-				})
-			}
-		})
-
 		app.post("/get-form-data", (res, req) => {
 			const requestContentType = req.getHeader("content-type")
 
@@ -270,8 +193,94 @@ export default function Page() {
 			}
 		})
 
+		// ++++++++++++++++++++++++++++++
+		// +++++ For UI tester tool +++++
+		// ++++++++++++++++++++++++++++++
+
+		app.get("/request/:foo/:bar", (res, req) => {
+			res.onAborted(() => {
+				console.log("onAbort")
+			})
+
+			const forEachResult: Record<string, string> = {}
+
+			req.forEach((key, val) => {
+				forEachResult[key] = val
+			})
+
+			res.writeHeader("content-type", "application/json")
+			res.end(
+				JSON.stringify({
+					forEach: forEachResult,
+					getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
+					getHeader: req.getHeader("connection"),
+					getParameter: `${req.getParameter(0)} - ${req.getParameter("foo")} | ${req.getParameter(1)} - ${req.getParameter("bar")}`,
+					getMethod: req.getMethod(),
+					getUrl: req.getUrl(),
+					getQuery: req.getQuery() || null,
+				}),
+			)
+		})
+
+		// TextDecoder is supported only for React Native 0.85 and latest
+		app.post("/read-json-from-arraybuffer", res => {
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
+			})
+
+			if(!isAborted) {
+				res.onFullData(chunk => {
+					const textDecoder = new TextDecoder("utf-8")
+					const text = textDecoder.decode(chunk)
+					try {
+						const json = JSON.parse(text) as unknown
+
+						if(!isAborted) {
+							// send it back in JSON
+							res.writeHeader("content-type", "application/json")
+							res.end(
+								JSON.stringify(json),
+							)
+						}
+					} catch {
+						res.end("not valid data")
+					}
+				})
+			}
+		})
+
+		app.post("/read-json-from-text", res => {
+			let isAborted = false
+			res.onAborted(() => {
+				isAborted = true
+			})
+
+			if(!isAborted) {
+				res.onFullDataText(body => {
+					try {
+						const json = JSON.parse(body) as unknown
+
+						if(!isAborted) {
+							// send it back in JSON
+							res.writeHeader("content-type", "application/json")
+							res.end(
+								JSON.stringify(json),
+							)
+						}
+					} catch {
+						res.end("not valid data")
+					}
+				})
+			}
+		})
+
+		// ------------------------------
+		// ----- For UI tester tool -----
+		// ------------------------------
+
 		// iOS will fail to listen/run the server without explicit host 127.0.0.1
-		app.listen("127.0.0.1", 5000, token => {
+		app.listen("127.0.0.1", port, token => {
 			if(token) {
 				console.log("Listening at 5000")
 			} else {
@@ -282,31 +291,8 @@ export default function Page() {
 		return () => {
 			app.close()
 		}
-	}, [])
-
-	return (
-		<View
-			style={ [
-				CarbonStyleSheet.g.py_09,
-				CarbonStyleSheet.g.px_05,
-			] }
-		>
-			<Text
-				style={ [
-					carbonStyleSheet.text,
-				] }
-			>
-				Hit the server from your PC to the Android Emulator (through ADB port forwarding) or to an Android device IP in the same network.
-			</Text>
-		</View>
-	)
+	}, [
+		port,
+	])
 
 }
-
-const
-	carbonStyleSheet =
-		CarbonStyleSheet.create({
-			text: {
-				color: CarbonStyleSheet.color.text_primary,
-			},
-		})

@@ -17,7 +17,7 @@ const
 		__dirname,
 
 	workspaceRoot =
-		node_path.resolve(projectRoot, ".."),
+		node_path.resolve(projectRoot, "..", ".."),
 
 	defaultConfig =
 		getDefaultConfig(__dirname)
@@ -34,10 +34,20 @@ const config = {
 
 	resolver: {
 		...defaultConfig.resolver,
+		assetExts: defaultConfig.resolver.assetExts.filter(ext => ext !== "svg"),
 		extraNodeModules: {
 			...(defaultConfig.resolver?.extraNodeModules ?? {}),
 			"uws-react-native": node_path.join(workspaceRoot, "package", "src"),
 		},
+		sourceExts: [
+			...defaultConfig.resolver.sourceExts,
+			"svg",
+		],
+	},
+
+	transformer: {
+		...defaultConfig.transformer,
+		babelTransformerPath: require.resolve("react-native-svg-transformer/expo"),
 	},
 
 };

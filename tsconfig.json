@@ -2,7 +2,10 @@
 	"files": [],
 	"references": [
 		{
-			"path": "./example"
+			"path": "./examples/android-ios"
+		},
+		{
+			"path": "./examples/app"
 		},
 		{
 			"path": "./package"

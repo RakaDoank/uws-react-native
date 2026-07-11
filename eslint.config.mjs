@@ -334,7 +334,7 @@ export default EslintConfig.defineConfig([
 		// React Native files
 
 		files: [
-			"./example/src/**/*.{ts,tsx}",
+			"./examples/*/src/**/*.{ts,tsx}",
 			"./package/src/**/*.{ts,tsx}",
 		],
 		settings: {
@@ -374,7 +374,7 @@ export default EslintConfig.defineConfig([
 
 	{
 		files: [
-			"./example/*.config.js",
+			"./examples/*/*.config.js",
 			"./scripts/**/*.{js,mjs}",
 			"./package/react-native.config.js",
 			"./package-builder/**/*.{js,mjs}",
