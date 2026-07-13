@@ -57,6 +57,14 @@ const
 
 // GitHub Release
 {
+	node_childProcess.execSync(
+		"pnpm pack --filter uws-react-native",
+		{
+			cwd: rootDir,
+			stdio: "inherit",
+		},
+	)
+
 	const
 		version =
 			originalPackageJson.version,
