@@ -63,7 +63,7 @@ pnpm
 pnpm install https://github.com/.../uws-react-native-X.X.X.tgz
 ```
 
-> You can also do the offline installation by downloading the tarball file first, and declare the local file name path in your `package.json` dependencies.
+> You can also do an offline installation by downloading the tarball file first, and do the regular installation with the CLI, but with the local file path.
 
 ### From GitHub Packages
 
