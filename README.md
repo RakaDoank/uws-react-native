@@ -103,9 +103,57 @@ pnpm install @rakadoank/uws-react-native
 ## Usage
 
 Since uws-react-native is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
-You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example.
+You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example, but **we recommend to create a server in `useEffect`**.
 
 This repository does also contain the [server example](https://github.com/RakaDoank/uws-react-native/blob/main/examples/app/src/screens/home/_use-server.ts). You can also refer to it, but it is currently for library development playground rather than proper example.
+
+A simple server example
+
+```tsx
+import { useEffect } from "react"
+import * as uWS from "uws-react-native"
+
+export function Component() {
+
+  // useEffect is perfect tool for production and even in development mode.
+  // In the development mode, any changes below will restart the server automatically because of the useEffect cycle
+  useEffect(() => {
+    const app = uWS.App()
+
+    app.get("/data/:foo/:bar", (res, req) => {
+      const fooSlug = req.getParameter("foo")
+      const barSlug = req.getParameter("bar")
+
+      res.writeHeader("content-type", "application/json")
+      res.end(
+        JSON.stringify({
+          foo: fooSlug,
+          bar: barSlug,
+        });
+      )
+    })
+
+    app.get("/my-page", res => {
+      res.write("<html><body>")
+      res.write("<h2>Hello World</h2>
+      res.end("</body></html>")
+    });
+
+    app.listen("127.0.0.1", 5000, token => {
+      if(token) {
+        console.log("Listening at port 5000")
+      } else {
+        console.log("Failed to listen")
+      }
+    })
+
+    return () => {
+      app.close()
+    }
+  }, [])
+
+}
+```
 
 ## Compatibility
 
