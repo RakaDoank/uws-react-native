@@ -11,10 +11,9 @@ const
 			rootDir,
 			"package",
 			"package.json",
-		)
+		),
 
-let
-	packageJson =
+	originalPackageJson =
 		JSON.parse(
 			node_fs.readFileSync(
 				packageJsonFilePath,
@@ -22,31 +21,71 @@ let
 			),
 		)
 
-// We have to use organization name or scope name for the library's name
-// Change the `uws-react-native` to `@rakadoank/uws-react-native`
-packageJson.name = "@rakadoank/uws-react-native"
+// GitHub Packages
+{
+	const packageJson = { ...originalPackageJson }
 
-// https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#publishing-a-package-using-publishconfig-in-the-packagejson-file
-packageJson.publishConfig = {
-	registry: "https://npm.pkg.github.com",
+	// We have to use organization name or scope name for the library's name
+	// Change the `uws-react-native` to `@rakadoank/uws-react-native`
+	packageJson.name = "@rakadoank/uws-react-native"
+
+	// https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#publishing-a-package-using-publishconfig-in-the-packagejson-file
+	packageJson.publishConfig = {
+		registry: "https://npm.pkg.github.com",
+	}
+
+	node_fs.writeFileSync(
+		packageJsonFilePath,
+		JSON.stringify(
+			packageJson,
+			null,
+			2,
+		),
+		{
+			encoding: "utf8",
+		},
+	)
+
+	node_childProcess.execSync(
+		"pnpm publish --filter uws-react-native --access public --no-git-checks",
+		{
+			cwd: rootDir,
+			stdio: "inherit",
+		},
+	)
 }
 
-node_fs.writeFileSync(
-	packageJsonFilePath,
-	JSON.stringify(
-		packageJson,
-		null,
-		2,
-	),
-	{
-		encoding: "utf8",
-	},
-)
+// GitHub Release
+{
+	const
+		version =
+			originalPackageJson.version,
 
-node_childProcess.execSync(
-	"pnpm publish --filter uws-react-native --access public --no-git-checks",
-	{
-		cwd: rootDir,
-		stdio: "inherit",
-	},
-)
+		/**
+		 * With double quotes
+		 */
+		gitTagArgument =
+			`"v${version}"`
+
+	// Create GitHub release
+	node_childProcess.execSync(
+		`gh release create ${gitTagArgument}` +
+			` --title ${gitTagArgument}` +
+			` --generate-notes`,
+		{
+			cwd: rootDir,
+			stdio: "inherit",
+		},
+	)
+
+	// Upload the tarball
+	node_childProcess.execSync(
+		`gh release upload ${gitTagArgument}` +
+			` uws-react-native-${version}.tgz` +
+			` --clobber`,
+		{
+			cwd: rootDir,
+			stdio: "inherit",
+		},
+	)
+}

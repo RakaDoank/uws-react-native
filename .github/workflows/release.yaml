@@ -40,6 +40,8 @@ jobs:
         run: |
           node ./scripts/release-npm.mjs
       - name: Release to GitHub Packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pnpm config set //npm.pkg.github.com/:_authToken "${{ secrets.GITHUB_TOKEN }}"
           node ./scripts/release-github.mjs
