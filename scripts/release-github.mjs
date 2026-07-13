@@ -13,7 +13,7 @@ const
 			"package.json",
 		),
 
-	originalPackageJson =
+	packageJson =
 		JSON.parse(
 			node_fs.readFileSync(
 				packageJsonFilePath,
@@ -23,21 +23,22 @@ const
 
 // GitHub Packages
 {
-	const packageJson = { ...originalPackageJson }
+	const packageJsonMod = { ...packageJson }
 
 	// We have to use organization name or scope name for the library's name
 	// Change the `uws-react-native` to `@rakadoank/uws-react-native`
-	packageJson.name = "@rakadoank/uws-react-native"
+	packageJsonMod.name = "@rakadoank/uws-react-native"
 
 	// https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#publishing-a-package-using-publishconfig-in-the-packagejson-file
-	packageJson.publishConfig = {
+	packageJsonMod.publishConfig = {
 		registry: "https://npm.pkg.github.com",
 	}
 
+	// write modified package.json
 	node_fs.writeFileSync(
 		packageJsonFilePath,
 		JSON.stringify(
-			packageJson,
+			packageJsonMod,
 			null,
 			2,
 		),
@@ -53,12 +54,25 @@ const
 			stdio: "inherit",
 		},
 	)
+
+	// Restore the original package.json content
+	node_fs.writeFileSync(
+		packageJsonFilePath,
+		JSON.stringify(
+			packageJson,
+			null,
+			2,
+		),
+		{
+			encoding: "utf8",
+		},
+	)
 }
 
 // GitHub Release
 {
 	node_childProcess.execSync(
-		"pnpm pack --filter uws-react-native",
+		`pnpm pack --filter uws-react-native`,
 		{
 			cwd: rootDir,
 			stdio: "inherit",
@@ -67,7 +81,7 @@ const
 
 	const
 		version =
-			originalPackageJson.version,
+			packageJson.version,
 
 		/**
 		 * With double quotes
