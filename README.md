@@ -21,7 +21,7 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 
 ## Installation
 
-We provide two registry homes where this library lives which can be used for your project. You can use either it is from NPM registry or GitHub Packages. It has absolutely **no external JavaScript dependencies**
+We provide three registry homes where this library is available for use in your project. You can use either it is from NPM registry, or GitHub Release, or GitHub Packages. It has absolutely **no external JavaScript dependencies**
 
 ### From NPM Registry
 
