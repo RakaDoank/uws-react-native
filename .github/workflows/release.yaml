@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      contents: read
+      contents: write # For GitHub Release
       packages: write # For publishing to the GitHub Packages
       id-token: write
     steps:
@@ -41,7 +41,7 @@ jobs:
       - name: Release to NPM registry
         run: |
           node ./scripts/release-npm.mjs
-      - name: Release to GitHub Packages
+      - name: Publish GitHub Packages and GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
