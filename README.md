@@ -9,6 +9,7 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) librar
 
 - [Installation](#installation)
   - [From NPM Registry](#from-npm-registry)
+  - [From GitHub Release](#from-github-release)
   - [From GitHub Packages](#from-github-packages)
 - [Usage](#usage)
 - [Compatibility](#compatibility)
@@ -38,6 +39,31 @@ pnpm
 ```
 pnpm install uws-react-native
 ```
+
+### From GitHub Release
+
+To install this library from GitHub release
+
+1. Go to this project's [GitHub Release](https://github.com/RakaDoank/uws-react-native/releases)
+2. Find the `uws-react-native-X.X.X.tgz` asset from one of the release versions
+3. Copy the asset URL or link (Right click at the asset file name in your browser)
+
+Finally, do the regular installation with the CLI, but with the asset URL
+
+npm
+```
+npm install https://github.com/.../uws-react-native-X.X.X.tgz
+```
+yarn
+```
+yarn add https://github.com/.../uws-react-native-X.X.X.tgz
+```
+pnpm
+```
+pnpm install https://github.com/.../uws-react-native-X.X.X.tgz
+```
+
+> You can also do the offline installation by downloading the tarball file first, and declare the local file name path in your `package.json` dependencies.
 
 ### From GitHub Packages
 
