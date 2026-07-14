@@ -1,0 +1,31 @@
+---
+name: "\U0001F41B BUG"
+about: So sorry. Can you tell us about the bug? Does it fly?
+title: "\U0001F41B Your Issue"
+labels: bug
+assignees: RakaDoank
+
+---
+
+## Summary:
+<!-- Explain the **issue**. Why does this issue occur? You can also tell us about your suggestion regarding this issue -->
+
+## Reproduce:
+<!-- Tell us how to reproduce this issue?
+
+Please, make it small or simple as possible. You can install the fresh of React Native app with `npx @react-native-community/cli init uws-rn-issue` first
+-->
+
+## Informations:
+<!-- Required only if this issue is about library problem
+
+Please also tell us the issue is occured to specific platform
+-->
+
+- `uws-react-native` version:
+- React Native version:
+- React Native platform:
+  - [x] Android
+  - [x] iOS
+  - [x] macOS
+- Development OS: Windows / macOS / Linux Distro
