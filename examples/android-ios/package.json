@@ -12,9 +12,9 @@
 		"web": "npm run start -- --web"
 	},
 	"dependencies": {
-		"@audira/carbon-react-native": "1.0.8",
-		"@audira/carbon-react-native-elements": "1.0.0",
-		"@carbon/icons": "11.80.0",
+		"@audira/carbon-react-native": "catalog:",
+		"@audira/carbon-react-native-elements": "catalog:",
+		"@carbon/icons": "catalog:",
 		"@examples/app": "workspace:*",
 		"expo": "57.0.4",
 		"expo-build-properties": "57.0.3",

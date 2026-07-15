@@ -1,0 +1,19 @@
+{
+	"extends": [
+		"@react-native/typescript-config",
+		"../../tsconfig.base.json"
+	],
+	"compilerOptions": {
+		"jsx": "react-native",
+		"paths": {
+			"uws-react-native": [
+				"../../package/src/index"
+			]
+		},
+		"types": []
+	},
+	"include": [
+		"../../package/src/**/*",
+		"./src/**/*"
+	]
+}

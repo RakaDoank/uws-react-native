@@ -5,10 +5,16 @@ allowBuilds:
   'unrs-resolver': false
 
 catalog:
+  '@audira/carbon-react-native': 1.0.8
+  '@audira/carbon-react-native-elements': 1.0.0
+  '@carbon/icons': 11.84.0
   'react': 19.2.3
   'react-native-builder-bob': 0.41.0
 
 engineStrict: true
+
+minimumReleaseAgeExclude:
+  - '@carbon/icons@11.84.0'
 
 nodeLinker: hoisted
 
