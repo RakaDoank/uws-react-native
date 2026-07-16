@@ -144,7 +144,7 @@ export function Component() {
       res.onAborted(() => {
         isAborted = true
       })
-E
+
       res.onFullData(data => {
         const textDecoder = new TextDecoder("utf-8")
         const text = textDecoder.decode(data)
