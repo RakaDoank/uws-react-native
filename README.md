@@ -133,11 +133,42 @@ export function Component() {
       )
     })
 
-    app.get("/my-page", res => {
+    app.get("/about", res => {
       res.write("<html><body>")
-      res.write("<h2>Hello World</h2>
+      res.write("<h2>Hello World</h2>")
       res.end("</body></html>")
-    });
+    })
+
+    app.post("/data", (res, req) => {
+      let isAborted = false
+      res.onAborted(() => {
+        isAborted = true
+      })
+E
+      res.onFullData(data => {
+        const textDecoder = new TextDecoder("utf-8")
+        const text = textDecoder.decode(data)
+
+        try {
+          const json = JSON.parse(text)
+
+          if(!isAborted) {
+            // send the json back
+            res.writeHeader("content-type", "application/json")
+            res.end(
+              JSON.stringify(json)
+            )
+          }
+        } catch {
+          // not a valid json
+          res.end(
+            JSON.stringify({
+              message: "Something went wrong",
+            })
+          )
+        }
+      })
+    })
 
     app.listen("127.0.0.1", 5000, token => {
       if(token) {
