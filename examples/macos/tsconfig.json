@@ -5,6 +5,13 @@
 	],
 	"compilerOptions": {
 		"jsx": "react-native",
+		"lib": [
+			// Similar as the "expo/tsconfig.base.json"
+			// without these additional lib, the type check may fail
+			// The @examples/app rely on a relatively new class for React Native like TextDecoder
+			"DOM",
+			"ESNext"
+		],
 		"paths": {
 			"uws-react-native": [
 				"../../package/src/index"

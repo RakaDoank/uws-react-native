@@ -10,6 +10,7 @@ catalog:
   '@carbon/icons': 11.84.0
   'react': 19.2.3
   'react-native-builder-bob': 0.41.0
+  'react-native-svg': 15.15.5
 
 engineStrict: true
 

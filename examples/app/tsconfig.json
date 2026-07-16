@@ -5,6 +5,10 @@
 	],
 	"compilerOptions": {
 		"jsx": "react-native",
+		"lib": [
+			"DOM",
+			"ESNext"
+		],
 		"paths": {
 			"uws-react-native": ["../../package/src/index.ts"]
 		}

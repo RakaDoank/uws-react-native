@@ -6,8 +6,10 @@
 	"peerDependencies": {
 		"@audira/carbon-react-native": "1.0.8",
 		"@audira/carbon-react-native-elements": "1.0.0",
+		"@carbon/icons": "catalog:",
 		"react": "catalog:",
-		"react-native": "*"
+		"react-native": "*",
+		"react-native-svg": "catalog:"
 	},
 	"files": [
 		"src"

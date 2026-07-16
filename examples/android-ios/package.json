@@ -26,7 +26,7 @@
 		"react": "catalog:",
 		"react-native": "0.86.0",
 		"react-native-safe-area-context": "5.7.0",
-		"react-native-svg": "15.15.5"
+		"react-native-svg": "catalog:"
 	},
 	"devDependencies": {
 		"react-native-svg-transformer": "1.5.3"
