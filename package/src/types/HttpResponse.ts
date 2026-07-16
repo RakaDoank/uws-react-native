@@ -188,9 +188,9 @@ export interface HttpResponse {
 	 *   })
 	 * 
 	 *   if(!isAborted) {
-	 *     res.onFullData(chunk => {
+	 *     res.onFullData(data => {
 	 *       if(!isAborted) {
-	 *         res.end(`Body size is ${chunk.byteLength}`)
+	 *         res.end(`Body size is ${data.byteLength}`)
 	 *       }
 	 *     })
 	 *   }
@@ -201,7 +201,7 @@ export interface HttpResponse {
 	 */
 	onFullData(
 		handler: (
-			body: ArrayBuffer,
+			data: ArrayBuffer,
 		) => void,
 	) : void,
 
@@ -213,7 +213,7 @@ export interface HttpResponse {
 	 */
 	onFullDataText(
 		handler: (
-			body: string,
+			data: string,
 		) => void,
 	) : void,
 
