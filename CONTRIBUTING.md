@@ -10,7 +10,8 @@ Thank you for your support to this library. This documentation will help you how
 - [Clone](#clone)
 - [Setup](#setup)
   - [1. Dependencies Installation](#1-dependencies-installation)
-  - [2. IDE Setup for Native Library Development](#2-ide-setup-for-native-library-development)
+  - [2. App Setup](#2-app-setup)
+  - [3. IDE Setup for Native Library Development](#3-ide-setup-for-native-library-development)
     - [Android](#android)
     - [iOS](#ios)
     - [macOS](#macos-1)
@@ -59,13 +60,15 @@ Install these in your machine
 
 #### Development for iOS & macOS
 These are required for iOS and macOS development
-> You can skip this if you are using macOS machine but it is only for Android development
+> You can skip this if you are using macOS machine but it is only for Android app development
 
 - [Xcode](https://developer.apple.com/xcode) latest version
 - [Ruby](https://www.ruby-lang.org/en/) >= 3.x. Install it through [Mise](https://mise.jdx.dev). **We recommend not to use** the macOS system provided Ruby
 - [Cocoapods](https://cocoapods.org/). Beforehand, please make sure that you are using Ruby version 3.x that you have installed through Mise. After that, run `gem install cocoapods`. For ensuring Cocoapods has installed, run `pod --version`
 
 #### Development for Android
+> You can skip this if you are using macOS machine but it is only for iOS & macOS app development
+
 You need to install Azul Zulu JDK in your macOS machine
 1. Install [Azul Zulu JDK](https://www.azul.com) version 17.x with [Homebrew](https://brew.sh/)
    ```
@@ -177,21 +180,67 @@ Make your environment is ready and the repository has been cloned. After that, d
 
 2. After that, run
    ```
-   pnpm run package-builder uws-mod
+   npm run package-builder uws-mod
    ```
    This is our custom script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
 and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository.
 
-3. Finally, locate to the `uws-react-native/examples/android-ios` directory in your terminal, and then run
-   ```
-   pnpm run prebuild
-   ```
-   This is an Expo script known as [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/) to build and write necessary Android and iOS files since those are ignored by GIT.
+### 2. App Setup
 
-### 2. IDE Setup for Native Library Development
+#### Android & iOS
+For Android & iOS app development, locate to the `/examples/android-ios` directory in your terminal, and then run
+```
+npm run prebuild
+```
+
+This is an Expo script known as [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/) to build and write necessary Android and iOS files since those are ignored by GIT.
+
+#### macOS
+For macOS app development,
+
+1. Locate to the `uws-react-native/examples/macos` directory in your terminal, and then run
+   ```
+   npm run init
+   ```
+   This is an `react-native-macos-init` script to build and write necessary macOS files. Currently, the generated `uws-react-native/examples/macos/macos` directory is ignored by GIT intentionally.
+
+2. Then, find `Podfile` file in the `uws-react-native/examples/macos/macos` directory. Open with VSCode, or any editors
+3. Please, modify the react-native-macos directory path,
+   
+   **from this** (unedited)
+   ```
+   :path => '../node_modules/react-native-macos'
+   ```
+   **to this**
+   ```
+   :path => '../../../node_modules/react-native-macos'
+   ```
+4. Locate to `/examples/macos/macos` directory in your terminal, and then run
+   ```
+   pod install
+   ```
+5. Open **Xcode**, and then open `uws-react-native/examples/macos/macos/uwsreactnativeexample.xcworkspace` in **Xcode**
+6. Click `uwsreactnativeexample` in the sidebar,
+7. In the **Targets** section, click `uwsreactnativeexample-macOS`, and then click `Build Phases` tab
+8. Open `Bundle React Native code and images`
+9. Modify the shell script for locating the correct of react-native-macos directory,
+
+   **from this** (unedited)
+   ```
+   export NODE_BINARY=node
+   ../node_modules/react-native-macos/scripts/react-native-xcode.sh
+   ```
+   **to this**
+   ```
+   export NODE_BINARY=node
+   ../../../node_modules/react-native-macos/scripts/react-native-xcode.sh
+   ```
+
+### 3. IDE Setup for Native Library Development
 In this project, the example app at the `uws-react-native/example` directory is the app we will use as the library playground to use for the library development. We do not do the development of React Native app there, instead we only writing our actual `uws-react-native` native library code
 
 #### Android
+Make sure you do the [Android & iOS App Setup](#android--ios) first. Then, continue to this steps
 1. Open **Android Studio**
 2. Open `uws-react-native/examples/android-ios/android` directory
 3. Sync project with gradle files
@@ -200,20 +249,18 @@ In this project, the example app at the `uws-react-native/example` directory is 
 5. Happy Coding :)
 
 #### iOS
-1. Open your terminal
-2. Go to `uws-react-native/examples/android-ios/ios` directory
-3. Install the pods by run this command
-   ```
-   pod install
-   ```
-   You do not have do this everytime. Running `npm run prebuild` in the example directory is also doing pod installation internally
-4. Open **Xcode**
-5. Open `uws-react-native/examples/android-ios/ios/example.xcworkspace` file
-6. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
-7. Happy Coding :)
+Make sure you do the [Android & iOS App Setup](#android--ios) first. Then, continue to this steps
+1. Open **Xcode**
+2. Open `uws-react-native/examples/android-ios/ios/example.xcworkspace` in **Xcode**
+3. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
+4. Happy Coding :)
 
 #### macOS
-⚠️ We do not provide the example app for React Native macOS yet. Soon this documentation will be updated
+Make sure you do the [macOS App Setup](#macos-1) first. Then, continue to this steps
+1. Open **Xcode**
+2. Open `uws-react-native/examples/macos/macos/example.xcworkspace` in **Xcode**
+3. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
+4. Happy Coding :)
 
 ### 3. IDE Setup for React Native and Node.js
 The entire repository is containing actual React Native files, and our Node.js files. The Node.js part files are just our tooling files which not included in the final build or in NPM registry and GitHub Packages, and some React Native files like in the example directory is not part of the final build.
@@ -229,12 +276,21 @@ To open React Native and Node.js files
 ## Run the Example App
 
 ### Android
-Run your Android emulator first, and then go to the `examples/android-ios` directory, run `npm run android`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run android` later.
+1. First, run your Android emulator
+2. Open your terminal, and locate to `uws-react-native/examples/android-ios` directory
+3. Then, run `npm run android`
 
 ### iOS
-For iOS, you need to run your iPhone/iPad Simulator first.
+1. First, run your iPhone/iPad Simulator first simulator
+2. Open your terminal, and locate to `uws-react-native/examples/android-ios` directory
+3. Then, run `npm run ios`
 
-After it's completely booted up, you can run the app. Go the `examples/android-ios` directory, run `npm run ios`. Alternatively, you can run the metro first by execute `npm run start`, and then run `npm run ios` later.
+### macOS
+1. Open your terminal
+2. Locate to `uws-react-native/examples/macos`
+3. Run `npm run start` in your terminal to run the Metro bundler
+4. Press `Command + T` in the current terminal to open new tab, or you can open new terminal window
+5. Then, run `npm run macos`
 
 ---
 
