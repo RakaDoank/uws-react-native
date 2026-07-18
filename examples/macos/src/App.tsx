@@ -18,13 +18,6 @@ import {
 	SafeAreaProvider,
 } from "react-native-safe-area-context"
 
-/**
- * Currently broken.
- * Why I cannot use any React hooks e.g. useState, useRef, etc. in this level?
- * 
- * The app will render successfully if you remove these providers,
- * and start to render a single view with text.
- */
 export function App() {
 
 	return (

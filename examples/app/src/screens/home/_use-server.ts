@@ -198,6 +198,7 @@ export function useServer({
 		// ++++++++++++++++++++++++++++++
 
 		app.get("/request/:foo/:bar", (res, req) => {
+			console.log("/request/:foo/:bar")
 			res.onAborted(() => {
 				console.log("onAbort")
 			})
@@ -207,6 +208,8 @@ export function useServer({
 			req.forEach((key, val) => {
 				forEachResult[key] = val
 			})
+
+			console.log("forEach", forEachResult)
 
 			res.writeHeader("content-type", "application/json")
 			res.end(
@@ -231,9 +234,9 @@ export function useServer({
 
 			if(!isAborted) {
 				res.onFullData(chunk => {
-					const textDecoder = new TextDecoder("utf-8")
-					const text = textDecoder.decode(chunk)
 					try {
+						const textDecoder = new TextDecoder("utf-8")
+						const text = textDecoder.decode(chunk)
 						const json = JSON.parse(text) as unknown
 
 						if(!isAborted) {

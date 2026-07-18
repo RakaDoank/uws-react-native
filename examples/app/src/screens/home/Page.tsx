@@ -104,6 +104,7 @@ export function Page() {
 						throw new Error("Invalid parameters")
 					}
 				} catch(err) {
+					console.log("test_0", err)
 					itemRefs.current[0]?.setState({
 						status: "error",
 						message: err instanceof Error ? err.message : null,
@@ -131,6 +132,7 @@ export function Page() {
 						throw new Error("Server is not responding")
 					}
 				} catch(err) {
+					console.log("test_1", err)
 					itemRefs.current[1]?.setState({
 						status: "error",
 						message: err instanceof Error ? err.message : null,
@@ -149,6 +151,8 @@ export function Page() {
 						method: "GET",
 					})
 
+					console.log("response", response)
+
 					if(response.status === 404) {
 						itemRefs.current[2]?.setState({
 							status: "finished",
@@ -158,6 +162,7 @@ export function Page() {
 						throw new Error("Server is not responding with 404 status")
 					}
 				} catch(err) {
+					console.log("test_2", err)
 					itemRefs.current[2]?.setState({
 						status: "error",
 						message: err instanceof Error ? err.message : null,
@@ -189,6 +194,7 @@ export function Page() {
 						throw new Error("JSON from server and client is not equal")
 					}
 				} catch(err) {
+					console.log("test_3", err)
 					itemRefs.current[3]?.setState({
 						status: "error",
 						message: err instanceof Error ? err.message : null,
@@ -220,6 +226,7 @@ export function Page() {
 						throw new Error("JSON from server and client is not equal")
 					}
 				} catch(err) {
+					console.log("test_4", err)
 					itemRefs.current[4]?.setState({
 						status: "error",
 						message: err instanceof Error ? err.message : null,
@@ -349,7 +356,7 @@ const
 		5000,
 
 	SERVER_BASE_URL =
-		`http://localhost:${PORT}`,
+		`http://127.0.0.1:${PORT}`,
 
 	jsonString =
 		JSON.stringify({

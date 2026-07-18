@@ -2,9 +2,6 @@ const
 	node_path =
 		require("node:path"),
 
-	{ getDefaultConfig, mergeConfig } =
-		require("@react-native/metro-config"),
-
 	{ makeMetroConfig } =
 		require("@rnx-kit/metro-config"),
 
@@ -15,8 +12,8 @@ const
 	workspaceRoot =
 		node_path.join(__dirname, "..", ".."),
 
-	defaultConfig =
-		getDefaultConfig(__dirname)
+	rnxKitMetroConfig =
+		makeMetroConfig()
 
 /**
  * Metro configuration
@@ -26,43 +23,37 @@ const
  */
 const config = {
 
+	...rnxKitMetroConfig,
+
 	projectRoot: __dirname,
 
 	resolver: {
-		...defaultConfig.resolver,
+		...rnxKitMetroConfig.resolver,
 		assetExts: [
-			...(defaultConfig.resolver?.assetExts?.filter(ext => ext !== "svg") ?? []),
+			...(rnxKitMetroConfig.resolver?.assetExts?.filter(ext => ext !== "svg") ?? []),
 		],
 		extraNodeModules: {
-			...defaultConfig.resolver?.extraNodeModules,
-			"react": node_path.join(__dirname, "node_modules", "react"),
+			...rnxKitMetroConfig.resolver?.extraNodeModules,
 			"uws-react-native": node_path.join(workspaceRoot, "package", "src"),
 		},
 		// only for monorepo setup
 		nodeModulesPaths: [
-			...defaultConfig.resolver?.nodeModulesPaths ?? [],
+			...rnxKitMetroConfig.resolver?.nodeModulesPaths ?? [],
 			node_path.join(__dirname, "node_modules"),
 			node_path.join(workspaceRoot, "node_modules"),
 		],
 		resolveRequest: MetroSymlinksResolver(),
 		sourceExts: [
-			...(defaultConfig.resolver?.sourceExts ?? []),
+			...(rnxKitMetroConfig.resolver?.sourceExts ?? []),
 			"svg",
 		],
 	},
 
 	transformer: {
-		...defaultConfig.transformer,
+		...rnxKitMetroConfig.transformer,
 		babelTransformerPath: require.resolve("react-native-svg-transformer/react-native"),
 	},
 
-	// only for monorepo setup
-	watchFolders: [
-		workspaceRoot,
-	],
-
 }
 
-module.exports = makeMetroConfig(
-	mergeConfig(defaultConfig, config),
-)
+module.exports = config
