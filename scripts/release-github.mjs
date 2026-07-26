@@ -86,13 +86,13 @@ const
 		/**
 		 * With double quotes
 		 */
-		gitTagArgument =
+		gitTag =
 			`"v${version}"`
 
 	// Create GitHub release
 	node_childProcess.execSync(
-		`gh release create ${gitTagArgument}` +
-			` --title ${gitTagArgument}` +
+		`gh release create ${gitTag}` +
+			` --title ${gitTag}` +
 			` --generate-notes`,
 		{
 			cwd: rootDir,
@@ -102,7 +102,7 @@ const
 
 	// Upload the tarball
 	node_childProcess.execSync(
-		`gh release upload ${gitTagArgument}` +
+		`gh release upload ${gitTag}` +
 			` uws-react-native-${version}.tgz` +
 			` --clobber`,
 		{
