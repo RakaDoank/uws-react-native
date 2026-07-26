@@ -5,6 +5,7 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) server
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
 - **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
 
+---
 - [Installation](#installation)
   - [From NPM Registry](#from-npm-registry)
   - [From GitHub Release](#from-github-release)
