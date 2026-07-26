@@ -87,6 +87,10 @@ facebook::jsi::Object UwsReactNativeModule::getParts(facebook::jsi::Runtime &rt,
 
     auto parts = std::vector<facebook::jsi::Object>();
 
+    /// Using jsi Array with zero element and "push" it later
+    /// is only supported in React Native >= 0.86
+//    auto parts = facebook::jsi::Array(rt, 0);
+
     while(true) {
       std::optional<std::string_view> optionalPart = mp.getNextPart(headers);
       if(!optionalPart.has_value()) {
