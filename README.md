@@ -5,8 +5,6 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) server
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
 - **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
 
-> ⚠️ WebSocket server is not implemented yet
-
 - [Installation](#installation)
   - [From NPM Registry](#from-npm-registry)
   - [From GitHub Release](#from-github-release)
@@ -197,7 +195,6 @@ uws-react-native is supported in Android, iOS, and macOS. Windows is currently n
 ### Unsupported APIs
 
 - **SSL options**. We need to research how to provide .pem file in React Native app and its platform architecture regarding the SSL topic
-- **WebSocket server**. Not implemented yet. It will be supported later.
 
 ### New APIs
 
