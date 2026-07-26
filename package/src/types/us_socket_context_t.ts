@@ -1,6 +1,5 @@
 /**
  * Native type representing a raw uSockets struct us_socket_context_t.
- * Used while upgrading a WebSocket manually.
+ * This is not intended to be modified from JavaScript.
  */
-export interface us_socket_context_t {
-}
+export type us_socket_context_t = unknown

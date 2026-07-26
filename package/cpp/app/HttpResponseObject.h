@@ -3,10 +3,37 @@
 #include <ReactCommon/CallInvoker.h>
 #include <jsi/Buffer.h>
 #include <jsi/jsi.h>
+#include <react/bridging/Function.h>
 #include <utility>
-#include "RecognizedString.h"
 #include "HttpResponseObjectProvider.h"
+#include "RecognizedString.h"
+#include "WebSocketUserData.h"
 #include "uWebSockets/App.h"
+
+#ifdef REACT_NATIVE_DEBUG
+namespace {
+
+thread_local int insideCorkCallback = 0;
+
+void assumeCorked(facebook::jsi::Runtime &rt) {
+ if(!insideCorkCallback) {
+   auto console = rt.global().getProperty(rt, "console");
+   if(!console.isObject()) {
+     return;
+   }
+
+   auto warning = console.asObject(rt).getProperty(rt, "warning");
+   if(!warning.isObject()) {
+     return;
+   }
+
+   auto fn = warning.asObject(rt).asFunction(rt);
+   fn.call(rt, "Warning: uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
+ }
+}
+
+} // namespace
+#endif
 
 namespace uws_react_native {
 
@@ -41,7 +68,15 @@ public:
                                                                                              const facebook::jsi::Value *arguments,
                                                                                              size_t count) -> facebook::jsi::Value {
       provider->res->cork([&rt_1, callback = arguments[0].asObject(rt_1).asFunction(rt_1)]() {
+#ifdef REACT_NATIVE_DEBUG
+        insideCorkCallback++;
+#endif
+
         callback.call(rt_1);
+
+#ifdef REACT_NATIVE_DEBUG
+        insideCorkCallback--;
+#endif
       });
 
       return {rt_1, thisValue};
@@ -65,7 +100,12 @@ public:
       }
 
       auto body = RecognizedString(rt_1, arguments[0]).getStringView();
+
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       provider->res->end(body);
+
       return {rt_1, thisValue};
     }));
 
@@ -103,6 +143,9 @@ public:
         closeConnection = arguments[1].asBool();
       }
 
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       provider->res->endWithoutBody(reportedContentLength, closeConnection);
 
       return {rt_1, thisValue};
@@ -354,50 +397,71 @@ public:
       auto fullBodyOrChunk = RecognizedString(rt_1, arguments[0]).getStringView();
       auto totalSize = arguments[1].asNumber();
 
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       auto tryEndResult = provider->res->tryEnd(fullBodyOrChunk, static_cast<uintmax_t>(totalSize));
 
       return facebook::jsi::Array::createWithElements(rt_1, {tryEndResult.first, tryEndResult.second});
     }));
 
-    /// TODO
-    /// Implement this method later
-    /// It looks like we need to persist/save the us_socket_context_t from the ws.
-//    this->setProperty(rt, "upgrade", facebook::jsi::Function::createFromHostFunction(rt,
-//                                                                                         facebook::jsi::PropNameID::forUtf8(rt, "upgrade"),
-//                                                                                         5,
-//                                                                                         [res](facebook::jsi::Runtime &rt_1,
-//                                                                                               const facebook::jsi::Value &thisValue,
-//                                                                                               const facebook::jsi::Value *arguments,
-//                                                                                               size_t count) -> facebook::jsi::Value {
-//      if(!arguments ||
-//         count != 5 ||
-//         !arguments[0].isString() ||
-//         !arguments[1].isString() ||
-//         !arguments[2].isString() ||
-//         !arguments[3].isString() ||
-//         !arguments[4].isNumber()) {
-//        return facebook::jsi::Value::undefined();
-//      }
-//
-//      auto userData = arguments[0].asString(rt_1).utf8(rt_1);
-//      auto secWebSocketKey = arguments[1].asString(rt_1).utf8(rt_1);
-//      auto secWebSocketProtocol = arguments[2].asString(rt_1).utf8(rt_1);
-//      auto secWebSocketExtensions = arguments[3].asString(rt_1).utf8(rt_1);
-//      auto context = arguments[4].asNumber();
-//
-//      // TODO give user a warning if this method has been called outside of cork handler
-//      // assumeCorked()
-//
-//      auto *usSocketContext = reinterpret_cast<us_socket_context_t *>(static_cast<u_long>(context));
-//
-//      res->upgrade(std::string_view(userData),
-//                   std::string_view(secWebSocketKey),
-//                   std::string_view(secWebSocketProtocol),
-//                   std::string_view(secWebSocketExtensions),
-//                   usSocketContext);
-//
-//      return facebook::jsi::Value::undefined();
-//    }));
+    this->setProperty(rt, "upgrade", facebook::jsi::Function::createFromHostFunction(rt,
+                                                                                     facebook::jsi::PropNameID::forUtf8(rt, "upgrade"),
+                                                                                     5,
+                                                                                     [provider](facebook::jsi::Runtime &rt_1,
+                                                                                                const facebook::jsi::Value &thisValue,
+                                                                                                const facebook::jsi::Value *arguments,
+                                                                                                size_t count) -> facebook::jsi::Value {
+      if(!arguments || count != 5 ||
+         !arguments[1].isString() ||
+         !arguments[2].isString() ||
+         !arguments[3].isString() ||
+         !arguments[4].isBigInt()) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      if(!arguments[0].isObject()) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      auto userDataFnObj = arguments[0].asObject(rt_1);
+      if(!userDataFnObj.isFunction(rt_1)) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      /// We are not supposed to store the user data object inside of singleton member,
+      /// such as map, vector, or any else.
+      ///
+      /// See this manual
+      /// https://github.com/uNetworking/uWebSockets/blob/master/misc/READMORE.md#the-appws-route
+      ///
+      /// Not like uWebSockets.js, there is no equivalent of v8::UniquePersistent in JSI.
+      /// So, instead of holding an JS object,
+      /// we store user data as facebook::jsi::HostObject.
+      /// See WebSocketUserData.h
+      auto userDataFn = userDataFnObj.asFunction(rt_1);
+      auto userData = std::make_shared<WebSocketUserData>();
+      userDataFn.call(rt_1,
+                      facebook::jsi::Object::createFromHostObject(rt_1, userData));
+
+      auto secWebSocketKey = arguments[1].asString(rt_1).utf8(rt_1);
+      auto secWebSocketProtocol = arguments[2].asString(rt_1).utf8(rt_1);
+      auto secWebSocketExtensions = arguments[3].asString(rt_1).utf8(rt_1);
+      auto context = arguments[4].asBigInt(rt_1).asUint64(rt_1);
+
+      auto *usSocketContext = reinterpret_cast<us_socket_context_t *>(context);
+
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
+      provider->res->upgrade(std::move(userData),
+                             std::string_view(secWebSocketKey),
+                             std::string_view(secWebSocketProtocol),
+                             std::string_view(secWebSocketExtensions),
+                             usSocketContext);
+
+      return facebook::jsi::Value::undefined();
+    }));
 
     this->setProperty(rt,
                       "write",
@@ -409,6 +473,10 @@ public:
                                                                                  const facebook::jsi::Value *arguments,
                                                                                  size_t count) -> facebook::jsi::Value {
       auto chunk = RecognizedString(rt_1, arguments[0]).getStringView();
+
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       return provider->res->write(chunk);
     }));
 
@@ -423,6 +491,10 @@ public:
                                                                                  size_t count) -> facebook::jsi::Value {
       auto headerKey = RecognizedString(rt_1, arguments[0]).getStringView();
       auto headerVal = RecognizedString(rt_1, arguments[1]).getStringView();
+
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       provider->res->writeHeader(headerKey, headerVal);
 
       return {rt_1, thisValue};
@@ -438,6 +510,10 @@ public:
                                                                                  const facebook::jsi::Value *arguments,
                                                                                  size_t count) -> facebook::jsi::Value {
       auto status = RecognizedString(rt_1, arguments[0]).getStringView();
+
+#ifdef REACT_NATIVE_DEBUG
+      assumeCorked(rt_1);
+#endif
       provider->res->writeStatus(status);
 
       return {rt_1, thisValue};

@@ -3,6 +3,7 @@
 #include <ReactCommon/CallInvoker.h>
 #include <ReactCommon/SchedulerPriority.h>
 #include <jsi/jsi.h>
+#include <react/bridging/Function.h>
 #include "AppRunner.h"
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
@@ -88,6 +89,7 @@ private:
       }
     }
 
+    // AppRunner thread
     std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, disableBodyRead, maxBodySize, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
 //      auto httpResponseObject = std::make_shared<HttpResponseObject>(rt,
 //                                                                     res,
@@ -99,6 +101,7 @@ private:
       auto sharedRequest = std::make_shared<uWS::HttpRequest>(*req);
 
       asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, sharedRequest, &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+        // React Native JS runtime
         if(httpResponseObjectProvider && sharedRequest) {
           cb.call(rt_1,
                   HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
@@ -248,7 +251,16 @@ public:
                                                                                    const facebook::jsi::Value &thisValue,
                                                                                    const facebook::jsi::Value *arguments,
                                                                                    size_t count) -> facebook::jsi::Value {
-      auto callback = arguments[0].asObject(rt_1).asFunction(rt_1);
+      if(!arguments || !arguments[0].isObject()) {
+        return {rt_1, thisValue};
+      }
+
+      auto obj = arguments[0].asObject(rt_1);
+      if(!obj.isFunction(rt_1)) {
+        return {rt_1, thisValue};
+      }
+
+      auto callback = obj.asFunction(rt_1);
 
       appRunner.app.filter([&jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](auto *res, int count) {
         auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
@@ -299,7 +311,7 @@ public:
       std::optional<int> options      = std::nullopt;
 
       if(arguments[0].isString()) {
-        host = RecognizedString(rt_1, arguments[0]).getString();
+        host = arguments[0].asString(rt_1).utf8(rt_1);
         if(arguments[1].isNumber()) {
           port = arguments[1].asNumber();
         }
@@ -338,8 +350,12 @@ public:
                                                                                    const facebook::jsi::Value &thisValue,
                                                                                    const facebook::jsi::Value *arguments,
                                                                                    size_t count) -> facebook::jsi::Value {
-      auto topic = RecognizedString(rt_1, arguments[0]).getStringView();
-      return static_cast<int>(appRunner.app.numSubscribers(topic));
+      auto topic = RecognizedString(rt_1, arguments[0]);
+      if(!topic.isValid()) {
+        return {rt_1, int(0)};
+      }
+
+      return static_cast<int>(appRunner.app.numSubscribers(topic.getStringView()));
     }));
 
     this->setProperty(rt,
@@ -351,8 +367,15 @@ public:
                                                                                    const facebook::jsi::Value &thisValue,
                                                                                    const facebook::jsi::Value *arguments,
                                                                                    size_t count) -> facebook::jsi::Value {
-      auto topic = RecognizedString(rt_1, arguments[0]).getStringView();
-      auto message = RecognizedString(rt_1, arguments[1]).getStringView();
+      auto topic = RecognizedString(rt_1, arguments[0]);
+      if(!topic.isValid()) {
+        return {rt_1, false};
+      }
+
+      auto message = RecognizedString(rt_1, arguments[1]);
+      if(!message.isValid()) {
+        return {rt_1, false};
+      }
 
       bool isBinary = false;
       if(arguments[2].isBool()) {
@@ -364,38 +387,40 @@ public:
         compress = arguments[3].asBool();
       }
 
-      return appRunner.app.publish(topic,
-                             message,
-                             isBinary ? uWS::OpCode::BINARY : uWS::TEXT,
-                             compress);
+      return appRunner.app.publish(topic.getStringView(),
+                                   message.getStringView(),
+                                   isBinary ? uWS::OpCode::BINARY : uWS::TEXT,
+                                   compress);
     }));
 
-    // TODO `WebSocketObject` and `WebSocketBehaviorImpl` are not properly implemented yet
-//    this->setProperty(rt,
-//                      "ws",
-//                      facebook::jsi::Function::createFromHostFunction(rt,
-//                                                                      facebook::jsi::PropNameID::forUtf8(rt, "ws"),
-//                                                                      2,
-//                                                                      [&appRunner, &jsInvoker](facebook::jsi::Runtime &rt_1,
-//                                                                                               const facebook::jsi::Value &thisValue,
-//                                                                                               const facebook::jsi::Value *arguments,
-//                                                                                               size_t count) -> facebook::jsi::Value {
-//#ifdef REACT_NATIVE_DEBUG
-//      if(!arguments) {
-//        throw facebook::jsi::JSError(rt_1, "Expected pattern and WebSocketBehaviour argument");
-//      }
-//      if(!arguments[1].isObject()) {
-//        throw facebook::jsi::JSError(rt_1, "Expected a WebSocketBehaviour object in the second argument");
-//      }
-//#endif
-//
-//      auto pattern = RecognizedString(rt_1, arguments[0]).getString();
-//      auto behavior = WebSocketBehaviorImpl(rt_1, jsInvoker, arguments[1].asObject(rt_1));
-//
-//      appRunner.app.ws(pattern, std::move(behavior));
-//
-//      return {rt_1, thisValue};
-//    }));
+    this->setProperty(rt,
+                      "ws",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "ws"),
+                                                                      2,
+                                                                      [&appRunner, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                               const facebook::jsi::Value &thisValue,
+                                                                                               const facebook::jsi::Value *arguments,
+                                                                                               size_t count) -> facebook::jsi::Value {
+      if(!arguments) {
+        return {rt_1, thisValue};
+      }
+
+      auto pattern = RecognizedString(rt_1, arguments[0]);
+      if(!pattern.isValid()) {
+        return {rt_1, thisValue};
+      }
+
+      if(!arguments[1].isObject()) {
+        return {rt_1, thisValue};
+      }
+
+      auto behavior = WebSocketBehaviorImpl(rt_1, jsInvoker, arguments[1].asObject(rt_1));
+
+      appRunner.app.ws(pattern.getString(), std::move(behavior));
+
+      return {rt_1, thisValue};
+    }));
 
     // +++++ ROUTER +++++
 

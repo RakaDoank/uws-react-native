@@ -5,7 +5,7 @@ export interface HttpRouterOptions {
 	 * if the body read is disabled.
 	 * 
 	 * This is an actual optimization, because uws-react-native has to predefined the body read
-	 * (the res->onDataV2) internally from C++ side by default. So if you disable body reading
+	 * (the res->onDataV2) internally from C++ side by default. So, if you disable body reading
 	 * in a specific route handler, uws-react-native will not do the predefined res->onDataV2 from C++ side at all.
 	 * 
 	 * The reason why uws-react-native has to predefined the res->onDataV2 from C++ side, it is because we cannot do a sync call from uWebSockets C++ which run in arbitrary thread to JS, and late onDataV2 assignment will losing the body data. It is also by design that we run uWebSockets in another thread to prevent Main/UI thread blocking.

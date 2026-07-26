@@ -19,10 +19,17 @@ private:
 
   bool valid = false;
 
+#ifdef REACT_NATIVE_DEBUG
+  void check(facebook::jsi::Runtime &rt) const {
+    if(!this->valid) {
+      throw facebook::jsi::JSError(rt, "The value is not known by RecognizedString which only recognizes string and ArrayBuffer");
+    }
+  }
+#endif
+
 public:
   RecognizedString(facebook::jsi::Runtime &rt,
-                   const facebook::jsi::Value &value,
-                   std::optional<bool> withCheck = true) {
+                   const facebook::jsi::Value &value) {
     if(value.isString()) {
       std::function<void (bool ascii, const void *pData, size_t num)> handler = [this](bool ascii, const void *pData, size_t num) {
         if(ascii) {
@@ -42,19 +49,13 @@ public:
       }
     }
 
-    if(withCheck.has_value() && withCheck.value()) {
-      this->check(rt);
-    }
+#ifdef REACT_NATIVE_DEBUG
+    this->check(rt);
+#endif
   }
 
-public:
-  void check(facebook::jsi::Runtime &rt) const {
-    if(!this->valid) {
-      throw facebook::jsi::JSError(rt, "Text and data can only be passed by string or ArrayBuffer");
-    }
-  }
-
-  bool isValid() const {
+  // Check if the Value is recognized as string
+  [[nodiscard]] bool isValid() const {
     return this->valid;
   }
 
@@ -64,6 +65,11 @@ public:
 
   std::string getString() {
     return {this->data, this->length};
+  }
+
+  static bool isValid(facebook::jsi::Runtime &rt,
+                      const facebook::jsi::Value &value) {
+    return value.isString() || (value.isObject() && value.asObject(rt).isArrayBuffer(rt));
   }
 
 };

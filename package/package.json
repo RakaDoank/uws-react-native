@@ -1,7 +1,7 @@
 {
 	"name": "uws-react-native",
-	"version": "0.0.11",
-	"description": "The port of uWebSockets library for React Native",
+	"version": "0.1.0-beta.1",
+	"description": "The port of uWebSockets server library for React Native",
 	"license": "Apache-2.0",
 	"author": "RakaDoank <rakaaudira@gmail.com> (https://github.com/RakaDoank)",
 	"homepage": "https://github.com/RakaDoank/uws-react-native",
@@ -19,7 +19,8 @@
 		"websocket"
 	],
 	"peerDependencies": {
-		"react-native": ">=0.79"
+		"react-native": ">=0.79",
+		"react-native-macos": ">=0.81"
 	},
 	"files": [
 		"android",

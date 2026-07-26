@@ -1,12 +1,20 @@
+import {
+	WebSocketSendStatus,
+} from "../modules/WebSocketSendStatus"
+
 import type {
 	RecognizedString,
 } from "./RecognizedString"
+
+import type {
+	WebSocketUserData,
+} from "./WebSocketUserData"
 
 /**
  * A WebSocket connection that is valid from open to close event.
  * Read more about this in the user manual.
  */
-export interface WebSocket<UserData> {
+export interface WebSocket {
 	/**
 	 * Forcefully closes this WebSocket. Immediately calls the close handler.
      * No WebSocket close message is sent.
@@ -19,7 +27,7 @@ export interface WebSocket<UserData> {
 	 */
 	cork(
 		cb: () => void,
-	) : WebSocket<UserData>,
+	) : WebSocket,
 
 	/**
 	 * Gracefully closes this WebSocket. Immediately calls the close handler.
@@ -62,9 +70,9 @@ export interface WebSocket<UserData> {
 	getTopics() : string[],
 
 	/**
-	 * Returns the UserData object.
+	 * Returns the user data object.
 	 */
-	getUserData() : UserData,
+	getUserData() : WebSocketUserData,
 
 	/**
 	 * Returns whether this websocket is subscribed to topic.
@@ -95,40 +103,48 @@ export interface WebSocket<UserData> {
 	 * Sends a message. Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure that will drain over time. You can check backpressure before or after sending by calling getBufferedAmount().
      *
      * Make sure you properly understand the concept of backpressure. Check the backpressure example file.
+	 * 
+	 * This method will returns void due to the message is not a recognized string.
      */
 	send(
 		message: RecognizedString,
 		isBinary?: boolean,
 		compress?: boolean,
-	) : number,
+	) : WebSocketSendStatus | void,
 
 	/**
 	 * Sends the first fragment of a fragmented message. Use for sending large messages in chunks.
      * Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure.
+	 * 
+	 * This method will returns void due to the message is not a recognized string.
      */
 	sendFirstFragment(
 		message: RecognizedString,
 		isBinary?: boolean,
 		compress?: boolean,
-	) : number,
+	) : WebSocketSendStatus | void,
 
 	/**
 	 * Sends a middle fragment of a fragmented message.
      * Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure.
+	 * 
+	 * This method will returns void due to the message is not a recognized string.
      */
 	sendFragment(
 		message: RecognizedString,
 		compress?: boolean,
-	) : number,
+	) : WebSocketSendStatus | void,
 
 	/**
 	 * Sends the last fragment of a fragmented message.
      * Returns 1 for success, 2 for dropped due to backpressure limit, and 0 for built up backpressure.
+	 * 
+	 * This method will returns void due to the message is not a recognized string.
      */
 	sendLastFragment(
 		message: RecognizedString,
 		compress?: boolean,
-	) : number,
+	) : WebSocketSendStatus | void,
 
 	/**
 	 * Subscribe to a topic.

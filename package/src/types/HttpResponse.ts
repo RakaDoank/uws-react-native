@@ -2,9 +2,13 @@ import type {
 	RecognizedString,
 } from "./RecognizedString"
 
-// import type {
-// 	us_socket_context_t,
-// } from "./us_socket_context_t"
+import type {
+	WebSocketUserData,
+} from "./WebSocketUserData"
+
+import type {
+	us_socket_context_t,
+} from "./us_socket_context_t"
 
 /**
  * An HttpResponse is valid until either onAborted callback or any of the .end/.tryEnd calls succeed. You may attach user data to this object.
@@ -247,23 +251,45 @@ export interface HttpResponse {
 		totalSize: number,
 	) : [boolean, boolean],
 
-	// TODO
-	// Implement this method later.
-	// /**
-	//  * Upgrades a HttpResponse to a WebSocket. See UpgradeAsync, UpgradeSync example files.
-	//  * 
-	//  * Currently, this library is only supported string for the user data.
-	//  * As an object alternative, you can use `JSON.stringify` to this method,
-	//  * and retrieve the user data back from ws.getUserData() with `JSON.parse`.
-	//  */
-	// upgrade/* <UserData extends object> */(
-	// 	// userData: UserData,
-	// 	userData: string,
-	// 	secWebSocketKey: RecognizedString,
-	// 	secWebSocketProtocol: RecognizedString,
-	// 	secWebSocketExtensions: RecognizedString,
-	// 	context: us_socket_context_t,
-	// ) : void,
+	/**
+	 * Upgrades a HttpResponse to a WebSocket.
+	 * 
+	 * Important! There is one difference compared to the uWebSockets.js.
+	 * Instead of passing a user data object to the first argument,
+	 * modify the user data object from the handler parameter at the first argument of this method.
+	 * 
+	 * @example
+	 * ```ts
+	 * uWS.App()
+	 *   .ws("/*", {
+	 *     upgrade: (res, req, context) => {
+	 *       // you can do an async task here
+	 *       // and then, call upgrade method from res
+	 *       res.upgrade(
+	 *         userData => { // do not do an async task in this
+	 *           userData.setString("your_love_letter", "hello world")
+	 *           userData.setBoolean("is_flat_earth", true)
+	 *           userData.setNumber("worth", 67)
+	 *         },
+	 *         req.getHeader("sec-websocket-key"),
+	 *         req.getHeader("sec-websocket-protocol"),
+	 *         req.getHeader("sec-websocket-extensions"),
+	 *         context,
+	 *       )
+	 *     },
+	 *     open: ws => {
+	 *       const isFlatEarth = ws.getUserData().getBoolean("is_flat_earth")
+	 *     },
+	 * })
+	 * ```
+	 */
+	upgrade(
+		userDataFn: (userData: WebSocketUserData) => void,
+		secWebSocketKey: RecognizedString,
+		secWebSocketProtocol: RecognizedString,
+		secWebSocketExtensions: RecognizedString,
+		context: us_socket_context_t,
+	) : void,
 
 	/**
 	 * Enters or continues chunked encoding mode. Writes part of the response. End with zero length write. Returns true if no backpressure was added.
@@ -299,13 +325,4 @@ export interface HttpResponse {
 	writeStatus(
 		status: RecognizedString,
 	) : HttpResponse,
-
-	// TODO
-	// the `upgrade` method needs to be implemented first,
-	// but I also don't know how to attach arbitrary UserData to the HttpRequest object JSI C++.
-	// Probably, I would tell user to get the data explicitly from the ws.getUserData() method
-	// /**
-	//  * Arbitrary user data may be attached to this object 
-	//  */
-	// [key: string]: unknown,
 }
