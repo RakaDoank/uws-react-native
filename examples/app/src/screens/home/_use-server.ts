@@ -2,6 +2,10 @@ import {
 	useEffect,
 } from "react"
 
+import {
+	Alert,
+} from "react-native"
+
 import * as uWS from "uws-react-native"
 
 /**
@@ -25,24 +29,6 @@ export function useServer({
 
 		app.get("/test", res => {
 			res.end("Yeay");
-		})
-
-		app.get("/long-operation", async res => {
-			let isAborted = false
-			res.onAborted(() => {
-				console.log("onAborted long operation")
-				isAborted = true
-			})
-
-			await new Promise(resolver => {
-				setTimeout(() => {
-					resolver(true)
-				}, 3000)
-			})
-
-			if(!isAborted) {
-				res.end("long operation")
-			}
 		})
 
 		app.get("/headers", (res, req) => {
@@ -137,20 +123,21 @@ export function useServer({
 			if(requestContentType.startsWith("multipart/form-data")) {
 				res.onFullData(body => {
 					res.writeHeader("content-type", "application/json")
-					console.log("/get-form-data fulldata", body.byteLength, requestContentType)
 
 					try {
 						const multipartField = uWS.getParts(body, requestContentType)
 
+						console.log("multipartField", multipartField)
+
 						if(multipartField?.length) {
-							const textDecoder = new TextDecoder("utf-8")
-							const text1Part = multipartField.find(p => p.name == "text1")
+							// const textDecoder = new TextDecoder("utf-8")
+							// const text1Part = multipartField.find(p => p.name == "text1")
 
-							let text1 = ""
+							// let text1 = ""
 
-							if(text1Part) {
-								text1 = textDecoder.decode(text1Part.data)
-							}
+							// if(text1Part) {
+							// 	text1 = textDecoder.decode(text1Part.data)
+							// }
 
 							res.end(
 								JSON.stringify({
@@ -162,9 +149,9 @@ export function useServer({
 											type: field.type,
 										}
 									}),
-									decodedFields: {
-										text1,
-									},
+									// decodedFields: {
+									// 	text1,
+									// },
 									success: true,
 								}),
 							)
@@ -177,6 +164,7 @@ export function useServer({
 							JSON.stringify({
 								data: null,
 								success: false,
+								message: err instanceof Error ? err.message : undefined,
 							}),
 						)
 					}
@@ -223,6 +211,30 @@ export function useServer({
 					getQuery: req.getQuery() || null,
 				}),
 			)
+		})
+
+		app.get("/long-operation", async res => {
+			let isAborted = false
+			res.onAborted(() => {
+				console.log("onAborted long operation")
+				isAborted = true
+			})
+
+			await new Promise(resolver => {
+				setTimeout(() => {
+					// Test if our JavaScript runtime is still attached
+					Alert.alert(
+						"Hello World",
+						"It is a long day isn't it?",
+					)
+
+					resolver(true)
+				}, 3000)
+			})
+
+			if(!isAborted) {
+				res.end("long operation")
+			}
 		})
 
 		// TextDecoder is supported only for React Native 0.85 and latest
