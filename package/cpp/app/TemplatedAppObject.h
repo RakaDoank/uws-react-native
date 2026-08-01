@@ -248,9 +248,9 @@ public:
                                                                       facebook::jsi::PropNameID::forUtf8(rt, "filter"),
                                                                       0,
                                                                       [&appRunner, &jsInvoker](facebook::jsi::Runtime &rt_1,
-                                                                                   const facebook::jsi::Value &thisValue,
-                                                                                   const facebook::jsi::Value *arguments,
-                                                                                   size_t count) -> facebook::jsi::Value {
+                                                                                               const facebook::jsi::Value &thisValue,
+                                                                                               const facebook::jsi::Value *arguments,
+                                                                                               size_t count) -> facebook::jsi::Value {
       if(!arguments || !arguments[0].isObject()) {
         return {rt_1, thisValue};
       }
@@ -415,7 +415,9 @@ public:
         return {rt_1, thisValue};
       }
 
-      auto behavior = WebSocketBehaviorImpl(rt_1, jsInvoker, arguments[1].asObject(rt_1));
+      auto behavior = WebSocketBehaviorImpl(rt_1,
+                                            jsInvoker,
+                                            arguments[1].asObject(rt_1));
 
       appRunner.app.ws(pattern.getString(), std::move(behavior));
 
