@@ -439,26 +439,26 @@ public:
       /// So, instead of holding an JS object,
       /// we store user data as facebook::jsi::HostObject.
       /// See WebSocketUserData.h
-      auto userDataFn = userDataFnObj.asFunction(rt_1);
       auto userData = std::make_shared<WebSocketUserData>();
-      userDataFn.call(rt_1,
-                      facebook::jsi::Object::createFromHostObject(rt_1, userData));
 
+      auto userDataFn = userDataFnObj.asFunction(rt_1);
       auto secWebSocketKey = arguments[1].asString(rt_1).utf8(rt_1);
       auto secWebSocketProtocol = arguments[2].asString(rt_1).utf8(rt_1);
       auto secWebSocketExtensions = arguments[3].asString(rt_1).utf8(rt_1);
       auto context = arguments[4].asBigInt(rt_1).asUint64(rt_1);
 
-      auto *usSocketContext = reinterpret_cast<us_socket_context_t *>(context);
+      userDataFn.call(rt_1,
+                      facebook::jsi::Object::createFromHostObject(rt_1, userData));
 
 #ifdef REACT_NATIVE_DEBUG
       assumeCorked(rt_1);
 #endif
+
       provider->res->upgrade(std::move(userData),
-                             std::string_view(secWebSocketKey),
-                             std::string_view(secWebSocketProtocol),
-                             std::string_view(secWebSocketExtensions),
-                             usSocketContext);
+                             secWebSocketKey,
+                             secWebSocketProtocol,
+                             secWebSocketExtensions,
+                             reinterpret_cast<us_socket_context_t *>(context));
 
       return facebook::jsi::Value::undefined();
     }));
