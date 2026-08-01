@@ -23,6 +23,6 @@ export interface WebSocketUserData {
 
 	setString(
 		key: string,
-		value: number,
+		value: string,
 	): void,
 }
