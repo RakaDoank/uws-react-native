@@ -9,7 +9,7 @@ import {
 import * as uWS from "uws-react-native"
 
 /**
- * This is the actual uWebSockets server.
+ * This is the actual uWebSockets server. For the UI, see /examples/app/src/screens/home/Page.tsx
  * 
  * You need to run the server inside of useEffect.
  * Otherwise, your server may run forever until the app is killed.
@@ -290,11 +290,56 @@ export function useServer({
 			}
 		})
 
+		app.ws("/ws/*", {
+			compression: uWS.CompressOptions.SHARED_COMPRESSOR,
+			maxPayloadLength: 16 * 1024 * 1024,
+			// upgrade(res, req, context) {
+			// 	const url = req.getUrl()
+
+			// 	console.log(
+			// 		"ws server:",
+			// 		"An Http connection wants to become WebSocket, URL: " + url,
+			// 	)
+
+			// 	res.upgrade(
+			// 		// this is the major difference from original uWebSockets
+			// 		// of how to set user data
+			// 		userData => {
+			// 			// You cannot use the `res` and `req` inside of this callback
+			// 			console.log("user data called")
+			// 			userData.setString("myData", url)
+			// 		},
+			// 		req.getHeader("sec-websocket-key"),
+			// 		req.getHeader("sec-websocket-protocol"),
+			// 		req.getHeader("sec-websocket-extensions"),
+			// 		context,
+			// 	)
+			// },
+			open(ws) {
+				console.log(
+					"ws server:",
+					"WebSocket connected " + ws.isSubscribed("foo"),
+					// "WebSocket connected with URL: " + ws.getUserData().getString("myData"),
+				)
+			},
+			message(_ws, message, isBinary) {
+				console.log("ws server:", "Message", message.byteLength, isBinary)
+				// send back
+				// ws.send(message, isBinary)
+			},
+			drain(/* ws */) {
+				// console.log("ws server:", "WebSocket backpressure: " + ws.getBufferedAmount());
+			},
+			close(/* _ws, code */) {
+				console.log("ws server:", "WebSocket closed")
+			},
+		})
+
 		// ------------------------------
 		// ----- For UI tester tool -----
 		// ------------------------------
 
-		// iOS will fail to listen/run the server without explicit host 127.0.0.1
+		// iOS & macOS will fail to listen/run the server without explicit host 127.0.0.1
 		app.listen("127.0.0.1", port, token => {
 			if(token) {
 				console.log("Listening at 5000")

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import {
 	useContext,
+	useEffect,
 	useRef,
 } from "react"
 
@@ -47,6 +48,9 @@ export function Page() {
 		isRunningTests =
 			useRef<boolean[]>([]),
 
+		webSocket =
+			useRef<WebSocket | null>(null),
+
 		setItemRef =
 			(
 				itemRef: ItemRef | null,
@@ -55,6 +59,50 @@ export function Page() {
 				itemRefs.current[index] = itemRef
 			},
 
+		openWs =
+			() => {
+				if(!webSocket.current) {
+					webSocket.current =
+						new WebSocket(`ws://${HOST}:${PORT}/ws/hello-world`)
+
+					webSocket.current.onopen = () => {
+						console.log("ws client:", "On opened")
+					}
+
+					webSocket.current.onmessage = event => {
+						console.log("ws client:", "On message", event.data)
+					}
+
+					webSocket.current.onerror = () => {
+						console.log(
+							"ws client:",
+							"On Error",
+						)
+					}
+
+					webSocket.current.onclose = event => {
+						console.log(
+							"ws client:",
+							`On Close: ${event.code} | ${event.reason}`,
+						)
+					}
+				} else {
+					webSocket.current.close()
+					webSocket.current = null
+
+					openWs()
+				}
+			}
+
+	// Cleanup WebSocket
+	useEffect(() => {
+		const ws = webSocket.current
+		return () => {
+			ws?.close()
+		}
+	}, [])
+
+	const
 		test_0 =
 			async () => {
 				isRunningTests.current[0] = true
@@ -68,7 +116,7 @@ export function Page() {
 							"okay",
 
 						isValid =
-							await fetch(`${SERVER_BASE_URL}/request/${param1}/${param2}?foo=bar&im=okay`, {
+							await fetch(`${HTTP_SERVER_BASE_URL}/request/${param1}/${param2}?foo=bar&im=okay`, {
 								method: "GET",
 							})
 								.then(async res => {
@@ -119,7 +167,7 @@ export function Page() {
 				isRunningTests.current[1] = true
 
 				try {
-					const response = await fetch(`${SERVER_BASE_URL}/long-operation`, {
+					const response = await fetch(`${HTTP_SERVER_BASE_URL}/long-operation`, {
 						method: "GET",
 					})
 
@@ -147,7 +195,7 @@ export function Page() {
 				isRunningTests.current[2] = true
 
 				try {
-					const response = await fetch(`${SERVER_BASE_URL}/randomass`, {
+					const response = await fetch(`${HTTP_SERVER_BASE_URL}/randomass`, {
 						method: "GET",
 					})
 
@@ -179,7 +227,7 @@ export function Page() {
 				try {
 					const
 						resJson =
-							await fetch(`${SERVER_BASE_URL}/read-json-from-arraybuffer`, {
+							await fetch(`${HTTP_SERVER_BASE_URL}/read-json-from-arraybuffer`, {
 								method: "POST",
 								body: jsonString,
 							})
@@ -211,7 +259,7 @@ export function Page() {
 				try {
 					const
 						resJson =
-							await fetch(`${SERVER_BASE_URL}/read-json-from-text`, {
+							await fetch(`${HTTP_SERVER_BASE_URL}/read-json-from-text`, {
 								method: "POST",
 								body: jsonString,
 							})
@@ -234,6 +282,15 @@ export function Page() {
 				}
 
 				isRunningTests.current[4] = false
+			},
+
+		test_5 =
+			() => {
+				webSocket.current?.send("Hi from client")
+				itemRefs.current[5]?.setState({
+					status: "finished",
+					message: "Check console",
+				})
 			},
 
 		runAllTests =
@@ -277,6 +334,10 @@ export function Page() {
 
 				<TableToolbar
 					buttons={ <>
+						<TableToolbarButton.Ghost
+							text="Open WebSocket Client"
+							onPress={ openWs }
+						/>
 						<TableToolbarButton.Primary
 							text="Run All Tests"
 							onPress={ runAllTests }
@@ -346,6 +407,13 @@ export function Page() {
 				endpoint="/read-json-from-text"
 				onPressTest={ test_4 }
 			/>
+
+			<Item
+				ref={ itemRef => setItemRef(itemRef, 5) }
+				testName="WebSocket Run, Send & Receieve Message"
+				endpoint="/ws/hello-world"
+				onPressTest={ test_5 }
+			/>
 		</Table>
 	)
 
@@ -355,8 +423,11 @@ const
 	PORT =
 		5000,
 
-	SERVER_BASE_URL =
-		`http://127.0.0.1:${PORT}`,
+	HOST =
+		"127.0.0.1",
+
+	HTTP_SERVER_BASE_URL =
+		`http://${HOST}:${PORT}`,
 
 	jsonString =
 		JSON.stringify({
