@@ -1,43 +1,47 @@
 #pragma once
 
-#include <algorithm>
-#include <functional>
 #include <jsi/jsi.h>
-#include <vector>
+#include "WebSocketUserDataStorage.h"
 
 namespace uws_react_native {
 
-class WebSocketUserData : public facebook::jsi::HostObject {
+class WebSocketUserDataHostObject : public facebook::jsi::HostObject {
 
 public:
-  WebSocketUserData &operator=(WebSocketUserData &) = delete;
+  WebSocketUserDataHostObject(WebSocketUserDataStorage *storage) {
+    this->storage = storage;
+  }
 
   facebook::jsi::Value get(facebook::jsi::Runtime &rt,
-                           const facebook::jsi::PropNameID &name) override {
-    auto nameStr = name.utf8(rt);
+                           const facebook::jsi::PropNameID &propName) override {
+    auto name = propName.utf8(rt);
 
-    // getBoolean
-    if(nameStr == this->propertyNames[0]) {
+    if(name == "getBoolean") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[0]),
-                                                             2,
+                                                             propName,
+                                                             1,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
                                                                     const facebook::jsi::Value *arguments,
                                                                     size_t count) -> facebook::jsi::Value {
-        if(this->booleans == nullptr || !arguments || !arguments[0].isString()) {
+        if(this->storage->booleans == nullptr || !arguments || !arguments[0].isString()) {
           return facebook::jsi::Value::undefined();
         }
 
         auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        return {rt_1, this->booleans->at(key)};
+        auto it = this->storage->booleans->find(key);
+
+        if(it == this->storage->booleans->end()) {
+          return facebook::jsi::Value::undefined();
+        }
+
+        return {rt_1, it->second};
       });
     }
 
-    // setBoolean
-    if(nameStr == this->propertyNames[1]) {
+    if(name == "setBoolean") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[1]),
+                                                             propName,
                                                              2,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
@@ -47,40 +51,39 @@ public:
           return facebook::jsi::Value::undefined();
         }
 
-        auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        auto boolean = arguments[1].asBool();
-
-        if(this->booleans == nullptr) {
-          this->booleans = std::make_unique<std::unordered_map<std::string, bool>>();
-        }
-        this->booleans->insert({ key, boolean });
+        this->storage->setBoolean(arguments[0].asString(rt_1).utf8(rt_1),
+                                  arguments[1].asBool());
 
         return facebook::jsi::Value::undefined();
       });
     }
 
-    // getNumber
-    if(nameStr == this->propertyNames[2]) {
+    if(name == "getNumber") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[2]),
-                                                             2,
+                                                             propName,
+                                                             1,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
                                                                     const facebook::jsi::Value *arguments,
                                                                     size_t count) -> facebook::jsi::Value {
-        if(this->numbers == nullptr || !arguments || !arguments[0].isString()) {
+        if(this->storage->numbers == nullptr || !arguments || !arguments[0].isString()) {
           return facebook::jsi::Value::undefined();
         }
 
         auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        return {rt_1, this->numbers->at(key)};
+        auto it = this->storage->numbers->find(key);
+
+        if(it == storage->numbers->end()) {
+          return facebook::jsi::Value::undefined();
+        }
+
+        return {rt_1, it->second};
       });
     }
 
-    // setNumber
-    if(nameStr == this->propertyNames[3]) {
+    if(name == "setNumber") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[3]),
+                                                             propName,
                                                              2,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
@@ -90,46 +93,39 @@ public:
           return facebook::jsi::Value::undefined();
         }
 
-        auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        auto number = arguments[1].asNumber();
-
-        if(this->numbers == nullptr) {
-          this->numbers = std::make_unique<std::unordered_map<std::string, double>>();
-        }
-        this->numbers->insert({ key, number });
+        this->storage->setNumber(arguments[0].asString(rt_1).utf8(rt_1),
+                                 arguments[1].asNumber());
 
         return facebook::jsi::Value::undefined();
       });
     }
 
-    // getString
-    if(nameStr == this->propertyNames[4]) {
+    if(name == "getString") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[4]),
-                                                             2,
+                                                             propName,
+                                                             1,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
                                                                     const facebook::jsi::Value *arguments,
                                                                     size_t count) -> facebook::jsi::Value {
-        if(this->strings == nullptr || !arguments || !arguments[0].isString()) {
+        if(this->storage->strings == nullptr || !arguments || !arguments[0].isString()) {
           return facebook::jsi::Value::undefined();
         }
 
         auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        auto it = this->strings->find(key);
+        auto it = this->storage->strings->find(key);
 
-        if(it == this->strings->end()) {
+        if(it == this->storage->strings->end()) {
           return facebook::jsi::Value::undefined();
         }
 
-        return facebook::jsi::String::createFromAscii(rt_1, it->second);
+        return facebook::jsi::String::createFromUtf8(rt_1, it->second);
       });
     }
 
-    // setString
-    if(nameStr == this->propertyNames[5]) {
+    if(name == "setString") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[5]),
+                                                             propName,
                                                              2,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
@@ -139,43 +135,39 @@ public:
           return facebook::jsi::Value::undefined();
         }
 
-        auto key = arguments[0].asString(rt_1).utf8(rt_1);
-        auto string = arguments[1].asString(rt_1).utf8(rt_1);
-
-        if(this->strings == nullptr) {
-          this->strings = std::make_unique<std::unordered_map<std::string, std::string>>();
-        }
-        this->strings->insert({ key, std::move(string) });
+        this->storage->setString(arguments[0].asString(rt_1).utf8(rt_1),
+                                 arguments[1].asString(rt_1).utf8(rt_1));
 
         return facebook::jsi::Value::undefined();
       });
     }
 
-    // remove
-    if(nameStr == this->propertyNames[6]) {
+    if(name == "remove") {
       return facebook::jsi::Function::createFromHostFunction(rt,
-                                                             facebook::jsi::PropNameID::forUtf8(rt, this->propertyNames[5]),
+                                                             propName,
                                                              1,
                                                              [this](facebook::jsi::Runtime &rt_1,
                                                                     const facebook::jsi::Value &thisValue,
                                                                     const facebook::jsi::Value *arguments,
                                                                     size_t count) -> facebook::jsi::Value {
-        if(this->isEmpty() || !arguments || !arguments[0].isString()) {
+        if((this->storage->booleans == nullptr && this->storage->numbers == nullptr && this->storage->strings == nullptr) ||
+           !arguments ||
+           !arguments[0].isString()) {
           return facebook::jsi::Value::undefined();
         }
 
         auto key = arguments[0].asString(rt_1).utf8(rt_1);
 
-        if(this->booleans != nullptr) {
-          this->booleans->erase(key);
+        if(this->storage->booleans != nullptr) {
+          this->storage->booleans->erase(key);
         }
 
-        if(this->numbers != nullptr) {
-          this->numbers->erase(key);
+        if(this->storage->numbers != nullptr) {
+          this->storage->numbers->erase(key);
         }
 
-        if(this->strings != nullptr) {
-          this->strings->erase(key);
+        if(this->storage->strings != nullptr) {
+          this->storage->strings->erase(key);
         }
 
         return facebook::jsi::Value::undefined();
@@ -188,7 +180,7 @@ public:
   void set(facebook::jsi::Runtime &rt,
            const facebook::jsi::PropNameID &name,
            const facebook::jsi::Value &value) override {
-    throw facebook::jsi::JSError(rt, "User data object is read-only.");
+    throw facebook::jsi::JSError(rt, "WebSocket object is read-only.");
   }
 
   std::vector<facebook::jsi::PropNameID> getPropertyNames(facebook::jsi::Runtime& rt) override {
@@ -202,14 +194,8 @@ public:
     return names;
   }
 
-  [[nodiscard]] bool isEmpty() const {
-    return this->booleans == nullptr && this->numbers == nullptr && this->strings == nullptr;
-  }
-
 private:
-  std::unique_ptr<std::unordered_map<std::string, bool>> booleans = nullptr;
-  std::unique_ptr<std::unordered_map<std::string, double>> numbers = nullptr;
-  std::unique_ptr<std::unordered_map<std::string, std::string>> strings = nullptr;
+  WebSocketUserDataStorage *storage = nullptr;
 
   std::array<std::string, 7> propertyNames = {"getBoolean",
                                               "setBoolean",
@@ -222,6 +208,7 @@ private:
 
                                               "remove"};
 
+
 };
 
-}
+} // namespace uws_react_native

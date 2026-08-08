@@ -6,14 +6,16 @@
 #include <jsi/jsi.h>
 #include <react/bridging/Function.h>
 #include "AppRunner.h"
-#include "WebSocketObject.h"
-#include "WebSocketUserData.h"
+#include "HttpRequestObject.h"
+#include "HttpResponseObject.h"
+#include "WebSocketHostObject.h"
+#include "WebSocketUserDataStorage.h"
 #include "jsi/Buffer.h"
 #include "uWebSockets/App.h"
 
 namespace uws_react_native {
 
-struct WebSocketBehaviorImpl : uWS::App::WebSocketBehavior<facebook::jsi::Value> {
+struct WebSocketBehaviorImpl : uWS::App::WebSocketBehavior<WebSocketUserDataStorage> {
 
 public:
   WebSocketBehaviorImpl(facebook::jsi::Runtime &rt,
@@ -26,12 +28,12 @@ public:
         auto obj = prop.asObject(rt);
         if(obj.isFunction(rt)) {
 
-          this->close = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, int code, std::string_view message) {
+          this->close = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, int code, std::string_view message) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), code, message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), code, message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       code,
                       facebook::jsi::ArrayBuffer(rt_1,
                                                  std::make_shared<StringViewMutableBuffer>(message)));
@@ -66,10 +68,10 @@ public:
 
           this->drain = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs));
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject));
             });
           };
 
@@ -87,10 +89,10 @@ public:
 
           this->dropped = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, std::string_view message, uWS::OpCode opCode) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), message, opCode](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), message, opCode](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       facebook::jsi::ArrayBuffer(rt_1, std::make_shared<StringViewMutableBuffer>(message)),
                       opCode == uWS::OpCode::BINARY);
             });
@@ -158,10 +160,10 @@ public:
 
           this->message = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, std::string_view message, uWS::OpCode opCode) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), message, opCode](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), message, opCode](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       facebook::jsi::ArrayBuffer(rt_1, std::make_shared<StringViewMutableBuffer>(message)),
                       opCode == uWS::OpCode::BINARY);
             });
@@ -181,10 +183,10 @@ public:
 
           this->open = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs));
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject));
             });
           };
 
@@ -202,10 +204,10 @@ public:
 
           this->ping = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, std::string_view message) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       facebook::jsi::ArrayBuffer(rt_1, std::make_shared<StringViewMutableBuffer>(message)));
             });
           };
@@ -224,10 +226,10 @@ public:
 
           this->pong = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, std::string_view message) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), message](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       facebook::jsi::ArrayBuffer(rt_1, std::make_shared<StringViewMutableBuffer>(message)));
             });
           };
@@ -253,10 +255,10 @@ public:
 
           this->subscription = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker)](auto *ws, std::string_view topic, int newCount, int oldCount) -> void {
             // AppRunner thread
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [sharedWs = std::make_shared<uWS::WebSocket<false, true, std::shared_ptr<WebSocketUserData>>>(*ws), topic, newCount, oldCount](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [webSocketHostObject = std::make_shared<WebSocketHostObject>(ws), topic, newCount, oldCount](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) -> void {
               // React Native JS Runtime
               cb.call(rt_1,
-                      WebSocketObject(rt_1, sharedWs),
+                      facebook::jsi::Object::createFromHostObject(rt_1, webSocketHostObject),
                       facebook::jsi::ArrayBuffer(rt_1, std::make_shared<StringViewMutableBuffer>(topic)),
                       newCount,
                       oldCount);
@@ -287,6 +289,14 @@ public:
                         HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
                         HttpRequestObject(rt_1, httpRequestShared),
                         facebook::jsi::BigInt::fromUint64(rt_1, contextAddress));
+              }
+            });
+
+            /// Same like the .get, .post, .put, and others in the TemplatedAppObject.h
+            /// We have to predefined the res->onAborted here
+            res->onAborted([httpResponseObjectProvider]() -> void {
+              if(httpResponseObjectProvider->dataAbort.callback) {
+                httpResponseObjectProvider->dataAbort.callback->call(facebook::jsi::Value::undefined());
               }
             });
           };

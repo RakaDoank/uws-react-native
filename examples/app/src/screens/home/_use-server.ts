@@ -293,33 +293,34 @@ export function useServer({
 		app.ws("/ws/*", {
 			compression: uWS.CompressOptions.SHARED_COMPRESSOR,
 			maxPayloadLength: 16 * 1024 * 1024,
-			// upgrade(res, req, context) {
-			// 	const url = req.getUrl()
+			upgrade(res, req, context) {
+				const url = req.getUrl()
 
-			// 	console.log(
-			// 		"ws server:",
-			// 		"An Http connection wants to become WebSocket, URL: " + url,
-			// 	)
+				console.log(
+					"ws server:",
+					"An Http connection wants to become WebSocket, URL: " + url,
+				)
 
-			// 	res.upgrade(
-			// 		// this is the major difference from original uWebSockets
-			// 		// of how to set user data
-			// 		userData => {
-			// 			// You cannot use the `res` and `req` inside of this callback
-			// 			console.log("user data called")
-			// 			userData.setString("myData", url)
-			// 		},
-			// 		req.getHeader("sec-websocket-key"),
-			// 		req.getHeader("sec-websocket-protocol"),
-			// 		req.getHeader("sec-websocket-extensions"),
-			// 		context,
-			// 	)
-			// },
+				// simulate upgrade async
+				setTimeout(() => {
+					res.upgrade(
+						// this is the major difference from original uWebSockets
+						// of how to set user data
+						userData => {
+							// You cannot use the `res` and `req` inside of this callback
+							userData.setString("myData", url)
+						},
+						req.getHeader("sec-websocket-key"),
+						req.getHeader("sec-websocket-protocol"),
+						req.getHeader("sec-websocket-extensions"),
+						context,
+					)
+				}, 1000)
+			},
 			open(ws) {
 				console.log(
 					"ws server:",
-					"WebSocket connected " + ws.isSubscribed("foo"),
-					// "WebSocket connected with URL: " + ws.getUserData().getString("myData"),
+					"WebSocket connected with URL: " + ws.getUserData().getString("myData"),
 				)
 			},
 			message(_ws, message, isBinary) {

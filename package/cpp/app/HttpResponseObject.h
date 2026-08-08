@@ -7,7 +7,8 @@
 #include <utility>
 #include "HttpResponseObjectProvider.h"
 #include "RecognizedString.h"
-#include "WebSocketUserData.h"
+#include "WebSocketUserDataHostObject.h"
+#include "WebSocketUserDataStorage.h"
 #include "uWebSockets/App.h"
 
 #ifdef REACT_NATIVE_DEBUG
@@ -431,15 +432,14 @@ public:
 
       /// We are not supposed to store the user data object inside of singleton member,
       /// such as map, vector, or any else.
-      ///
       /// See this manual
       /// https://github.com/uNetworking/uWebSockets/blob/master/misc/READMORE.md#the-appws-route
       ///
       /// Not like uWebSockets.js, there is no equivalent of v8::UniquePersistent in JSI.
       /// So, instead of holding an JS object,
-      /// we store user data as facebook::jsi::HostObject.
-      /// See WebSocketUserData.h
-      auto userData = std::make_shared<WebSocketUserData>();
+      /// we store user data as plain struct, and we provide construct the JS object later.
+      /// See WebSocketUserDataStorage.h
+      auto userDataStorage = WebSocketUserDataStorage();
 
       auto userDataFn = userDataFnObj.asFunction(rt_1);
       auto secWebSocketKey = arguments[1].asString(rt_1).utf8(rt_1);
@@ -448,13 +448,14 @@ public:
       auto context = arguments[4].asBigInt(rt_1).asUint64(rt_1);
 
       userDataFn.call(rt_1,
-                      facebook::jsi::Object::createFromHostObject(rt_1, userData));
+                      facebook::jsi::Object::createFromHostObject(rt_1,
+                                                                  std::make_shared<WebSocketUserDataHostObject>(&userDataStorage)));
 
 #ifdef REACT_NATIVE_DEBUG
       assumeCorked(rt_1);
 #endif
 
-      provider->res->upgrade(std::move(userData),
+      provider->res->upgrade(std::move(userDataStorage),
                              secWebSocketKey,
                              secWebSocketProtocol,
                              secWebSocketExtensions,
