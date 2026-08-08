@@ -286,6 +286,14 @@ export function Page() {
 
 		test_5 =
 			() => {
+				if(!webSocket.current) {
+					itemRefs.current[5]?.setState({
+						status: "error",
+						message: "Open WebSocket client first",
+					})
+					return
+				}
+
 				webSocket.current?.send("Hi from client")
 				itemRefs.current[5]?.setState({
 					status: "finished",

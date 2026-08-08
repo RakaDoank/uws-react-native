@@ -323,10 +323,10 @@ export function useServer({
 					"WebSocket connected with URL: " + ws.getUserData().getString("myData"),
 				)
 			},
-			message(_ws, message, isBinary) {
+			message(ws, message, isBinary) {
 				console.log("ws server:", "Message", message.byteLength, isBinary)
 				// send back
-				// ws.send(message, isBinary)
+				ws.send(message, isBinary)
 			},
 			drain(/* ws */) {
 				// console.log("ws server:", "WebSocket backpressure: " + ws.getBufferedAmount());
