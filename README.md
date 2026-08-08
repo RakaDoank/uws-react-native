@@ -5,14 +5,14 @@ The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) server
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
 - **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++
 
----
+## Table of Contents
 - [Installation](#installation)
   - [From NPM Registry](#from-npm-registry)
   - [From GitHub Release](#from-github-release)
   - [From GitHub Packages](#from-github-packages)
 - [Usage](#usage)
 - [Compatibility](#compatibility)
-  - [Platform](#platform)
+  - [Platforms](#platforms)
   - [Unsupported APIs](#unsupported-apis)
   - [New APIs](#new-apis)
 - [Contributing](#contributing)
@@ -101,7 +101,7 @@ pnpm install @rakadoank/uws-react-native
 
 ## Usage
 
-Since uws-react-native is a port of uWebSockets library for JavaScript, this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
+uws-react-native is just a port of uWebSockets library for JavaScript. So this library is really similar of how to use the [uWebSockets](https://github.com/uNetworking/uWebSockets) in C++, or the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) for Node.js.
 You can refer to the [uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) example, but **we recommend to create a server in `useEffect`**.
 
 This repository does also contain the [server example](https://github.com/RakaDoank/uws-react-native/blob/main/examples/app/src/screens/home/_use-server.ts). You can also refer to it, but it is currently for library development playground rather than proper example.
@@ -189,9 +189,17 @@ export function Component() {
 
 `uws-react-native` is only compatible for new architecture of React Native.
 
-### Platform
+### Platforms
 
-uws-react-native is supported in Android, iOS, and macOS. Windows is currently not supported, and Web is impossible.
+| Platform | Compatible             |
+| --------- | --------------------- |
+| Android   | ✅                    |
+| iOS       | ✅                    |
+| macOS     | ✅                    |
+| Windows   | ❌                    |
+| Web       | ❌ (Impossible)       |
+
+> Currently not confident to support Windows platform due to lack of knowledge regarding Windows app development.
 
 ### Unsupported APIs
 
