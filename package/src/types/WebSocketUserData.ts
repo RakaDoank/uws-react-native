@@ -25,4 +25,6 @@ export interface WebSocketUserData {
 		key: string,
 		value: string,
 	): void,
+
+	remove(key: string): void,
 }
