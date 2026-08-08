@@ -91,12 +91,6 @@ private:
 
     // AppRunner thread
     std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, disableBodyRead, maxBodySize, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
-//      auto httpResponseObject = std::make_shared<HttpResponseObject>(rt,
-//                                                                     res,
-//                                                                     jsInvoker);
-//
-//      auto httpRequestObject = std::make_shared<HttpRequestObject>(rt, req);
-
       auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
       auto sharedRequest = std::make_shared<uWS::HttpRequest>(*req);
 
