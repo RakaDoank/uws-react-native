@@ -169,6 +169,32 @@ export function Component() {
       })
     })
 
+    app.ws("/chat-me", {
+      compression: uWS.CompressOptions.SHARED_COMPRESSOR,
+      upgrade(res, req, context) {
+        const myString = req.getUrl()
+    
+        res.upgrade(
+          userData => {
+            userData.setString("my_string", myString)
+            userData.setNumber("my_number", 628228544)
+            userData.setBoolean("is_dead", false)
+          },
+          req.getHeader("sec-websocket-key"),
+          req.getHeader("sec-websocket-protocol"),
+          req.getHeader("sec-websocket-extensions"),
+          context,
+        )
+      },
+      open(ws) {
+        const myString: string | undefined = ws.getString("my_string")
+        const myNumber: number | undefined = ws.getNumber("my_number")
+        const isDead: boolean | undefined = ws.getBoolean("is_dead")
+    
+        ws.send("Hello World")
+      },
+    })
+
     app.listen("127.0.0.1", 5000, token => {
       if(token) {
         console.log("Listening at port 5000")
