@@ -3,6 +3,7 @@
 #include <jsi/jsi.h>
 #include <memory>
 #include <string_view>
+#include "jsi/Buffer.h"
 #include "uWebSockets/HttpResponse.h"
 
 namespace uws_react_native {
