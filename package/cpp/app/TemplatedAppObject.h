@@ -5,7 +5,7 @@
 #include <jsi/jsi.h>
 #include <react/bridging/Function.h>
 #include "AppRunner.h"
-#include "HttpRequestObject.h"
+#include "HttpRequestHostObject.h"
 #include "HttpResponseObject.h"
 #include "HttpResponseObjectProvider.h"
 #include "RecognizedString.h"
@@ -92,14 +92,16 @@ private:
     // AppRunner thread
     std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, disableBodyRead, maxBodySize, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
       auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
-      auto sharedRequest = std::make_shared<uWS::HttpRequest>(*req);
 
-      asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, sharedRequest, &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+      asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
+                                     [httpResponseObjectProvider,
+                                      httpRequestHostObject = std::make_shared<HttpRequestHostObject>(req),
+                                      &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
         // React Native JS runtime
-        if(httpResponseObjectProvider && sharedRequest) {
+        if(httpResponseObjectProvider && httpRequestHostObject) {
           cb.call(rt_1,
                   HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
-                  HttpRequestObject(rt_1, sharedRequest));
+                  facebook::jsi::Object::createFromHostObject(rt_1, httpRequestHostObject));
         }
       });
 

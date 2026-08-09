@@ -20,9 +20,9 @@ namespace {
 thread_local int insideCorkCallback = 0;
 
 void assumeCorked(facebook::jsi::Runtime &rt) {
- if(!insideCorkCallback) {
+  if(!insideCorkCallback) {
     uws_react_native::Console::warn(rt, "uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
- }
+  }
 }
 
 } // namespace

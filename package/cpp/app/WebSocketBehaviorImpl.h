@@ -6,7 +6,7 @@
 #include <jsi/jsi.h>
 #include <react/bridging/Function.h>
 #include "AppRunner.h"
-#include "HttpRequestObject.h"
+#include "HttpRequestHostObject.h"
 #include "HttpResponseObject.h"
 #include "WebSocketHostObject.h"
 #include "WebSocketUserDataStorage.h"
@@ -280,14 +280,13 @@ public:
           this->upgrade = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker), &jsInvoker](auto *res, auto *req, us_socket_context_t *context) -> void {
             // AppRunner thread
             auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
-            auto httpRequestShared = std::make_shared<uWS::HttpRequest>(*req);
 
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, httpRequestShared, &jsInvoker, contextAddress = reinterpret_cast<uintptr_t>(context)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, httpRequestHostObject = std::make_shared<HttpRequestHostObject>(req), &jsInvoker, contextAddress = reinterpret_cast<uintptr_t>(context)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
               // React Native JS runtime
-              if(httpResponseObjectProvider && httpRequestShared) {
+              if(httpResponseObjectProvider && httpRequestHostObject) {
                 cb.call(rt_1,
                         HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
-                        HttpRequestObject(rt_1, httpRequestShared),
+                        facebook::jsi::Object::createFromHostObject(rt_1, httpRequestHostObject),
                         facebook::jsi::BigInt::fromUint64(rt_1, contextAddress));
               }
             });

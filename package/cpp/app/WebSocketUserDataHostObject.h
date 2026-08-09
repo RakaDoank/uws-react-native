@@ -1,6 +1,9 @@
 #pragma once
 
+#include <algorithm>
+#include <array>
 #include <jsi/jsi.h>
+#include <vector>
 #include "WebSocketUserDataStorage.h"
 
 namespace uws_react_native {
