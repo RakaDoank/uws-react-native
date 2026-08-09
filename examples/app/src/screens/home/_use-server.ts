@@ -199,18 +199,20 @@ export function useServer({
 
 			console.log("forEach", forEachResult)
 
-			res.writeHeader("content-type", "application/json")
-			res.end(
-				JSON.stringify({
-					forEach: forEachResult,
-					getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
-					getHeader: req.getHeader("connection"),
-					getParameter: `${req.getParameter(0)} - ${req.getParameter("foo")} | ${req.getParameter(1)} - ${req.getParameter("bar")}`,
-					getMethod: req.getMethod(),
-					getUrl: req.getUrl(),
-					getQuery: req.getQuery() || null,
-				}),
-			)
+			res.cork(() => {
+				res.writeHeader("content-type", "application/json")
+				res.end(
+					JSON.stringify({
+						forEach: forEachResult,
+						getCaseSensitiveMethod: req.getCaseSensitiveMethod(),
+						getHeader: req.getHeader("connection"),
+						getParameter: `${req.getParameter(0)} - ${req.getParameter("foo")} | ${req.getParameter(1)} - ${req.getParameter("bar")}`,
+						getMethod: req.getMethod(),
+						getUrl: req.getUrl(),
+						getQuery: req.getQuery() || null,
+					}),
+				)
+			})
 		})
 
 		app.get("/long-operation", async res => {
