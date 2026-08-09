@@ -6,6 +6,9 @@
 #include <utility>
 #include "HttpResponseObjectProvider.h"
 #include "jsi/Buffer.h"
+#ifdef REACT_NATIVE_DEBUG
+#include "jsi/Console.h"
+#endif
 #include "RecognizedString.h"
 #include "WebSocketUserDataHostObject.h"
 #include "WebSocketUserDataStorage.h"
@@ -18,18 +21,7 @@ thread_local int insideCorkCallback = 0;
 
 void assumeCorked(facebook::jsi::Runtime &rt) {
  if(!insideCorkCallback) {
-   auto console = rt.global().getProperty(rt, "console");
-   if(!console.isObject()) {
-     return;
-   }
-
-   auto warning = console.asObject(rt).getProperty(rt, "warning");
-   if(!warning.isObject()) {
-     return;
-   }
-
-   auto fn = warning.asObject(rt).asFunction(rt);
-   fn.call(rt, "Warning: uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
+    uws_react_native::Console::warn(rt, "uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
  }
 }
 
