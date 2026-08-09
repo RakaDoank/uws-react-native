@@ -193,6 +193,9 @@ export function Component() {
     
         ws.send("Hello World")
       },
+      close(ws, code, message) { /* on close */ },
+      ping(ws, message) {},
+      pong(ws, message) {},
     })
 
     app.listen("127.0.0.1", 5000, token => {
