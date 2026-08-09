@@ -254,9 +254,7 @@ See [Contributing](https://github.com/RakaDoank/uws-react-native?tab=contributin
 
 ## Development & Research
 
-uws-react-native is still in heavy development and research. All the uWebSockets instances are not fully implemented yet.
-
-There are development and research things that you can read for your informations, especially if you are already familiar with uWebSockets. The most things are because of the React Native's architecture differentiation compared to the casual uWebSockets server program.
+There are development and research things that you can read for your information, especially if you are already familiar with uWebSockets. The most things are because of the React Native's architecture differentiation compared to the casual uWebSockets server program.
 
 ### Threading
 
