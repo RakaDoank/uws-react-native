@@ -187,9 +187,11 @@ export function Component() {
         )
       },
       open(ws) {
-        const myString: string | undefined = ws.getString("my_string")
-        const myNumber: number | undefined = ws.getNumber("my_number")
-        const isDead: boolean | undefined = ws.getBoolean("is_dead")
+        const userData = ws.getUserData()
+
+        const myString: string | undefined = userData.getString("my_string")
+        const myNumber: number | undefined = userData.getNumber("my_number")
+        const isDead: boolean | undefined = userData.getBoolean("is_dead")
     
         ws.send("Hello World")
       },
