@@ -329,6 +329,8 @@ export function Page() {
 					test_2(),
 					test_3(),
 					test_4(),
+					// eslint-disable-next-line @typescript-eslint/await-thenable
+					test_5(),
 				])
 			}
 

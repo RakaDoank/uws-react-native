@@ -186,7 +186,6 @@ export function useServer({
 		// ++++++++++++++++++++++++++++++
 
 		app.get("/request/:foo/:bar", (res, req) => {
-			console.log("/request/:foo/:bar")
 			res.onAborted(() => {
 				console.log("onAbort")
 			})
@@ -196,8 +195,6 @@ export function useServer({
 			req.forEach((key, val) => {
 				forEachResult[key] = val
 			})
-
-			console.log("forEach", forEachResult)
 
 			res.cork(() => {
 				res.writeHeader("content-type", "application/json")
