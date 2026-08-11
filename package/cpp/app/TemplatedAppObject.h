@@ -5,7 +5,7 @@
 #include <jsi/jsi.h>
 #include <react/bridging/Function.h>
 #include "AppRunner.h"
-#include "HttpRequestHostObject.h"
+#include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
 #include "HttpResponseObjectProvider.h"
 #include "RecognizedString.h"
@@ -93,15 +93,19 @@ private:
     std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, disableBodyRead, maxBodySize, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
       auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
 
+      /// Intentionally I have to take another copy of uWS::HttpRequest here to be consumed from JS thread
+      /// I always get "bad_alloc" error if I didn't this
+      auto httpRequest = std::make_shared<uWS::HttpRequest>(*req);
+
       asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
                                      [httpResponseObjectProvider,
-                                      httpRequestHostObject = std::make_shared<HttpRequestHostObject>(req),
+                                      httpRequest,
                                       &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
         // React Native JS runtime
-        if(httpResponseObjectProvider && httpRequestHostObject) {
+        if(httpResponseObjectProvider && httpRequest) {
           cb.call(rt_1,
                   HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
-                  facebook::jsi::Object::createFromHostObject(rt_1, httpRequestHostObject));
+                  HttpRequestObject(rt_1, httpRequest));
         }
       });
 

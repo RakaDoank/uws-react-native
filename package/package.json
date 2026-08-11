@@ -1,6 +1,6 @@
 {
 	"name": "uws-react-native",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "The port of uWebSockets server library for React Native",
 	"license": "Apache-2.0",
 	"author": "RakaDoank <rakaaudira@gmail.com> (https://github.com/RakaDoank)",
@@ -16,7 +16,9 @@
 		"uwebsockets.js",
 		"server",
 		"http",
-		"websocket"
+		"http server",
+		"websocket",
+		"websocket server"
 	],
 	"peerDependencies": {
 		"react-native": ">=0.79",

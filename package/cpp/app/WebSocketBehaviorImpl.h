@@ -6,7 +6,7 @@
 #include <jsi/jsi.h>
 #include <react/bridging/Function.h>
 #include "AppRunner.h"
-#include "HttpRequestHostObject.h"
+#include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
 #include "WebSocketHostObject.h"
 #include "WebSocketUserDataStorage.h"
@@ -281,12 +281,19 @@ public:
             // AppRunner thread
             auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
 
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider, httpRequestHostObject = std::make_shared<HttpRequestHostObject>(req), &jsInvoker, contextAddress = reinterpret_cast<uintptr_t>(context)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
+            /// Intentionally I have to take another copy of uWS::HttpRequest here to be consumed from JS thread
+            /// I always get "bad_alloc" error if I didn't this
+            auto httpRequest = std::make_shared<uWS::HttpRequest>(*req);
+
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider,
+                                                                                        httpRequest,
+                                                                                        &jsInvoker,
+                                                                                        contextAddress = reinterpret_cast<uintptr_t>(context)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
               // React Native JS runtime
-              if(httpResponseObjectProvider && httpRequestHostObject) {
+              if(httpResponseObjectProvider && httpRequest) {
                 cb.call(rt_1,
                         HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
-                        facebook::jsi::Object::createFromHostObject(rt_1, httpRequestHostObject),
+                        HttpRequestObject(rt_1, httpRequest),
                         facebook::jsi::BigInt::fromUint64(rt_1, contextAddress));
               }
             });
