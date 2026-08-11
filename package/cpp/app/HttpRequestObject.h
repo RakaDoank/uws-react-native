@@ -34,7 +34,6 @@ public:
                        facebook::jsi::String::createFromAscii(rt_1, std::string(item.first)),
                        facebook::jsi::String::createFromAscii(rt_1, std::string(item.second)));
       });
-
       return facebook::jsi::Value::undefined();
     }));
 
@@ -179,7 +178,6 @@ public:
       }
 
       req->setYield(arguments[0].asBool());
-
       return {rt_1, thisValue};
     }));
 
