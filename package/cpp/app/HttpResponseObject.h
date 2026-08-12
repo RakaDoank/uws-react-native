@@ -10,7 +10,8 @@
 #include "jsi/Console.h"
 #endif
 #include "RecognizedString.h"
-#include "WebSocketUserDataHostObject.h"
+#include "WebSocketUserDataNativeState.h"
+#include "WebSocketUserDataObject.h"
 #include "WebSocketUserDataStorage.h"
 #include "uWebSockets/App.h"
 
@@ -440,8 +441,8 @@ public:
       auto context = arguments[4].asBigInt(rt_1).asUint64(rt_1);
 
       userDataFn.call(rt_1,
-                      facebook::jsi::Object::createFromHostObject(rt_1,
-                                                                  std::make_shared<WebSocketUserDataHostObject>(&userDataStorage)));
+                      WebSocketUserDataObject(rt_1,
+                                              std::make_shared<WebSocketUserDataNativeState>(&userDataStorage)));
 
 #ifdef REACT_NATIVE_DEBUG
       assumeCorked(rt_1);
