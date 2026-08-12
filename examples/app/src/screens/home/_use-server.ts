@@ -323,7 +323,7 @@ export function useServer({
 				)
 			},
 			message(ws, message, isBinary) {
-				console.log("ws server:", "Message", message.byteLength, isBinary)
+				console.log("ws server:", "Get message from client", message.byteLength, isBinary)
 				// send back
 				ws.send(message, isBinary)
 			},

@@ -294,7 +294,7 @@ export function Page() {
 					return
 				}
 
-				webSocket.current?.send("Hi from client")
+				webSocket.current?.send(`Hi from client ${Date.now()}`)
 				itemRefs.current[5]?.setState({
 					status: "finished",
 					message: "Check console",
