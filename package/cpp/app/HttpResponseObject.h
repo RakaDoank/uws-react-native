@@ -6,28 +6,11 @@
 #include <utility>
 #include "HttpResponseObjectProvider.h"
 #include "jsi/Buffer.h"
-#ifdef REACT_NATIVE_DEBUG
-#include "jsi/Console.h"
-#endif
 #include "RecognizedString.h"
 #include "WebSocketUserDataNativeState.h"
 #include "WebSocketUserDataObject.h"
 #include "WebSocketUserDataStorage.h"
 #include "uWebSockets/App.h"
-
-#ifdef REACT_NATIVE_DEBUG
-namespace {
-
-thread_local int insideCorkCallback = 0;
-
-void assumeCorked(facebook::jsi::Runtime &rt) {
-  if(!insideCorkCallback) {
-    uws_react_native::Console::warn(rt, "uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
-  }
-}
-
-} // namespace
-#endif
 
 namespace uws_react_native {
 
@@ -57,20 +40,17 @@ public:
                       facebook::jsi::Function::createFromHostFunction(rt,
                                                                       facebook::jsi::PropNameID::forUtf8(rt, "cork"),
                                                                       1,
-                                                                      [provider](facebook::jsi::Runtime &rt_1,
-                                                                                             const facebook::jsi::Value &thisValue,
-                                                                                             const facebook::jsi::Value *arguments,
-                                                                                             size_t count) -> facebook::jsi::Value {
-      provider->res->cork([&rt_1, callback = arguments[0].asObject(rt_1).asFunction(rt_1)]() {
+                                                                      [provider, &jsInvoker](facebook::jsi::Runtime &rt_1,
+                                                                                                                  const facebook::jsi::Value &thisValue,
+                                                                                                                  const facebook::jsi::Value *arguments,
+                                                                                                                  size_t count) mutable -> facebook::jsi::Value {
 #ifdef REACT_NATIVE_DEBUG
-        insideCorkCallback++;
+      provider->isInsideCork = true;
 #endif
 
-        callback.call(rt_1);
-
-#ifdef REACT_NATIVE_DEBUG
-        insideCorkCallback--;
-#endif
+      provider->res->cork([fn = facebook::react::AsyncCallback<facebook::jsi::Value>(rt_1, arguments[0].asObject(rt_1).asFunction(rt_1), jsInvoker)]() {
+        fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
+                            facebook::jsi::Value::undefined());
       });
 
       return {rt_1, thisValue};
@@ -92,11 +72,10 @@ public:
       if(provider->dataAbort.isAlreadyAborted) {
         return {rt_1, thisValue};
       }
-
       auto body = RecognizedString(rt_1, arguments[0]).getStringView();
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       provider->res->end(body);
 
@@ -138,7 +117,7 @@ public:
       }
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       provider->res->endWithoutBody(reportedContentLength, closeConnection);
 
@@ -392,7 +371,7 @@ public:
       auto totalSize = arguments[1].asNumber();
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       auto tryEndResult = provider->res->tryEnd(fullBodyOrChunk, static_cast<uintmax_t>(totalSize));
 
@@ -445,7 +424,7 @@ public:
                                               std::make_shared<WebSocketUserDataNativeState>(&userDataStorage)));
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
 
       provider->res->upgrade(std::move(userDataStorage),
@@ -469,7 +448,7 @@ public:
       auto chunk = RecognizedString(rt_1, arguments[0]).getStringView();
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       return provider->res->write(chunk);
     }));
@@ -487,7 +466,7 @@ public:
       auto headerVal = RecognizedString(rt_1, arguments[1]).getStringView();
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       provider->res->writeHeader(headerKey, headerVal);
 
@@ -506,7 +485,7 @@ public:
       auto status = RecognizedString(rt_1, arguments[0]).getStringView();
 
 #ifdef REACT_NATIVE_DEBUG
-      assumeCorked(rt_1);
+      provider->assumeCorked(rt_1);
 #endif
       provider->res->writeStatus(status);
 
@@ -515,6 +494,6 @@ public:
 
   } // HttpResponseObject
 
-}; // HttpResponseObject
+}; // class HttpResponseObject
 
 } // namespace uws_react_native

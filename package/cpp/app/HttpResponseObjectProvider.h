@@ -4,6 +4,9 @@
 #include <memory>
 #include <string_view>
 #include "jsi/Buffer.h"
+#ifdef REACT_NATIVE_DEBUG
+#include "jsi/Console.h"
+#endif
 #include "uWebSockets/HttpResponse.h"
 
 namespace uws_react_native {
@@ -113,7 +116,17 @@ public:
 
     }
   }
-  
-}; // HttpResponseObjectProvider
 
-} // uws_react_native
+#ifdef REACT_NATIVE_DEBUG
+  bool isInsideCork = false;
+
+  void assumeCorked(facebook::jsi::Runtime &rt) const {
+    if(!this->isInsideCork) {
+      Console::warn(rt, "uWS.HttpResponse writes must be made from within a corked callback. See documentation for uWS.HttpResponse.cork and consult the user manual.");
+    }
+  }
+#endif
+  
+}; // class HttpResponseObjectProvider
+
+} // namespace uws_react_native
