@@ -150,6 +150,45 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
+    this->setProperty(rt,
+                      "remove",
+                      facebook::jsi::Function::createFromHostFunction(rt,
+                                                                      facebook::jsi::PropNameID::forUtf8(rt, "remove"),
+                                                                      1,
+                                                                      [](facebook::jsi::Runtime &rt_1,
+                                                                         const facebook::jsi::Value &thisValue,
+                                                                         const facebook::jsi::Value *arguments,
+                                                                         size_t count) -> facebook::jsi::Value {
+      if(!arguments || !arguments[0].isString()) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      auto storage = thisValue.asObject(rt_1).getNativeState<WebSocketUserDataNativeState>(rt_1)->storage;
+
+      if(storage->booleans == nullptr && storage->numbers == nullptr && storage->strings == nullptr) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      auto key = arguments[0].asString(rt_1).utf8(rt_1);
+      if(key.empty()) {
+        return facebook::jsi::Value::undefined();
+      }
+
+      if(storage->booleans != nullptr) {
+        storage->booleans->erase(key);
+      }
+
+      if(storage->numbers != nullptr) {
+        storage->numbers->erase(key);
+      }
+
+      if(storage->strings != nullptr) {
+        storage->strings->erase(key);
+      }
+
+      return facebook::jsi::Value::undefined();
+    }));
+
   } // WebSocketUserDataObject
 
 }; // class WebSocketUserDataObject
