@@ -18,18 +18,18 @@
 		"@types/color": "4.2.1",
 		"@types/node": "^24",
 		"@types/react": "19.2.14",
-		"@types/react-dom": "19.2.3",
+		"@types/react-dom": "19.2.4",
 		"@types/react-native-web": "0.19.2",
-		"eslint": "10.6.0",
+		"eslint": "10.9.0",
 		"eslint-import-resolver-typescript": "4.4.5",
-		"eslint-plugin-import-x": "4.16.2",
+		"eslint-plugin-import-x": "4.17.1",
 		"eslint-plugin-react": "7.37.5",
 		"eslint-plugin-react-hooks": "7.1.1",
 		"eslint-plugin-react-native": "^5.0.0",
-		"globals": "17.6.0",
+		"globals": "17.11.0",
 		"package-builder": "workspace:*",
 		"typescript": "6.0.3",
-		"typescript-eslint": "8.62.0"
+		"typescript-eslint": "8.67.0"
 	},
 	"engines": {
 		"node": ">=24",

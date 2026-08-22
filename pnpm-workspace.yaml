@@ -11,11 +11,13 @@ catalog:
   'react': 19.2.3
   'react-native-builder-bob': 0.41.0
   'react-native-svg': 15.15.5
+  'react-native-svg-transformer': 1.5.3
 
 engineStrict: true
 
 minimumReleaseAgeExclude:
   - '@carbon/icons@11.84.0'
+  - eslint@10.9.0
 
 nodeLinker: hoisted
 
