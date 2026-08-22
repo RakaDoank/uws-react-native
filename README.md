@@ -235,6 +235,7 @@ export function Component() {
 ### Unsupported APIs
 
 - **SSL options**. We need to research how to provide .pem file in React Native app and its platform architecture regarding the SSL topic
+- \`**res.onWritable**\`. We cannot support writable events due to asynchronous call from our runner to the React Native JS thread. In the meantime, this library is not a good case for huge streaming data. We may support this until we can tie our JavaScript runtime with [react-native-worklets](https://docs.swmansion.com/react-native-worklets). Read [Development & Research](#development--research) for further information
 
 ### New APIs
 
