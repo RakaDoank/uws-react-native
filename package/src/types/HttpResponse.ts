@@ -221,15 +221,18 @@ export interface HttpResponse {
 		) => void,
 	) : void,
 
-	// TODO
-	// Implement it later.
+	// We cannot support the `res.onWritable`, because of the asynchronous call
+	// from our runner to the React Native JS thread.
+	// This may be supported until we can tie our JavaScript runtime with
+	// react-native-worklets.
+
 	// /**
 	//  * Registers a handler for writable events. Continue failed write attempts in here.
 	//  * You MUST return true for success, false for failure.
 	//  * Writing nothing is always success, so by default you must return true.
 	//  */
 	// onWritable(
-	// 	handler: (offset: number) => boolean,
+	// 	handler: (offset: bigint) => boolean,
 	// ) : HttpResponse,
 
 	/**
