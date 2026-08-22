@@ -22,6 +22,9 @@ export async function uws_mod(workspaceDir) {
 
 		uSockets =
 			{
+				/**
+				 * uSockets release version
+				 */
 				gitTag: "v0.8.8",
 				get url() {
 					return `https://github.com/uNetworking/uSockets/archive/refs/tags/${this.gitTag}.zip`
@@ -32,13 +35,14 @@ export async function uws_mod(workspaceDir) {
 
 		uWebSockets =
 			{
+				/**
+				 * uWebSockets release version
+				 */
 				gitTag: "v20.78.0",
 				get url() {
 					return `https://github.com/uNetworking/uWebSockets/archive/refs/tags/${this.gitTag}.zip`
 				},
 				zipFileDestination: node_path.join(packageCppPath, "uWebSockets.zip"),
-				dirDestination: node_path.join(packageCppPath, "uWebSockets"),
-
 				/**
 				 * I need a secondary uWebSockets directory intentionally.
 				 * When I want to include uWebSockets headers, I have to write with its scope directory path like this
@@ -52,9 +56,7 @@ export async function uws_mod(workspaceDir) {
 				 * #include "libusockets.h"
 				 * ```
 				 */
-				get scopeDirDestination() {
-					return node_path.join(this.dirDestination, "uWebSockets")
-				},
+				dirDestination: node_path.join(packageCppPath, "uWebSockets", "uWebSockets"),
 			}
 
 	if(node_fs.existsSync(uSockets.zipFileDestination)) {
@@ -137,15 +139,11 @@ export async function uws_mod(workspaceDir) {
 					)
 				}
 
-				// create the first uWebSockets directory
-				node_fs.mkdirSync(uWebSockets.dirDestination)
-
 				const unzippedDirectory = node_path.join(packageCppPath, `uWebSockets-${uWebSockets.gitTag.replace("v", "")}`)
 
-				// uWebSockets/uWebSockets/XXX.h
 				node_fs.cpSync(
 					node_path.join(unzippedDirectory, "src"),
-					uWebSockets.scopeDirDestination,
+					uWebSockets.dirDestination,
 					{
 						recursive: true,
 						force: true,
