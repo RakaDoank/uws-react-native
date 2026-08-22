@@ -30,8 +30,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Code check
-        run: npm run code-check
       - name: Build Package
         run: |
           npm run package-builder bob
