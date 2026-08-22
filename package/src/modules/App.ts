@@ -10,6 +10,7 @@ import type {
  * This is also where you listen and run your app, set any SSL options (in case of SSLApp) and the like.
  */
 export function App(/* options?: AppOptions */) : TemplatedApp {
+// @ts-expect-error Test for Lint-staged
 const pr_test = "HELLO WORLD"
 	return NativeUwsReactNative.App(/* options */) as unknown as TemplatedApp
 }
