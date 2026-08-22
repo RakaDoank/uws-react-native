@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          # Fetch all history so git diff can compare branches accurately
+          fetch-depth: 0
       - name: Use PNPM
         uses: pnpm/action-setup@v6
         with:
