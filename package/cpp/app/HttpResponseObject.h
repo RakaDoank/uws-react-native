@@ -323,6 +323,41 @@ public:
       return facebook::jsi::Value::undefined();
     }));
 
+    /// In the meantime, uws-react-native is not good for huge streaming data.
+    /// We cannot support the `res.onWritable`, because of the asynchronous call
+    /// from our runner to the React Native JS thread.
+    /// This may be supported until we can tie our JavaScript runtime with
+    /// react-native-worklets.
+//    this->setProperty(rt,
+//                      "onWritable",
+//                      facebook::jsi::Function::createFromHostFunction(rt,
+//                                                                      facebook::jsi::PropNameID::forUtf8(rt, "onWritable"),
+//                                                                      1,
+//                                                                      [provider, &jsInvoker](facebook::jsi::Runtime &rt_1,
+//                                                                                             const facebook::jsi::Value &thisValue,
+//                                                                                             const facebook::jsi::Value *arguments,
+//                                                                                             size_t count) -> facebook::jsi::Value {
+//#ifdef REACT_NATIVE_DEBUG
+//      /// Does JS users really need this check in runtime?
+//      if(!arguments || !arguments[0].isObject()) {
+//        throw facebook::jsi::JSError(rt_1, "Expects a function with boolean returned in the first argument.");
+//      }
+//#endif
+//
+//      provider->res->onWritable([fn = facebook::react::AsyncCallback(rt_1, arguments[0].asObject(rt_1).asFunction(rt_1), jsInvoker)](uintmax_t offset) -> bool {
+//        fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [offset](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) -> void {
+//          auto value = cb.call(rt_2, facebook::jsi::BigInt::fromUint64(rt_2, offset));
+//          if(value.isBool()) {
+//            // TODO
+//          }
+//          // TODO
+//        });
+//        return true;
+//      });
+//
+//      return {rt_1, thisValue};
+//    }));
+
     this->setProperty(rt,
                       "pause",
                       facebook::jsi::Function::createFromHostFunction(rt,
