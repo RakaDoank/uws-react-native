@@ -16,8 +16,7 @@ catalog:
 engineStrict: true
 
 minimumReleaseAgeExclude:
-  - '@carbon/icons@11.84.0'
-  - eslint@10.9.0
+  - expo-build-properties@57.0.20
 
 nodeLinker: hoisted
 
