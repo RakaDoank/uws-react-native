@@ -8,6 +8,7 @@
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
 #include "HttpResponseObjectProvider.h"
+#include "HttpResponseObjectNativeState.h"
 #include "RecognizedString.h"
 #include "WebSocketBehaviorImpl.h"
 #include "uWebSockets/App.h"
@@ -91,20 +92,20 @@ private:
 
     // AppRunner thread
     std::function<void (uWS::HttpResponse<false> *res, uWS::HttpRequest *req)> uwsRouteHandler = [&jsInvoker, disableBodyRead, maxBodySize, asyncCallback = facebook::react::AsyncCallback(rt, std::move(callback), jsInvoker)](uWS::HttpResponse<false> *res, uWS::HttpRequest *req) {
-      auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
+      auto httpResponseObjectNativeState = std::make_shared<HttpResponseObjectNativeState>(res);
 
       /// Intentionally I have to take another copy of uWS::HttpRequest here to be consumed from JS thread
       /// I always get "bad_alloc" error if I didn't this
       auto httpRequest = std::make_shared<uWS::HttpRequest>(*req);
 
       asyncCallback.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority,
-                                     [httpResponseObjectProvider,
+                                     [httpResponseObjectNativeState,
                                       httpRequest,
                                       &jsInvoker](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
         // React Native JS runtime
-        if(httpResponseObjectProvider && httpRequest) {
+        if(httpResponseObjectNativeState && httpRequest) {
           cb.call(rt_1,
-                  HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
+                  HttpResponseObject(rt_1, jsInvoker, httpResponseObjectNativeState),
                   HttpRequestObject(rt_1, httpRequest));
         }
       });
@@ -118,9 +119,9 @@ private:
       /// `Returning from a request handler without responding or attaching an onAborted handler is ill-use`
       ///
       /// I thought `onAborted` is just a callback or event listener.
-      res->onAborted([httpResponseObjectProvider]() {
-        if(httpResponseObjectProvider->dataAbort.callback) {
-          httpResponseObjectProvider->dataAbort.callback->call(facebook::jsi::Value::undefined());
+      res->onAborted([httpResponseObjectNativeState]() {
+        if(httpResponseObjectNativeState->dataAbort.callback) {
+          httpResponseObjectNativeState->dataAbort.callback->call(facebook::jsi::Value::undefined());
         }
       });
 
@@ -128,21 +129,21 @@ private:
       /// uWebSockets will do nothing to our handler if we assign the lambda so late.
       /// So we have to predefined onDataV2 handler here, and save the chunk.
       if(!disableBodyRead) {
-        res->onDataV2([httpResponseObjectProvider, maxBodySize](auto chunk, auto maxRemainingBodyLength) {
-          if(httpResponseObjectProvider->dataBody.isStopCollecting) {
+        res->onDataV2([httpResponseObjectNativeState, maxBodySize](auto chunk, auto maxRemainingBodyLength) {
+          if(httpResponseObjectNativeState->dataBody.isStopCollecting) {
             return;
           }
 
           if(maxBodySize > 0) {
             auto chunkSize = chunk.size();
-            auto currentChunkSize = httpResponseObjectProvider->dataBody.buffer->size();
+            auto currentChunkSize = httpResponseObjectNativeState->dataBody.buffer->size();
 
             /// First and possibly only chunk
             if(currentChunkSize == 0 && chunkSize > maxBodySize) {
-              httpResponseObjectProvider->dataBody.isStopCollecting = true;
+              httpResponseObjectNativeState->dataBody.isStopCollecting = true;
               /// set the first chunk
-              httpResponseObjectProvider->insertBodyBuffer(chunk, maxRemainingBodyLength);
-              httpResponseObjectProvider->invokeBodyCallback();
+              httpResponseObjectNativeState->insertBodyBuffer(chunk, maxRemainingBodyLength);
+              httpResponseObjectNativeState->invokeBodyCallback();
               /// Don't worry,
               /// JS call may late
               /// it will invokes the handler once when user pass the handler.
@@ -153,8 +154,8 @@ private:
             if(currentChunkSize > 0 && chunkSize > maxBodySize - currentChunkSize) {
               /// tell to JS that we already stop collecting chunk
               /// and invoke the JSI onData / onDataText / onDataV2 / onFullData / onFullDataText handler immediately
-              httpResponseObjectProvider->dataBody.isStopCollecting = true;
-              httpResponseObjectProvider->invokeBodyCallback();
+              httpResponseObjectNativeState->dataBody.isStopCollecting = true;
+              httpResponseObjectNativeState->invokeBodyCallback();
               /// Don't worry,
               /// JS call may late
               /// it will invokes the handler once when user pass the handler.
@@ -162,8 +163,8 @@ private:
             }
           }
 
-          httpResponseObjectProvider->insertBodyBuffer(chunk, maxRemainingBodyLength);
-          httpResponseObjectProvider->invokeBodyCallback();
+          httpResponseObjectNativeState->insertBodyBuffer(chunk, maxRemainingBodyLength);
+          httpResponseObjectNativeState->invokeBodyCallback();
         });
       }
     };
@@ -263,11 +264,10 @@ public:
       auto callback = obj.asFunction(rt_1);
 
       appRunner.app.filter([&jsInvoker, asyncCallback = facebook::react::AsyncCallback(rt_1, std::move(callback), jsInvoker)](auto *res, int count) {
-        auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
-
-        asyncCallback.call([&jsInvoker, count, httpResponseObjectProvider](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
+        auto httpResponseObjectNativeState = std::make_shared<HttpResponseObjectNativeState>(res);
+        asyncCallback.call([&jsInvoker, count, httpResponseObjectNativeState](facebook::jsi::Runtime &rt_2, facebook::jsi::Function &cb) {
           cb.call(rt_2,
-                  HttpResponseObject(rt_2, httpResponseObjectProvider, jsInvoker),
+                  HttpResponseObject(rt_2, jsInvoker, httpResponseObjectNativeState),
                   count);
         });
       });
