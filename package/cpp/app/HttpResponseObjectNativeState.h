@@ -11,21 +11,21 @@
 
 namespace uws_react_native {
 
-class HttpResponseObjectProvider {
+class HttpResponseObjectNativeState : public facebook::jsi::NativeState {
 
 public:
-  HttpResponseObjectProvider(uWS::HttpResponse<false> *pRes) {
+  HttpResponseObjectNativeState(uWS::HttpResponse<false> *pRes) {
     this->res = pRes;
   }
 
   uWS::HttpResponse<false> *res;
-  
+
   struct {
     std::shared_ptr<facebook::react::AsyncCallback<facebook::jsi::Value>> callback = nullptr;
 
     bool isAlreadyAborted = false;
   } dataAbort;
-  
+
   struct {
     /**
      * These handlers are for
@@ -126,7 +126,7 @@ public:
     }
   }
 #endif
-  
-}; // class HttpResponseObjectProvider
+
+}; // class HttpResponseObjectNativeState
 
 } // namespace uws_react_native
