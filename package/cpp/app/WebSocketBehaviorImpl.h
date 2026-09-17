@@ -8,6 +8,7 @@
 #include "AppRunner.h"
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
+#include "HttpResponseObjectNativeState.h"
 #include "WebSocketUserDataStorage.h"
 #include "WebSocketObject.h"
 #include "jsi/Buffer.h"
@@ -279,20 +280,20 @@ public:
 
           this->upgrade = [fn = facebook::react::AsyncCallback(rt, std::move(obj).asFunction(rt), jsInvoker), &jsInvoker](auto *res, auto *req, us_socket_context_t *context) -> void {
             // AppRunner thread
-            auto httpResponseObjectProvider = std::make_shared<HttpResponseObjectProvider>(res);
+            auto httpResponseNativeState = std::make_shared<HttpResponseObjectNativeState>(res);
 
             /// Intentionally I have to take another copy of uWS::HttpRequest here to be consumed from JS thread
             /// I always get "bad_alloc" error if I didn't this
             auto httpRequest = std::make_shared<uWS::HttpRequest>(*req);
 
-            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseObjectProvider,
+            fn.callWithPriority(facebook::react::SchedulerPriority::ImmediatePriority, [httpResponseNativeState,
                                                                                         httpRequest,
                                                                                         &jsInvoker,
                                                                                         contextAddress = reinterpret_cast<uintptr_t>(context)](facebook::jsi::Runtime &rt_1, facebook::jsi::Function &cb) {
               // React Native JS runtime
-              if(httpResponseObjectProvider && httpRequest) {
+              if(httpResponseNativeState && httpRequest) {
                 cb.call(rt_1,
-                        HttpResponseObject(rt_1, httpResponseObjectProvider, jsInvoker),
+                        HttpResponseObject(rt_1, jsInvoker, httpResponseNativeState),
                         HttpRequestObject(rt_1, httpRequest),
                         facebook::jsi::BigInt::fromUint64(rt_1, contextAddress));
               }
@@ -300,9 +301,9 @@ public:
 
             /// Same like the .get, .post, .put, and others in the TemplatedAppObject.h
             /// We have to predefined the res->onAborted here
-            res->onAborted([httpResponseObjectProvider]() -> void {
-              if(httpResponseObjectProvider->dataAbort.callback) {
-                httpResponseObjectProvider->dataAbort.callback->call(facebook::jsi::Value::undefined());
+            res->onAborted([httpResponseNativeState]() -> void {
+              if(httpResponseNativeState->dataAbort.callback) {
+                httpResponseNativeState->dataAbort.callback->call(facebook::jsi::Value::undefined());
               }
             });
           };
