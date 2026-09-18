@@ -7,7 +7,6 @@
 #include "AppRunner.h"
 #include "HttpRequestObject.h"
 #include "HttpResponseObject.h"
-#include "HttpResponseObjectProvider.h"
 #include "HttpResponseObjectNativeState.h"
 #include "RecognizedString.h"
 #include "WebSocketBehaviorImpl.h"
