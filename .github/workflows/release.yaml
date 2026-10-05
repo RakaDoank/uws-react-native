@@ -16,32 +16,30 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
-      - name: Use PNPM
-        uses: pnpm/action-setup@v6
-        with:
-          # temporarily stick to the 11.11.0 because 11.12.0 has issue in Action
-          # https://github.com/pnpm/action-setup/issues/276
-          version: 11.11.0
-          cache: true
+  
+      - name: Use Bun.js
+        uses: oven-sh/setup-bun@v2
+
+      # Currently, we are using `npm` for publishing
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'pnpm'
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Build Package
-        run: |
-          npm run package-builder bob
+        run: bun install --frozen-lockfile
+
       - name: UWS Mod
         run: |
-          npm run package-builder uws-mod
+          bun run package-builder uws-mod
+
       - name: Release to NPM registry
         run: |
-          node ./scripts/release-npm.mjs
+          bun ./scripts/release-npm.mjs
+
       - name: Publish GitHub Packages and GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pnpm config set //npm.pkg.github.com/:_authToken "${{ secrets.GITHUB_TOKEN }}"
-          node ./scripts/release-github.mjs
+          npm config set //npm.pkg.github.com/:_authToken "${{ secrets.GITHUB_TOKEN }}"
+          bun ./scripts/release-github.mjs

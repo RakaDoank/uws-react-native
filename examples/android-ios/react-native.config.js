@@ -16,13 +16,6 @@ module.exports = {
 		 */
 		[libraryPackageJson.name]: {
 			root: node_path.join(__dirname, "..", "..", "package"),
-			// platforms: {
-			// 	// Codegen script incorrectly fails without this
-			// 	// So we explicitly specify the platforms with empty object
-			// 	ios: {},
-			// 	android: {},
-			// 	macos: {},
-			// },
 		},
 	},
 }

@@ -6,10 +6,12 @@ const
 	rootDir =
 		node_path.join(import.meta.dirname, ".."),
 
+	packageDir =
+		node_path.join(rootDir, "package"),
+
 	packageJsonFilePath =
 		node_path.join(
-			rootDir,
-			"package",
+			packageDir,
 			"package.json",
 		),
 
@@ -19,7 +21,16 @@ const
 				packageJsonFilePath,
 				"utf8",
 			),
-		)
+		) as typeof import("../package/package.json")
+
+// Bob
+node_childProcess.execSync(
+	`bun run package-builder bob`,
+	{
+		cwd: rootDir,
+		stdio: "inherit",
+	},
+)
 
 // GitHub Packages
 {
@@ -29,6 +40,7 @@ const
 	// Change the `uws-react-native` to `@rakadoank/uws-react-native`
 	packageJsonMod.name = "@rakadoank/uws-react-native"
 
+	// @ts-expect-error Add package to the GitHub Packages registry
 	// https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#publishing-a-package-using-publishconfig-in-the-packagejson-file
 	packageJsonMod.publishConfig = {
 		registry: "https://npm.pkg.github.com",
@@ -47,10 +59,21 @@ const
 		},
 	)
 
+	// Create the tarball file
 	node_childProcess.execSync(
-		"pnpm publish --filter uws-react-native --access public --no-git-checks",
+		"bun pm pack",
 		{
-			cwd: rootDir,
+			cwd: packageDir,
+			stdio: "inherit",
+		},
+	)
+
+	node_childProcess.execSync(
+		"bunx npm publish"
+			+ ` ./rakadoank-uws-react-native-${packageJson.version}.tgz`
+			+ " --access public",
+		{
+			cwd: packageDir,
 			stdio: "inherit",
 		},
 	)
@@ -71,10 +94,11 @@ const
 
 // GitHub Release
 {
+	// Create the tarball file
 	node_childProcess.execSync(
-		`pnpm pack --filter uws-react-native`,
+		"bun pm pack",
 		{
-			cwd: rootDir,
+			cwd: packageDir,
 			stdio: "inherit",
 		},
 	)

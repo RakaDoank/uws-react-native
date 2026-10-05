@@ -4,6 +4,7 @@
 		"composite": true
 	},
 	"include": [
+		"./index.js",
 		"./src/**/*"
 	]
 }
