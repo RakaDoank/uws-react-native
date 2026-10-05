@@ -5,6 +5,9 @@ import type {
 	TemplatedApp,
 } from "../types"
 
+console.log("Hello World")
+console.log("PR Test")
+
 /**
  * Constructs a non-SSL app. An app is your starting point where you attach behavior to URL routes.
  * This is also where you listen and run your app, set any SSL options (in case of SSLApp) and the like.
