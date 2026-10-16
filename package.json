@@ -52,7 +52,7 @@
 		"lint-staged": "17.6.0",
 		"package-builder": "workspace:*",
 		"typescript": "6.0.3",
-		"typescript-eslint": "8.71.0"
+		"typescript-eslint": "8.71.2"
 	},
 	"engines": {
 		"bun": "^1.4.3",
