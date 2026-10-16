@@ -8,7 +8,8 @@
 		"lint": "eslint",
 		"package-builder": "package-builder",
 		"prepare": "husky",
-		"type-check": "tsc --build"
+		"type-check": "bun check --build",
+		"type-check:ts": "tsc --build"
 	},
 	"workspaces": {
 		"catalog": {
@@ -54,7 +55,7 @@
 		"typescript-eslint": "8.71.0"
 	},
 	"engines": {
-		"bun": "^1.4.x",
+		"bun": "^1.4.3",
 		"node": ">=24"
 	}
 }

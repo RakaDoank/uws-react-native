@@ -1,1 +1,1 @@
-npm run type-check && pnpx lint-staged
+bun check -b && bunx lint-staged
