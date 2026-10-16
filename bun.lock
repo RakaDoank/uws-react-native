@@ -76,8 +76,8 @@
         "@audira/carbon-react-native-elements": "catalog:",
         "@carbon/icons": "catalog:",
         "@examples/app": "workspace:*",
-        "bundo-appgen": "0.0.4",
-        "bundo-window": "0.0.1",
+        "bundo-appgen": "0.0.14",
+        "bundo-window": "0.0.3",
         "bundo.rn": "0.0.2",
         "react": "19.1.4",
         "react-native": "0.81.6",
@@ -983,9 +983,9 @@
 
     "bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
 
-    "bundo-appgen": ["bundo-appgen@0.0.4", "", { "optionalDependencies": { "tsx": "^4" }, "peerDependencies": { "react-native-macos": "^0.81" }, "bin": { "bundo-appgen": "bin.mjs" } }, "sha512-Q8Lk7CBgt4wRLJcQp+YZXBnrouKlZjcKjNFltahxj8GqBFL27OBWxkO2Qu1Mb9WJC+fkDRMU0S9se/p8/6+15g=="],
+    "bundo-appgen": ["bundo-appgen@0.0.14", "", { "optionalDependencies": { "tsx": "^4" }, "peerDependencies": { "react-native-macos": "^0.81 || ^0.83" }, "bin": { "bundo-appgen": "bin.mjs" } }, "sha512-Ec09USmb+1tpnrSD/bpRLtWfi3vW98cnui8ettswofCSEG6s/DInYdg8zVGMzabewG2ZHDZZlL9d+usovDKYsg=="],
 
-    "bundo-window": ["bundo-window@0.0.1", "", { "peerDependencies": { "react-native-macos": "^0.81" } }, "sha512-xw9mebBYKbwH594TkNeL/sP7Ig8Ju3bEqcYsMze7+ZKsip5G8oLy845CGNSwL9d0zHseyU63/Zm2u+giw9M6Gg=="],
+    "bundo-window": ["bundo-window@0.0.3", "", { "peerDependencies": { "bundo-appgen": "~0.0.8" } }, "sha512-WDgfN0OMSy6CYpbZTpu3r37yg543eWcpfLy+p4W/muXBtbNG81enZ7O6IU/YEWl0/MsXSpYLlQwR88OVAKp2xw=="],
 
     "bundo.rn": ["bundo.rn@0.0.2", "", { "peerDependencies": { "react-native-macos": "^0.81" }, "bin": { "bundo": "bin.mjs", "bundo.rn": "bin.mjs" } }, "sha512-oPuvXRvWYK7cmZDi1qPtwZb1tvwwf+u9JaXc8I4jHP8idw4/bKytJHtA6Ijyp6ebqroTQHsfkpNmPn63DxS2JQ=="],
 
