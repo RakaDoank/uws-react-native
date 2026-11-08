@@ -127,7 +127,7 @@ node_childProcess.execSync(
 	// Upload the tarball
 	node_childProcess.execSync(
 		`gh release upload ${gitTag}` +
-			` uws-react-native-${version}.tgz` +
+			` ./package/uws-react-native-${version}.tgz` +
 			` --clobber`,
 		{
 			cwd: rootDir,
