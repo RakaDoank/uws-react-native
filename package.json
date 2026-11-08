@@ -2,7 +2,7 @@
 	"name": "react-native-uws",
 	"private": true,
 	"version": "0.0.0",
-	"description": "Embed a HTTP server to your React Native app",
+	"description": "HTTP and WebSocket server for React Native with the port of uWebSockets",
 	"scripts": {
 		"code-check": "npm run type-check && npm run lint",
 		"lint": "eslint",
