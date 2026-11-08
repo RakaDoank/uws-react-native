@@ -1,6 +1,6 @@
 # uws-react-native
 
-The port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) HTTP and WebSocket server for React Native. Inspired by the [**uWebSockets.js**](https://github.com/uNetworking/uWebSockets.js) for Node.js and tailored for React Native app.
+HTTP and WebSocket server with the port of [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for React Native. Inspired by the [**uWebSockets.js**](https://github.com/uNetworking/uWebSockets.js) for Node.js and tailored for React Native app.
 
 - **uWebSockets** is simple, secure & standards compliant web server for the most demanding of applications. See [**uWebSockets**](https://github.com/uNetworking/uWebSockets) for more information
 - **uws-react-native** is library that allows you to easily use **uWebSockets** in your React Native through new architecture with JSI to the native C++ for running HTTP and WebSocket server
