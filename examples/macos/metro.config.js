@@ -12,6 +12,9 @@ const
 	workspaceRoot =
 		node_path.join(__dirname, "..", ".."),
 
+	workspaceNodeModules =
+		node_path.join(workspaceRoot, "node_modules"),
+
 	rnxKitMetroConfig =
 		makeMetroConfig()
 
@@ -32,15 +35,9 @@ const config = {
 		assetExts: [
 			...(rnxKitMetroConfig.resolver?.assetExts?.filter(ext => ext !== "svg") ?? []),
 		],
-		extraNodeModules: {
-			...rnxKitMetroConfig.resolver?.extraNodeModules,
-			"uws-react-native": node_path.join(workspaceRoot, "package", "src"),
-		},
-		// only for monorepo setup
 		nodeModulesPaths: [
-			...rnxKitMetroConfig.resolver?.nodeModulesPaths ?? [],
 			node_path.join(__dirname, "node_modules"),
-			node_path.join(workspaceRoot, "node_modules"),
+			workspaceNodeModules,
 		],
 		resolveRequest: MetroSymlinksResolver(),
 		sourceExts: [
@@ -48,6 +45,12 @@ const config = {
 			"svg",
 		],
 	},
+
+	watchFolders: [
+		node_path.join(workspaceRoot, "examples", "app"),
+		node_path.join(workspaceRoot, "package"),
+		workspaceNodeModules,
+	],
 
 	transformer: {
 		...rnxKitMetroConfig.transformer,

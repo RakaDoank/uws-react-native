@@ -46,4 +46,4 @@ expo-env.d.ts
 
 /uws-react-native-*.tgz
 
-tsconfig.tsbuildinfo
+*.tsbuildinfo

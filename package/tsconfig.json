@@ -1,6 +1,7 @@
 {
-	"extends": "../tsconfig.base.json",
+	"extends": "../tsconfig.base.react-native.json",
 	"compilerOptions": {
+		"composite": true,
 		"rootDir": "./src"
 	},
 	"include": [

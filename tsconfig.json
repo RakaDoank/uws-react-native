@@ -1,17 +1,10 @@
 {
 	"files": [],
 	"references": [
-		{
-			"path": "./examples/android-ios"
-		},
-		{
-			"path": "./examples/app"
-		},
-		{
-			"path": "./examples/macos"
-		},
-		{
-			"path": "./package"
-		}
+		{ "path": "./examples/android-ios" },
+		{ "path": "./examples/app" },
+		{ "path": "./examples/macos" },
+		{ "path": "./package" },
+		{ "path": "./tsconfig.node.json" }
 	]
 }

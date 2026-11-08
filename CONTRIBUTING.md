@@ -57,9 +57,9 @@ If you prefer our documented guide, you can read it below
 ### macOS
 Install these in your machine
 - [Homebrew](https://brew.sh/)
-- [Mise](https://mise.jdx.dev). Install it through Homebrew. See [Getting Started](https://mise.jdx.dev/getting-started.html). It is useful for Node.js and Ruby installation and easy version switch
-- [Node.js](https://nodejs.org) >=24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
-- [PNPM](https://pnpm.io) >= 11. Install it through Homebrew. See the [installation guide](https://pnpm.io/installation)
+- [Mise](https://mise.jdx.dev). Install it through Homebrew. See [Getting Started](https://mise.jdx.dev/getting-started.html). It is useful for Bun, Node.js, and Ruby installation and easy version switch
+- [Bun](github.com/oven-sh/bun) >= 1.4. Install and switch Bun easily through [Mise](https://mise.jdx.dev)
+- [Node.js](https://nodejs.org) >= 24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
 
 #### Development for iOS & macOS
 These are required for iOS and macOS development
@@ -120,8 +120,8 @@ There is a lot of Linux distributions and a lot of way to install in Linux,
 but in simple words, you need these binaries or softwares
 
 - [Mise](https://mise.jdx.dev). It is useful for Node.js and Ruby installation and easy version switch
-- [Node.js](https://nodejs.org) >=24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
-- [PNPM](https://pnpm.io) >= 11. See the [installation guide](https://pnpm.io/installation)
+- [Bun](github.com/oven-sh/bun) >= 1.4. Install and switch Bun easily through [Mise](https://mise.jdx.dev)
+- [Node.js](https://nodejs.org) >= 24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
 - [OpenJDK](https://openjdk.org/) version 17. You can download or install from [Adoptium](https://adoptium.net/) or your system package manager
 - [Android Studio](https://developer.android.com/studio) with Meerkat version or latest version in your Linux machine
 
@@ -140,13 +140,11 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 
 ### Windows
 Install these in your machine
-- [Chocolatey](https://chocolatey.org/). See [Chocolatey CLI Setup](https://docs.chocolatey.org/en-us/choco/setup)
-- [Mise](https://mise.jdx.dev). Install it through Chocolatey. See [Getting Started](https://mise.jdx.dev/getting-started.html). It is useful for Node.js and Ruby installation and easy version switch
-- [Node.js](https://nodejs.org) >=24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
-- [PNPM](https://pnpm.io) >= 11. Install it through Chocolatey. See the [installation guide](https://pnpm.io/installation)
-- [Microsoft OpenJDK](https://www.microsoft.com/openjdk) version 17.x.x. Install it through Chocolatey
+- [Mise](https://mise.jdx.dev). Install it through Winget or Chocolatey. See [Getting Started](https://mise.jdx.dev/getting-started.html). It is useful for Bun, and Node.js
+- [Node.js](https://nodejs.org) >= 24. Install and switch Node.js easily through [Mise](https://mise.jdx.dev)
+- [Microsoft OpenJDK](https://www.microsoft.com/openjdk) version 17.x.x. Install it through Winget, or Chocolatey
   ```
-  choco install microsoft-openjdk17
+  winget install -e --id Microsoft.OpenJDK.17
   ```
 - [Android Studio](https://developer.android.com/studio) with Meerkat version or latest version in your Windows machine
 
@@ -175,15 +173,15 @@ git clone https://github.com/RakaDoank/uws-react-native.git
 Make your environment is ready and the repository has been cloned. After that, do these next steps
 
 ### 1. Dependencies Installation
-1. Go to the repository's directory in your terminal or cmd and do the installation with your `pnpm`
+1. Go to the repository's directory in your terminal or cmd and do the installation with your Bun
    ```
-   pnpm install
+   bun install
    ```
    This installation will install all the dependencies including the `react-native` example app.
 
 2. After that, run
    ```
-   npm run package-builder uws-mod
+   bun run package-builder uws-mod
    ```
    This is our custom script to fetch [uSockets](https://github.com/uNetworking/uSockets) and [uWebSockets](https://github.com/uNetworking/uWebSockets) source code files
 and write it in our repository with correct directory setup. We prefer this rather than cloning the entire uSockets and uWebSockets project repository.
@@ -193,7 +191,7 @@ and write it in our repository with correct directory setup. We prefer this rath
 #### Android & iOS
 For Android & iOS app development, locate to the `/examples/android-ios` directory in your terminal, and then run
 ```
-npm run prebuild
+bun run prebuild
 ```
 
 This is an Expo script known as [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/) to build and write necessary Android and iOS files since those are ignored by GIT.
@@ -201,43 +199,11 @@ This is an Expo script known as [Continuous Native Generation](https://docs.expo
 #### macOS
 For macOS app development,
 
-1. Locate to the `uws-react-native/examples/macos` directory in your terminal, and then run
-   ```
-   npm run init
-   ```
-   This is an `react-native-macos-init` script to build and write necessary macOS files. Currently, the generated `uws-react-native/examples/macos/macos` directory is ignored by GIT intentionally.
-
-2. Then, find `Podfile` file in the `uws-react-native/examples/macos/macos` directory. Open with VSCode, or any editors
-3. Please, modify the react-native-macos directory path,
-   
-   **from this** (unedited)
-   ```
-   :path => '../node_modules/react-native-macos'
-   ```
-   **to this**
-   ```
-   :path => '../../../node_modules/react-native-macos'
-   ```
-4. Locate to `/examples/macos/macos` directory in your terminal, and then run
-   ```
-   pod install
-   ```
-5. Open **Xcode**, and then open `uws-react-native/examples/macos/macos/uwsreactnativeexample.xcworkspace` in **Xcode**
-6. Click `uwsreactnativeexample` in the sidebar,
-7. In the **Targets** section, click `uwsreactnativeexample-macOS`, and then click `Build Phases` tab
-8. Open `Bundle React Native code and images`
-9. Modify the shell script for locating the correct of react-native-macos directory,
-
-   **from this** (unedited)
-   ```
-   export NODE_BINARY=node
-   ../node_modules/react-native-macos/scripts/react-native-xcode.sh
-   ```
-   **to this**
-   ```
-   export NODE_BINARY=node
-   ../../../node_modules/react-native-macos/scripts/react-native-xcode.sh
-   ```
+Locate to the `uws-react-native/examples/macos` directory in your terminal, and then run
+```
+bun run appgen
+```
+This is an `bundo-appgen` script to build and write necessary macOS files.
 
 ### 3. IDE Setup for Native Library Development
 In this project, the example app at the `uws-react-native/example` directory is the app we will use as the library playground to use for the library development. We do not do the development of React Native app there, instead we only writing our actual `uws-react-native` native library code
@@ -254,14 +220,14 @@ Make sure you do the [Android & iOS App Setup](#android--ios) first. Then, conti
 #### iOS
 Make sure you do the [Android & iOS App Setup](#android--ios) first. Then, continue to this steps
 1. Open **Xcode**
-2. Open `uws-react-native/examples/android-ios/ios/example.xcworkspace` in **Xcode**
+2. Open `uws-react-native/examples/android-ios/ios/UWSExample.xcworkspace` in **Xcode**
 3. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
 4. Happy Coding :)
 
 #### macOS
 Make sure you do the [macOS App Setup](#macos-1) first. Then, continue to this steps
 1. Open **Xcode**
-2. Open `uws-react-native/examples/macos/macos/example.xcworkspace` in **Xcode**
+2. Open `uws-react-native/examples/macos/macos/UWSExample.xcworkspace` in **Xcode**
 3. In **Xcode**, you should see `UwsReactNative` directory in the `Pods > Development Tools` from the sidebar navigator. This is where the library code lives you can actually do any fixes
 4. Happy Coding :)
 
@@ -281,19 +247,19 @@ To open React Native and Node.js files
 ### Android
 1. First, run your Android emulator
 2. Open your terminal, and locate to `uws-react-native/examples/android-ios` directory
-3. Then, run `npm run android`
+3. Then, run `bun run android`
 
 ### iOS
 1. First, run your iPhone/iPad Simulator first simulator
 2. Open your terminal, and locate to `uws-react-native/examples/android-ios` directory
-3. Then, run `npm run ios`
+3. Then, run `bun run ios`
 
 ### macOS
 1. Open your terminal
 2. Locate to `uws-react-native/examples/macos`
-3. Run `npm run start` in your terminal to run the Metro bundler
+3. Run `bun run start` in your terminal to run the Metro bundler
 4. Press `Command + T` in the current terminal to open new tab, or you can open new terminal window
-5. Then, run `npm run macos`
+5. Then, run `bun run macos`
 
 ---
 
@@ -302,7 +268,7 @@ To open React Native and Node.js files
 ### JavaScript/TypeScript
 All the JavaScript/TypeScript has been lint-checked with ESLint, and type-checked with TypeScript. Please follow the rule that has been made e.g indentation with Tab. Do not modify the rule or add `// eslint-disable` mark to your code with no reasons.
 
-While development, ensure that your ESLint Extension of your Visual Studio Code is running if you are using that IDE. Alternatively, you can run `npm run code-check` in the root of repository.
+While development, ensure that your ESLint Extension of your Visual Studio Code is running if you are using that IDE. Alternatively, you can run `bun run code-check` in the root of repository.
 
 You can check the lint rules at [uws-react-native/eslint.config.mjs](https://github.com/RakaDoank/uws-react-native/blob/main/eslint.config.mjs) and the `compilerOptions` of TypeScript at [uws-react-native/tsconfig.json](https://github.com/RakaDoank/uws-react-native/blob/main/tsconfig.base.json) and other `tsconfig.json` files in the `example` and `package` directory.
 
@@ -341,7 +307,7 @@ and write it in our repository with correct directory setup. We prefer this rath
 ---
 
 ## About the Example App and the Library in Monorepo Setup
-The app was actually bootstrapped with [npx create-expo-app@latest](https://github.com/react-native-community/cli), but since this project is a monorepo setup with `PNPM` to scaffold both app and actual library deployment. There are modifications that have been done in the examples app to split between the app, the actual `uws-react-native` library, and other development tools or the `devDependencies`
+The app was actually bootstrapped with [npx create-expo-app@latest](https://github.com/react-native-community/cli), but since this project is a monorepo setup with Bun to scaffold both app and actual library deployment. There are modifications that have been done in the examples app to split between the app, the actual `uws-react-native` library, and other development tools or the `devDependencies`
 - `uws-react-native/examples/android-ios/metro.config.js`: The example app has to know where the actual `uws-react-native` directory lives without including the `uws-react-native` in the `dependencies` of the `package.json` example app
 - `uws-react-native/examples/android-ios/react-native.config.js`: Since the actual `uws-react-native` library is not included as `dependencies` in the `package.json` file of example app, we have to tell React Native CLI where the `uws-react-native` directory lives to auto-linked the example app with `uws-react-native` library in development
 - `@react-native/eslint-config` development dependency (`devDependencies`) was moved out to the root of `package.json` (repository) from the `examples/android-ios` app

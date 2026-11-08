@@ -9,7 +9,9 @@
 		"@carbon/icons": "catalog:",
 		"react": "catalog:",
 		"react-native": "*",
-		"react-native-svg": "catalog:"
+		"react-native-safe-area-context": "catalog:",
+		"react-native-svg": "catalog:",
+		"uws-react-native": "workspace:*"
 	},
 	"files": [
 		"src"
